@@ -240,3 +240,8 @@ examples/Robotwin/train_files/submit_robotwin_training.sh
 lda/dataloader/gr00t_lerobot/datasets_temp.py
 MUJOCO_LOG.TXT
 examples/MultiRobot/*
+
+# Machine-local symlinks into the shared HF cache (see slurm/download_weights.slurm)
+/pretrained/
+/checkpoints/
+/slurm/logs/
