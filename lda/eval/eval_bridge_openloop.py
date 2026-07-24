@@ -124,7 +124,10 @@ def main() -> None:
             print(f"traj {traj_id}: FAILED {type(e).__name__}: {e}", flush=True)
             continue
 
-        traj_dir = os.path.join(args.out_dir, "oxe", f"traj_{traj_id}")
+        # save_npy_file writes directly to <save_plot_path>/traj_<id>. eval_policy.py
+        # appears to nest under an embodiment name only because it passes a
+        # save_plot_path that already ends in one.
+        traj_dir = os.path.join(args.out_dir, f"traj_{traj_id}")
         gt = np.load(os.path.join(traj_dir, "gt_action_across_time.npy"))
         pred = np.load(os.path.join(traj_dir, "pred_action_across_time.npy"))
         row = summarize(gt, pred)
