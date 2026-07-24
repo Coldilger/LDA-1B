@@ -14,7 +14,7 @@ lda/dataloader/gr00t_lerobot/data_config.py, which is `class OxeDataConfig(BaseD
     video_keys  = ["video.top_head"]
     language    = ["annotation.language.action_text"]
 
-Three things this conversion has to get right, all verified against the data
+Four things this conversion has to get right, all verified against the data
 rather than assumed:
 
 0. **`action.*_eef_position/rotation` must hold ABSOLUTE poses, not bridge's deltas.**
@@ -46,6 +46,18 @@ rather than assumed:
    produce garbage. The unapply path multiplies by a zero range, mapping back to
    0 — also harmless.
 
+3. **Statistics for the action pose columns must describe DELTAS, not the stored
+   absolute poses.** The parquet holds absolute poses on purpose (point 0), but the
+   loader normalizes what `calculate_delta_eef` derives from them. Computing q01/q99
+   over the absolute values instead spans ~0.3 m where real per-step motion is
+   ~0.009 m. Both directions then break: training targets collapse into a sliver of
+   [-1, 1], and a model's [-1, 1] output denormalizes into ~0.3 m per-step jumps.
+   Measured, before the fix: an open-loop probe of LDA-pretrain scored a position
+   error of 0.576 m -- suspiciously constant across 12 trajectories and 12.5x worse
+   than a "the arm never moves" baseline, which is the signature of a scale error
+   rather than a bad model. `lda/dataloader/calculate_delta_min_max.py` exists for
+   exactly this computation.
+
 Videos are not re-encoded or copied: `video.top_head` is symlinked to the source
 `observation.images.image_0` directory, keeping the 21 GB of mp4s in one place.
 image_0 is bridge's primary external camera and the view every episode has.
@@ -61,6 +73,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from lda.utils.rotation_convert import calculate_delta_eef
 
 # Widths of each compact-layout column, in the order BaseDataConfig lists them.
 LIMB_KEYS = [
@@ -112,6 +126,7 @@ def convert_episode(src_parquet: Path, dst_parquet: Path) -> dict[str, np.ndarra
 
     out = {}
     collected = {}
+    action_pose = {}
     for name, width in LIMB_KEYS:
         s = _split(state, STATE_SRC[name], width)
         if name in ACTION_POSE_SRC:
@@ -123,7 +138,28 @@ def convert_episode(src_parquet: Path, dst_parquet: Path) -> dict[str, np.ndarra
         out[f"state.{name}"] = list(s)
         out[f"action.{name}"] = list(a)
         collected[f"state.{name}"] = s
-        collected[f"action.{name}"] = a
+        # Gripper is never differentiated by the loader, so its statistics are
+        # collected from the stored values like any other column.
+        if name.endswith("_gripper"):
+            collected[f"action.{name}"] = a
+        else:
+            action_pose[name] = a
+
+    # The parquet stores ABSOLUTE poses, but the loader normalizes what
+    # calculate_delta_eef produces from them. Statistics must therefore describe
+    # the DELTA distribution (~0.009 m per step), not the absolute one (~0.3 m
+    # spread) -- normalizing deltas against absolute-pose quantiles squeezes every
+    # target into a sliver of [-1, 1] and, in reverse, blows a model's [-1, 1]
+    # output up into ~0.3 m per-step jumps. This is what lda/dataloader/
+    # calculate_delta_min_max.py exists to compute.
+    for side in ("left", "right"):
+        pos = action_pose[f"{side}_eef_position"]
+        rot = action_pose[f"{side}_eef_rotation"]
+        delta = calculate_delta_eef(np.concatenate([pos, rot], axis=1).astype(np.float64))
+        if len(delta) == 0:  # single-frame episode
+            delta = np.zeros((1, 6))
+        collected[f"action.{side}_eef_position"] = delta[:, :3].astype(np.float32)
+        collected[f"action.{side}_eef_rotation"] = delta[:, 3:6].astype(np.float32)
 
     for col in PASSTHROUGH_COLUMNS:
         if col in df.columns:
