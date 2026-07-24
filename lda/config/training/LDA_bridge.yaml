@@ -1,0 +1,125 @@
+# Stage-3 finetune of LDA-pretrain on BridgeData V2 (WidowX), for comparison
+# against F1-VLA and mimic-video on the SimplerEnv Bridge tasks.
+#
+# The architecture block is copied verbatim from the released checkpoint's own
+# config.yaml (Wayer2/LDA-pretrain), NOT from LDA_pretrain.yaml in this repo —
+# the repo config describes a different, older model (QwenGR00T + Qwen2.5-VL +
+# dinov2, action_dim 29). Only the checkpoint's own config is guaranteed to match
+# the weights we are loading.
+#
+# Why the embodiment tag is `oxe` and why that is not a free win: an open-loop
+# probe of LDA-pretrain on held-out Bridge episodes under this tag showed the
+# model barely beating a "the arm never moves" baseline, a coin-flip gripper, and
+# invented right-arm motion up to 0.999 where WidowX has no right arm at all.
+# So the `oxe` slot is NOT a ready-made WidowX projector — this finetune has to
+# teach it Bridge's distribution close to from scratch. `oxe` is still the right
+# tag because it is an in-range trained embodiment (index 5); `new_embodiment`
+# (index 32) is out of bounds for this checkpoint's 32-slot embodiment tables and
+# faults on the very first forward.
+
+run_id: bridge_finetune
+run_root_dir: outputs/lda_bridge
+seed: 42
+trackers: [jsonl, wandb]
+wandb_entity: null
+wandb_project: lda-bridge
+is_debug: false
+
+framework:
+  name: QwenMMDiT
+  qwenvl:
+    base_vlm: pretrained/vlm/Qwen3-VL-4B-Instruct
+    attn_implementation: flash_attention_2
+
+  action_model:
+    action_model_type: DiT-L
+    hidden_size: 2560
+    add_pos_embed: true
+    max_seq_len: 1024
+    # 138 = the unified padded action space (69 dims per arm). Our Bridge data
+    # occupies the compact 14-dim bimanual layout inside it, right arm zero-filled.
+    action_dim: 138
+    # null => the model consumes no proprioception. Bridge state is therefore never
+    # fed to the policy, which also sidesteps the reference-frame problem that cost
+    # F1-VLA a separate investigation (see F1-VLA/eval/bridge/RESULTS.md, fix #4).
+    state_dim: null
+    action_horizon: 16
+    future_action_window_size: 15
+    past_action_window_size: 0
+    obs_horizon: 2
+    num_views: 1
+    future_obs_index: 5
+    max_num_embodiments: 32
+    num_target_vision_tokens: 32
+    num_timestep_buckets: 1000
+    num_inference_timesteps: 4
+    noise_beta_alpha: 1.5
+    noise_beta_beta: 1.0
+    noise_s: 0.999
+    obs_loss_weight: 1.0
+    only_policy: false
+    only_wo_video_gen: false
+    policy_and_video_gen: false
+    vision_encoder_type: dinov3
+    vision_encoder_size: s
+    vision_encoder_path: pretrained
+    diffusion_model_cfg:
+      cross_attention_dim: 2560
+      dropout: 0.2
+      final_dropout: true
+      interleave_self_attention: true
+      norm_type: ada_norm
+      num_layers: 16
+      output_dim: 2560
+      positional_embeddings: null
+
+datasets:
+  vla_data:
+    dataset_py: lerobot_datasets
+    data_root_dir: /mnt/beegfsnew/scratch/3295540/data
+    data_mix: bridge_lda
+    lerobot_version: v2.0
+    CoT_prompt: "Your task is {instruction}. To identify the key objects for your task. Locate their bounding boxes in [x1,y1,x2,y2] format."
+    image_size: [224, 224]
+    delete_pause_frame: false
+    # Must stay true: the conversion stores absolute poses in action.*_eef_* on
+    # purpose so the loader derives deltas with calculate_delta_eef, in the
+    # gripper-frame convention the pretrained weights were trained on. Setting
+    # this false would feed absolute poses straight to a delta-trained model.
+    use_delta_action: true
+    training_task_weights: [1, 1, 1, 1]
+    # H200 (141 GB) with the VLM and vision encoder frozen. Raise if headroom allows.
+    per_device_batch_size: 16
+
+trainer:
+  pretrained_checkpoint: checkpoints/LDA-pretrain/LDA-pretrain.pt
+  # Same freeze set as pretraining: only the MM-DiT trunk and the action/vision
+  # heads train. This is what makes a 1B-scale model affordable on a single GPU.
+  freeze_modules: 'qwen_vl_interface,action_model.vision_encoder'
+  max_train_steps: 100000
+  num_warmup_steps: 2000
+  save_interval: 5000
+  eval_interval: 1000
+  logging_frequency: 100
+  learning_rate:
+    base: 4.0e-05
+    qwen_vl_interface: 1.0e-05
+    action_model: 1.0e-04
+  lr_scheduler_type: cosine_with_min_lr
+  scheduler_specific_kwargs:
+    min_lr: 5.0e-07
+  repeated_diffusion_steps: 1
+  max_grad_norm: 1.0
+  gradient_clipping: 1.0
+  gradient_accumulation_steps: 1
+  weight_decay: 0.0
+  optimizer:
+    name: AdamW
+    betas: [0.9, 0.95]
+    eps: 1.0e-08
+    weight_decay: 1.0e-08
+  is_resume: false
+  resume_epoch: null
+  resume_step: null
+  enable_gradient_checkpointing: true
+  enable_mixed_precision_training: true

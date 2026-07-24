@@ -39,6 +39,14 @@ def get_dataset_mixtures(data_root_dir: str, data_mix:str):
 ## {nakename: [(data_name, sampling_weight, robot_type)] }
 DATASET_NAMED_MIXTURES = {
 
+    # Bridge (WidowX), converted to the OXE compact layout. Tag "oxe" (idx 5) is
+    # an in-range pretrain embodiment, so LDA-pretrain has a real projector slot
+    # for it — used for the open-loop MSE probe of whether Bridge was in the OXE
+    # pretrain slice. data_root_dir must be /mnt/beegfsnew/scratch/3295540/data.
+    "bridge_lda": [
+        ("bridge_lda", 1.0, "oxe"),
+    ],
+
     "fourier_gr1_unified_1000": [
         ("gr1_unified.PnPBottleToCabinetClose_GR1ArmsAndWaistFourierHands_1000", 1.0, "fourier_gr1_arms_waist"),
         ("gr1_unified.PnPCanToDrawerClose_GR1ArmsAndWaistFourierHands_1000", 1.0, "fourier_gr1_arms_waist"),
