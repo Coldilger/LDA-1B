@@ -84,7 +84,34 @@ On a single-dataset mix it evaluates exactly one trajectory regardless of the
 value. The first "decisive" reading came from n=1; per-trajectory variance turned
 out to be large, so the probe was rewritten to loop properly.
 
-### 4. Launch-path breakage
+### 4. `mse_score` in the training loop compares incompatible quantities
+
+`train_LDA.py:400-417` scores `predict_action`'s `normalized_actions` against
+`example["action"]`, but that label comes from `raw_data` — absolute poses, before
+normalization and before the delta conversion. Normalized predictions against raw
+absolute labels, the same mismatch as bug 2.
+
+Practical consequence: the W&B `mse_score` curve rose steadily through the first
+12k steps, which reads as "the model is getting worse" and is not evidence of
+anything. Ignore that panel.
+
+What the model is actually doing has to be read off the training loss, and only
+after smoothing: a single diffusion-loss sample has sd 0.10 against a mean of
+0.27, so the raw curve looks like flat noise. Averaged in quarters over the first
+415 logged values:
+
+| | Q1 | Q2 | Q3 | Q4 | change |
+|---|---|---|---|---|---|
+| `action_dit_loss` | 0.2999 | 0.2683 | 0.2659 | 0.2415 | −24% |
+| total loss | 0.6744 | 0.5924 | 0.5866 | 0.5295 | −21% |
+
+`dynamics_loss` stays near flat (0.046 → 0.041), which fits: the visual-forecasting
+head is far less embodiment-specific than the action head.
+
+Sanity check on the freeze set: 2.23B of 6.69B parameters are trainable, i.e. the
+VLM is frozen as intended and the MM-DiT plus heads are not.
+
+### 5. Launch-path breakage
 
 `accelerate` resolved to a Python 3.9 install in `~/.local` without DeepSpeed;
 `deepspeed_zero2.yaml` pointed at `/mnt/home/liukai/...` on the authors' machine;
