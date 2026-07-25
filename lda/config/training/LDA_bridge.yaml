@@ -100,12 +100,20 @@ trainer:
   # Same freeze set as pretraining: only the MM-DiT trunk and the action/vision
   # heads train. This is what makes a 1B-scale model affordable on a single GPU.
   freeze_modules: 'qwen_vl_interface,action_model.vision_encoder'
-  # Optimizer steps, each consuming 6 accumulated micro-batches. 447,733 sampled
-  # steps / 96 is ~4.7k per epoch, so this is ~6 epochs. Revise once the first
-  # throughput numbers land; checkpoints are frequent enough to stop early.
-  max_train_steps: 30000
-  num_warmup_steps: 2000
-  save_interval: 2500
+  # These count MICRO-batches, not optimizer steps. Under DeepSpeed the engine owns
+  # accumulation, so accelerator.sync_gradients is true every iteration and the
+  # loop's completed_steps ticks once per micro-batch (train_LDA.py:356-358). The
+  # effective batch is still 96 -- DeepSpeed applies the update every 6 -- but the
+  # budget must be read in micro-batches: 150000 x 16 = 2.4M samples over a 447,733
+  # step dataset, i.e. ~5.4 epochs (25000 real optimizer steps). The earlier 30000
+  # would have been ~1 epoch, far too little for an embodiment slot the open-loop
+  # probe showed starting from scratch.
+  # Measured throughput: 2.55 micro-batches/s on one H100, so ~55k per 6h wave
+  # => roughly 3 waves. The LR scheduler is built over this same horizon
+  # (train_LDA.py:129) and stepped per micro-batch, so it stays self-consistent.
+  max_train_steps: 150000
+  num_warmup_steps: 6000
+  save_interval: 10000
   eval_interval: 1000
   logging_frequency: 100
   learning_rate:
