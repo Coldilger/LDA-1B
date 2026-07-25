@@ -1,0 +1,38 @@
+#!/bin/bash
+#SBATCH --job-name=lda_evalenv
+#SBATCH --partition=medium_cpu
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --time=03:00:00
+#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/evalenv-%j.out
+
+# The closed-loop eval needs one interpreter with BOTH stacks: LDA (transformers
+# 4.57 for Qwen3-VL, flash-attn) and SimplerEnv (sapien, mani_skill2_real2sim).
+# f1_vla_eval has the second but transformers 4.49, too old for Qwen3-VL; the lda
+# env has the first but no sapien.
+#
+# This clones lda rather than installing into it, because the finetune is running
+# out of that env right now and each 6-hour wave starts a fresh interpreter from
+# it -- a dependency resolution that went sideways would take the training down
+# with it.
+source /software/miniconda3/etc/profile.d/conda.sh
+conda create --clone lda --name lda_eval -y
+
+PY=/home/3295540/.conda/envs/lda_eval/bin/python
+$PY -m pip install --no-input sapien==2.2.2 gymnasium==0.29.1 transforms3d==0.4.2
+# Same editable installs f1_vla_eval uses, pointing at the SimplerEnv copy
+# F1-VLA already vendors and has completed runs against.
+$PY -m pip install --no-input --no-deps -e /mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv/ManiSkill2_real2sim
+$PY -m pip install --no-input --no-deps -e /mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv
+
+echo "=== import check ==="
+$PY - <<'PY'
+import importlib
+for m in ["sapien", "mani_skill2_real2sim", "simpler_env", "transformers", "flash_attn", "lda"]:
+    try:
+        mod = importlib.import_module(m)
+        print(f"OK   {m} {getattr(mod, '__version__', '')}")
+    except Exception as e:
+        print(f"FAIL {m}: {type(e).__name__}: {e}")
+PY
+echo "EVALENV_EXIT=$?"
