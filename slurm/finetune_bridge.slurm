@@ -15,7 +15,6 @@ export TOKENIZERS_PARALLELISM=false
 
 # Every wave is its own sbatch job, so without a pinned run id W&B would show the
 # training as N disconnected segments (the lesson from F1-VLA's slurm scripts).
-export WANDB_MODE=offline
 export WANDB_PROJECT=lda-bridge
 export WANDB_RUN_ID=lda_bridge_finetune
 export WANDB_RESUME=allow

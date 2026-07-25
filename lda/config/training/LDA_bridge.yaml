@@ -88,7 +88,11 @@ datasets:
     # this false would feed absolute poses straight to a delta-trained model.
     use_delta_action: true
     training_task_weights: [1, 1, 1, 1]
-    # H200 (141 GB) with the VLM and vision encoder frozen. Raise if headroom allows.
+    # Paper Table V gives the finetuning batch as 12*8 -- 12 GPUs x 8 per device,
+    # i.e. an effective batch of 96 (the pretraining entry, 32*48, matches the
+    # released config's per_device_batch_size: 48 on 32 GPUs, which confirms the
+    # first number is GPU count). We have one GPU, so 16 x 6 accumulation steps
+    # reproduces the same effective 96.
     per_device_batch_size: 16
 
 trainer:
@@ -96,9 +100,12 @@ trainer:
   # Same freeze set as pretraining: only the MM-DiT trunk and the action/vision
   # heads train. This is what makes a 1B-scale model affordable on a single GPU.
   freeze_modules: 'qwen_vl_interface,action_model.vision_encoder'
-  max_train_steps: 100000
+  # Optimizer steps, each consuming 6 accumulated micro-batches. 447,733 sampled
+  # steps / 96 is ~4.7k per epoch, so this is ~6 epochs. Revise once the first
+  # throughput numbers land; checkpoints are frequent enough to stop early.
+  max_train_steps: 30000
   num_warmup_steps: 2000
-  save_interval: 5000
+  save_interval: 2500
   eval_interval: 1000
   logging_frequency: 100
   learning_rate:
@@ -111,13 +118,16 @@ trainer:
   repeated_diffusion_steps: 1
   max_grad_norm: 1.0
   gradient_clipping: 1.0
-  gradient_accumulation_steps: 1
+  gradient_accumulation_steps: 6
   weight_decay: 0.0
   optimizer:
     name: AdamW
     betas: [0.9, 0.95]
     eps: 1.0e-08
-    weight_decay: 1.0e-08
+    # train_LDA.py reads trainer.optimizer.weight_decay (the trainer.weight_decay
+    # key above is inert). Paper Table V specifies 1e-5 for finetuning; the
+    # released pretrain config's 1e-8 describes the pretraining run instead.
+    weight_decay: 1.0e-05
   is_resume: false
   resume_epoch: null
   resume_step: null
