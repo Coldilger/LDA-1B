@@ -49,7 +49,10 @@ differencing consecutive poses gives the base-frame deltas the controller wants.
 
 from __future__ import annotations
 
+import contextlib
+import os
 from collections import deque
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -80,6 +83,29 @@ RAW_SLICES = {
 
 TRAIN_RESO = 256  # Bridge frames are 256x256; the model resizes to 224 internally.
 
+# Repo root, i.e. the directory the training config's relative paths are written
+# against (`pretrained/vlm/Qwen3-VL-4B-Instruct`, `vision_encoder_path: pretrained`).
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+@contextlib.contextmanager
+def _cwd(path):
+    """Load the model with the repo root as cwd.
+
+    The run's saved config.yaml stores the VLM and vision-encoder locations as
+    paths relative to the repo root, and SimplerEnv is driven from its own
+    directory. Without this, `from_pretrained` resolves nothing at that location
+    and huggingface_hub falls back to reading it as a Hub repo id, failing with
+    "Repo id must be in the form 'repo_name' or 'namespace/repo_name'". Patching
+    the config instead would not survive: each training wave rewrites it.
+    """
+    prev = os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(prev)
+
 
 class LDAInference:
     def __init__(
@@ -106,7 +132,8 @@ class LDAInference:
         self.invert_gripper = invert_gripper
         self.embodiment_id = EMBODIMENT_TAG_MAPPING[embodiment_tag.value]
 
-        self.policy = baseframework.from_pretrained(pretrained_checkpoint=checkpoint_path)
+        with _cwd(REPO_ROOT):
+            self.policy = baseframework.from_pretrained(pretrained_checkpoint=checkpoint_path)
         self.policy.eval()
         self.policy.to(device)
 
