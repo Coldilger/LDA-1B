@@ -143,12 +143,24 @@ def pad_action_state_with_key(action_state: np.ndarray, action_key: str, single_
         action_state = np.zeros_like(action_state)
         return action_state, action_mask
     # Set mask based on non-zero entries per sample
-    for i in range(num_samples):
-        if not np.all(action_state[i] == 0):
-            if action_dim <= max_length:
-                action_mask[i, :action_dim] = True
-            else:
-                action_mask[i, :] = True  # or handle truncation consistently
+    # Presence is a property of the modality, not of a single timestep. The
+    # per-timestep test this replaced silently dropped every step whose values
+    # happened to be all zero -- which for a binary gripper means every "closed"
+    # command. On Bridge that is 41% of the supervision, and specifically all of
+    # one class, so the head can only ever learn "open": measured at 70k steps,
+    # gripper predictions were uncorrelated with ground truth (45%/55% for the two
+    # polarities against an 80% always-open baseline).
+    #
+    # Testing the whole array instead still masks out modalities that genuinely do
+    # not exist -- notably WidowX's zero-filled right arm, which reaches here
+    # unmasked because the `single_arm` shortcut above only fires for the franka
+    # and ur embodiment tags, not oxe.
+    modality_present = not np.all(action_state == 0)
+    if modality_present:
+        if action_dim <= max_length:
+            action_mask[:, :action_dim] = True
+        else:
+            action_mask[:, :] = True  # or handle truncation consistently
     return action_state, action_mask
 
 def calculate_dataset_statistics(parquet_paths: list[Path]) -> dict:
