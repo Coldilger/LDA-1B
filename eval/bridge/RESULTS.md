@@ -308,12 +308,24 @@ Pending. Protocol: 4 tasks x 24 episodes x 3 seeds, means of three seeds, via
 
 | task | LDA-1B | F1-VLA | mimic-video | paper (F1) |
 |---|---|---|---|---|
-| Put Carrot on Plate | — | 38.9% | — | 70.8% |
-| Put Spoon on Towel | — | 47.2% | — | 50.0% |
-| Stack Green Cube | — | 37.5% | — | 50.0% |
-| Put Eggplant in Basket | — | 69.4% | — | 66.7% |
-| **average** | — | **48.2%** | — | **59.4%** |
+| Put Carrot on Plate | — | 38.9% | 41.7% | 70.8% |
+| Put Spoon on Towel | — | 47.2% | 45.8% | 50.0% |
+| Stack Green Cube | — | 37.5% | 16.7% | 50.0% |
+| Put Eggplant in Basket | — | 69.4% | 95.8% | 66.7% |
+| **average** | — | **48.2%** | **50.0%** | **59.4%** |
 
-F1-VLA column is from `F1-VLA/eval/bridge/RESULTS.md` (3-seed means, `chunk_size: 4`
-checkpoint). Fill the mimic-video column from `mimic-video-project` before
-publishing any comparison.
+F1-VLA is from `F1-VLA/eval/bridge/RESULTS.md`: 3-seed means on the `chunk_size: 4`
+checkpoint.
+
+**The three columns are not equally earned, and the table should not be read as a
+straight ranking.** mimic-video's figures are its best `stop-step` out of eleven
+that were swept, chosen on the evaluation itself, and each is a single 24-episode
+run. F1-VLA's are means of three seeds with no such selection. The selection
+matters a lot here — mimic's average ranges from 50.0% at stop-step 1 down to
+29.2% at stop-step 10, and the eggplant task alone swings 100% to 20.8%. Seed
+noise matters too: the same F1 config scored 29.2% and 45.8% on the carrot task on
+different seeds.
+
+The same trap applies to LDA: `exec_horizon` is an untuned knob. It is fixed at 8
+a priori, and if it is ever swept the whole sweep goes in this table, not its
+maximum.
