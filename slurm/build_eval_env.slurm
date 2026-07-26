@@ -28,6 +28,11 @@ $PY -m pip install --no-input sapien==2.2.2 gymnasium==0.29.1 transforms3d==0.4.
 $PY -m pip install --no-input ruckig==0.19.4 trimesh==4.12.2 rtree==1.4.1 \
     mediapy==1.2.7 natsort==8.4.0
 
+# The SimplerEnv installs above drag in numpy 2, under which transforms3d's
+# np.array(..., copy=False) raises instead of copying-if-needed, and every episode
+# dies in quat2euler. Both working envs run 1.26.4; pin back to it.
+$PY -m pip install --no-input "numpy==1.26.4"
+
 # sapien 2.2.2 imports pkg_resources, which setuptools removed in 81. The clone
 # inherits 83 from the lda env, so it has to come back down.
 $PY -m pip install --no-input "setuptools==79.0.1"
