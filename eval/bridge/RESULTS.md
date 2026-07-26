@@ -197,6 +197,66 @@ Every run gets a unique `--additional-env-save-tags`. The evaluator silently ski
 episodes whose output video already exists, so without it a rerun reports a number
 nothing measured — this produced a phantom 0.0% during the F1-VLA work.
 
+## Closed-loop bring-up (checkpoints 50k / 70k, mid-training)
+
+The smoke run was deliberately done on intermediate weights: its job is to find
+wiring bugs, and those do not care how good the policy is. Three surfaced, each
+only visible once the whole loop ran, and each hidden behind the previous one:
+
+1. The saved config stores the VLM path relative to the repo root, while the eval
+   runs from SimplerEnv's directory; huggingface_hub then read it as a Hub repo id.
+2. `lda_eval` had picked up numpy 2, under which transforms3d's
+   `np.array(..., copy=False)` raises and every episode dies in `quat2euler`.
+3. The wrapper fed 256x256, but `predict_action` builds `curr_imgs` — the tensor
+   reaching DINOv3 — from the raw image *before* `resize_images`. Training always
+   delivered 224 (a 14x14 token grid, the paper's stated latent shape). Feeding 256
+   raises nothing and simply produces features the model never trained on.
+
+### The pipeline is correct; the model was not ready
+
+Both runs scored 0.0% with `moved_correct_obj` false on all 1440 steps, so the
+question was whether the loop was broken or the policy merely undertrained. Three
+measurements settle it:
+
+| check | result | reference |
+|---|---|---|
+| motion reaching the controller | 0.00965 m/step | Bridge's own ~0.009 |
+| arm motion in the rendered rollout | 1.19 per frame, 3.29 end-to-end | F1 at 38.9% success: 2.31 / 7.49 |
+| episodes actually run | 24, none skipped | — |
+
+The arm moves, at roughly the right per-step scale, about half as decisively as a
+policy that succeeds ~39% of the time. That is an undertrained policy whose step
+directions partly cancel, not a broken conversion.
+
+### Finetuning is measurably working
+
+The same open-loop probe used on the pretrained checkpoint, rerun on 70k steps
+(47% of the run) — identical trajectories, seed and protocol:
+
+| | pretrained | 70k steps |
+|---|---|---|
+| position L1 | 0.051 m | **0.0384 m** |
+| **ratio to stay-still baseline** | **1.24** | **0.837** |
+| rotation L1 | 0.147 rad | 0.101 rad |
+| gripper L1 | 0.413 | 0.398 |
+
+Crossing 1.0 on that ratio is the threshold that separates "knows something" from
+"knows nothing": the pretrained model was worse than an arm that never moves, and
+the finetuned one is better. Halfway through training.
+
+### Open concern: the gripper head is not learning
+
+Gripper L1 moved 0.413 -> 0.398 against 0.5 for a coin flip. A dedicated test over
+40 frames with differing ground truth agrees: 45% as-is, 55% inverted, against an
+**80% always-open baseline** — uncorrelated, not merely flipped, so `invert_gripper`
+stays off.
+
+For pick-and-place this matters more than reaching accuracy: a gripper that never
+closes on cue caps success at zero however well the arm is aimed. One plausible
+mechanism is dilution — the gripper is 1 dimension of the 138-wide padded action
+space, so its share of the gradient is small. Recheck on the final checkpoint; if
+it has not moved by then the cause is structural rather than a shortage of steps.
+
 ## Results
 
 Pending. Protocol: 4 tasks x 24 episodes x 3 seeds, means of three seeds, via
