@@ -252,10 +252,54 @@ Gripper L1 moved 0.413 -> 0.398 against 0.5 for a coin flip. A dedicated test ov
 stays off.
 
 For pick-and-place this matters more than reaching accuracy: a gripper that never
-closes on cue caps success at zero however well the arm is aimed. One plausible
-mechanism is dilution — the gripper is 1 dimension of the 138-wide padded action
-space, so its share of the gradient is small. Recheck on the final checkpoint; if
-it has not moved by then the cause is structural rather than a shortage of steps.
+closes on cue caps success at zero however well the arm is aimed.
+
+Four candidate explanations were tested, and three are ruled out.
+
+**Loss masking (real bug, fixed).** `pad_action_state_with_key` decided whether a
+timestep entered the loss with `not np.all(action_state[i] == 0)`. For a binary
+gripper, 0.0 is the *close* command, not padding, so every closed-gripper step was
+dropped — 41% of the supervision and all of one class, leaving a head that could
+only learn "open". The same rule also dropped any exactly-stationary motion step.
+Fixed by testing the modality across the whole trajectory instead, which still
+masks out genuinely absent modalities such as WidowX's zero-filled right arm (the
+`single_arm` shortcut does not cover it: that fires only for the franka and ur
+tags, not oxe). Verified live in the training path — the loss now sees 7 valid
+dims of 138, gripper included on every step.
+
+**Gradient dilution — ruled out.** With the mask corrected the gripper is 1 of 7
+supervised dimensions, not 1 of 138.
+
+**Wrong target — ruled out.** The value the model trains against is exactly ±1;
+q99 normalization is applied.
+
+**Sampling resolution — ruled out.** A binary target under only 4 denoising steps
+could plausibly collapse toward the midpoint, which is what the predictions look
+like. Raising the step count makes it marginally *worse*, not better:
+
+| denoising steps | correlation | class separation |
+|---|---|---|
+| 4 (config default) | +0.104 | +0.095 |
+| 20 | +0.048 | +0.045 |
+| 50 | +0.038 | +0.036 |
+
+**What remains is training difficulty**, and there is a structural reason it is
+harder here than for F1-VLA: this checkpoint has `state_dim: null`, so no
+proprioception reaches the policy at all. The model cannot be told its own gripper
+state — it has to read it out of a 224px frame while also judging whether the
+fingers are around the object. F1 was handed gripper state directly. Position and
+rotation, which need no such readout, improved normally over the same steps.
+
+Measured with balanced classes (both trivial baselines then sit at 50%):
+
+| checkpoint | n | correlation | accuracy |
+|---|---|---|---|
+| 70k (pre-fix) | 40 | +0.091 | 55.0% |
+| 90k (10k post-fix) | 40 | −0.124 | 42.5% |
+| 100k (20k post-fix) | 200 | +0.104 | 55.5% |
+
+At n=40 the standard error is ~0.16, so the first two say nothing; the n=200
+reading is ~1.5 SE from zero. A weak positive signal that is not yet growing.
 
 ## Results
 
