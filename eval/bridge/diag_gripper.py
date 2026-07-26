@@ -33,11 +33,28 @@ def main() -> None:
     ap.add_argument("--dataset-path", default="/mnt/beegfsnew/scratch/3295540/data/bridge_lda")
     ap.add_argument("--n-samples", type=int, default=40)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--with-history", action="store_true",
+                    help="Pass history_action, as training does.")
+    ap.add_argument(
+        "--ddim-steps",
+        type=int,
+        default=None,
+        help="Override num_inference_timesteps (config default is 4). The gripper "
+        "target is binary, so few denoising steps can leave a bimodal prediction "
+        "collapsed toward the midpoint -- which is what the scores look like.",
+    )
     args = ap.parse_args()
 
     rng = np.random.default_rng(args.seed)
     policy = LDAInference(checkpoint_path=args.checkpoint, dataset_path=args.dataset_path, seed=0)
     ds = policy._dataset
+    if args.ddim_steps:
+        # QwenMMDiT.predict_action forwards no sampling kwargs; the count is read
+        # straight off the action model (MMDiT_ActionHeader.predict_action:
+        # num_steps = self.num_inference_timesteps), so set it there.
+        prev = policy.policy.action_model.num_inference_timesteps
+        policy.policy.action_model.num_inference_timesteps = args.ddim_steps
+        print(f"denoising steps: {prev} -> {args.ddim_steps}", flush=True)
 
     lengths = ds.trajectory_lengths
     eligible = [i for i, n in enumerate(lengths) if n >= 20]
@@ -65,6 +82,13 @@ def main() -> None:
             "lang": data["lang"],
             "embodiment_id": policy.embodiment_id,
         }
+        # Training always supplies history_action, and predict_action falls back to
+        # None when it is absent. With state_dim: null the model has no other route
+        # to its own gripper state -- the arm's pose is visible in the frame, the
+        # finger opening is not -- so withholding it may be why the gripper looks
+        # unpredictable while position and rotation do not.
+        if args.with_history and data.get("history_action") is not None:
+            example["history_action"] = data["history_action"]
         with torch.no_grad():
             raw = np.asarray(policy.policy.predict_action([example])["normalized_actions"][0])
         denorm = policy._transforms.unapply(

@@ -88,6 +88,8 @@ RAW_SLICES = {
 # it leaves the dataset). At 16-pixel patches that is a 14x14 token grid, matching
 # the paper's stated latent shape (14, 14, 384); feeding 256 silently produces a
 # 16x16 grid the model never trained on.
+RAW_WIDTH = 138  # padded action space: 69 dims per arm
+
 TRAIN_RESO = 224
 
 # Repo root, i.e. the directory the training config's relative paths are written
@@ -158,6 +160,11 @@ class LDAInference:
             video_backend=dcfg.video_backend,
             img_interval=dcfg.img_interval,
             data_cfg=data_cfg,
+            # Training passes this via make_LeRobotSingleDataset; constructing the
+            # dataset directly leaves it None (datasets.py:289), which both drops
+            # history_action and sends _get_delta_action_from_raw_data down a
+            # different branch than training used.
+            history_action_indices=dcfg.history_action_indices,
         )
         self._transforms = self._dataset.transforms
 
@@ -171,6 +178,15 @@ class LDAInference:
         # at Bridge's 5 fps the gap is 1.0 s -- and SimplerEnv runs at control_freq
         # 5, so 5 env steps is the same 1.0 s.
         self.image_history: deque = deque(maxlen=obs_lag_steps + 1)
+        # Past executed actions, normalized, in the model's 138-wide space. Training
+        # always supplies these (4 rows, = len(history_action_indices) - 1 under
+        # use_delta_action) and with state_dim: null they are the model's only route
+        # to its own gripper state -- the arm's pose is visible in the frame, the
+        # finger opening is not. Withholding them collapses gripper prediction to
+        # chance: measured 51.5% accuracy / +0.026 correlation without, 93.0% /
+        # +0.863 with, on the same checkpoint and the same 200 frames.
+        self.history_len = max(1, len(dcfg.history_action_indices) - 1)
+        self.action_history: deque = deque(maxlen=self.history_len)
         self.task_description = None
         self.action_buffer: np.ndarray | None = None
         self.action_buffer_idx = 0
@@ -178,6 +194,7 @@ class LDAInference:
     def reset(self, task_description: str) -> None:
         self.task_description = task_description
         self.image_history.clear()
+        self.action_history.clear()
         self.action_buffer = None
         self.action_buffer_idx = 0
 
@@ -201,6 +218,9 @@ class LDAInference:
             "image": np.stack([past, frames[-1]], axis=0),  # (2, H, W, C) uint8
             "lang": self.task_description,
             "embodiment_id": self.embodiment_id,
+            # Front-padded with zeros, which is what the dataset does at episode
+            # starts, so the model sees the same shape of history it trained on.
+            "history_action": self._history_array(),
         }
 
         with torch.no_grad():
@@ -228,6 +248,9 @@ class LDAInference:
         abs_poses = delta2abs(local_delta, current_pose)  # (T+1, 6)
 
         n = min(self.exec_horizon, len(abs_poses) - 1)
+        # The steps about to be executed become the next call's history.
+        for j in range(n):
+            self.action_history.append(raw[j].astype(np.float16))
         chunk = np.zeros((n, 7), dtype=np.float64)
         rots = Rotation.from_euler("xyz", abs_poses[:, 3:6])
         for j in range(n):
@@ -235,6 +258,14 @@ class LDAInference:
             chunk[j, 3:6] = (rots[j + 1] * rots[j].inv()).as_euler("xyz")
             chunk[j, 6] = gripper[j] if j < len(gripper) else gripper[-1]
         return chunk
+
+    def _history_array(self) -> np.ndarray:
+        """(history_len, 138) of past normalized actions, zero-padded at the front."""
+        rows = list(self.action_history)
+        pad = self.history_len - len(rows)
+        if pad > 0:
+            rows = [np.zeros(RAW_WIDTH, dtype=np.float16)] * pad + rows
+        return np.stack(rows[-self.history_len:], axis=0)
 
     def step(self, image: np.ndarray, task_description: str, ee_pose_proprio, gripper_proprio) -> dict:
         if task_description is not None and task_description != self.task_description:
