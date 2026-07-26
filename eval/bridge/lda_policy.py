@@ -22,7 +22,7 @@ F1-VLA/eval/bridge/RESULTS.md. What is the same, what differs, and why:
 2. **Rotation: euler -> axis-angle.** SAME as F1, and load-bearing for the same
    reason: the two coincide only for tiny angles.
 
-3. **Image: square before feeding.** SAME as F1 (that fix was 12.5% -> 29.2%),
+3. **Image: square, and at 224.** SAME as F1 (that fix was 12.5% -> 29.2%),
    but the mechanism here is different and worth stating. Training built images as
    `expand2square(frame) -> resize(224)`; since Bridge frames are already 256x256
    square, expand2square is a no-op and training effectively saw a plain square
@@ -81,7 +81,14 @@ RAW_SLICES = {
     "action.right_gripper": slice(75, 76),
 }
 
-TRAIN_RESO = 256  # Bridge frames are 256x256; the model resizes to 224 internally.
+# 224, not Bridge's native 256. predict_action builds `curr_imgs` -- the tensor fed
+# to DINOv3 -- from the raw example["image"] *before* resize_images is applied, so
+# whatever this wrapper hands over is what the vision encoder sees. Training always
+# reached it at 224 (get_step_data_with_transform resizes every frame to 224 before
+# it leaves the dataset). At 16-pixel patches that is a 14x14 token grid, matching
+# the paper's stated latent shape (14, 14, 384); feeding 256 silently produces a
+# 16x16 grid the model never trained on.
+TRAIN_RESO = 224
 
 # Repo root, i.e. the directory the training config's relative paths are written
 # against (`pretrained/vlm/Qwen3-VL-4B-Instruct`, `vision_encoder_path: pretrained`).
