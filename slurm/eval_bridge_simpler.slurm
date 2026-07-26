@@ -1,7 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=lda_eval
-#SBATCH --partition=short_gpuh200
-#SBATCH --gres=gpu:H200:1
+# H100 rather than H200: the H200 nodes have spent most of this run draining,
+# so a 12-job sweep queued there would simply sit. Override with sbatch
+# --partition/--gres if H200 frees up.
+#SBATCH --partition=short_gpunew
+#SBATCH --gres=gpu:H100:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=01:00:00
