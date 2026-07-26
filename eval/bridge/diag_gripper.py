@@ -43,11 +43,23 @@ def main() -> None:
     eligible = [i for i, n in enumerate(lengths) if n >= 20]
     picks = rng.choice(eligible, size=min(args.n_samples, len(eligible)), replace=False)
 
+    # Sampling frames at random gives ~80% open, so a thresholded accuracy is
+    # dominated by the majority class and a real change hides inside it. Collect a
+    # balanced set instead: keep drawing until both classes are filled.
+    want_per_class = max(1, args.n_samples // 2)
     gt_all, pred_all = [], []
-    for tid in picks:
-        tid = int(tid)
+    n_open = n_closed = 0
+    attempts = 0
+    while (n_open < want_per_class or n_closed < want_per_class) and attempts < args.n_samples * 25:
+        attempts += 1
+        tid = int(rng.choice(picks))
         base = int(rng.integers(0, max(1, lengths[tid] - 18)))
         data = ds.get_step_data_with_transform(tid, base, return_state=True)
+        gt_peek = float(np.asarray(data["action"])[0, 6])
+        if gt_peek > 0.5 and n_open >= want_per_class:
+            continue
+        if gt_peek <= 0.5 and n_closed >= want_per_class:
+            continue
         example = {
             "image": np.stack([np.asarray(im) for im in data["image"][:2]], axis=0),
             "lang": data["lang"],
@@ -59,10 +71,13 @@ def main() -> None:
             {k: torch.as_tensor(raw[:, sl]) for k, sl in RAW_SLICES.items()}
         )
         pred = float(np.asarray(denorm["action.left_gripper"]).reshape(-1)[0])
-        # data["action"] is the raw label; column 6 is the left gripper.
-        gt = float(np.asarray(data["action"])[0, 6])
+        gt = gt_peek
         gt_all.append(gt)
         pred_all.append(pred)
+        if gt > 0.5:
+            n_open += 1
+        else:
+            n_closed += 1
 
     gt = np.array(gt_all)
     pred = np.array(pred_all)
@@ -72,10 +87,18 @@ def main() -> None:
     print()
     direct = ((pred > 0.5) == (gt > 0.5)).mean()
     inverted = ((1 - pred > 0.5) == (gt > 0.5)).mean()
-    print(f"agreement, as-is      : {direct * 100:5.1f}%")
+    # On a balanced set both trivial baselines sit at 50%, so accuracy is readable
+    # directly. Correlation is reported too because it moves before the threshold
+    # does -- a head that has started to learn shifts its scores well before enough
+    # of them cross 0.5 to change the accuracy.
+    corr = float(np.corrcoef(pred, gt)[0, 1]) if pred.std() > 1e-9 else 0.0
+    mean_open = pred[gt > 0.5].mean()
+    mean_closed = pred[gt <= 0.5].mean()
+    print(f"agreement, as-is      : {direct * 100:5.1f}%   (50% = chance on a balanced set)")
     print(f"agreement, inverted   : {inverted * 100:5.1f}%")
-    print(f"always-open baseline  : {(gt > 0.5).mean() * 100:5.1f}%")
-    print(f"always-closed baseline: {(gt <= 0.5).mean() * 100:5.1f}%")
+    print(f"correlation with truth: {corr:+.3f}")
+    print(f"mean score | truth=open  : {mean_open:.3f}")
+    print(f"mean score | truth=closed: {mean_closed:.3f}   (separation {mean_open - mean_closed:+.3f})")
     print()
     if pred.max() - pred.min() < 0.1:
         print("VERDICT: prediction barely varies -> the head is not discriminating yet;")
