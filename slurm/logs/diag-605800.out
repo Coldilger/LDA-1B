@@ -1,0 +1,38 @@
+/home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+07/26 [04:03:07] INFO     | >> [*] Loading from local         share_tools.py:264
+                          checkpoint path                                       
+                          `/mnt/beegfsnew/scratch/3295540/LDA                   
+                          -1B/outputs/lda_bridge/bridge_finet                   
+                          une/checkpoints/steps_70000_pytorch                   
+                          _model.pt`                                            
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  2.02it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.83it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.85it/s]
+Total number of DiT parameters:  1772973056
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+trajectory 0: 'put small spoon from basket to tray'
+
+raw normalized output: shape (16, 138)
+  left dims 0:7 |mean| 0.27616  range [-0.9833, 0.7811]
+  (normalized space is [-1,1]; all-zero means the model predicts no motion)
+
+after unapply (gripper-frame deltas, m / rad):
+  |dpos| mean 0.00888   (Bridge reference ~0.009)
+  |drot| mean 0.05587
+  gripper min 0.008 max 0.088
+
+what the widowx controller receives:
+  step  0  |world_vector| 0.00144  |rot_axangle| 0.01506  gripper -1
+  step  1  |world_vector| 0.01781  |rot_axangle| 0.11742  gripper -1
+  step  2  |world_vector| 0.00484  |rot_axangle| 0.02707  gripper -1
+  step  3  |world_vector| 0.00350  |rot_axangle| 0.01416  gripper -1
+  step  4  |world_vector| 0.02572  |rot_axangle| 0.08624  gripper -1
+  step  5  |world_vector| 0.01326  |rot_axangle| 0.07797  gripper -1
+  step  6  |world_vector| 0.01370  |rot_axangle| 0.08187  gripper -1
+  step  7  |world_vector| 0.01342  |rot_axangle| 0.10073  gripper -1
+  step  8  |world_vector| 0.00348  |rot_axangle| 0.01037  gripper -1
+  step  9  |world_vector| 0.00122  |rot_axangle| 0.00915  gripper -1
+  step 10  |world_vector| 0.00623  |rot_axangle| 0.01847  gripper -1
+  step 11  |world_vector| 0.01113  |rot_axangle| 0.03572  gripper -1
+
+mean |world_vector|: 0.00965  (Bridge per-step ~0.009)
+DIAG_EXIT=0

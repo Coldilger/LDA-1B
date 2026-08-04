@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/eval/bridge/diag_actions.py", line 26, in <module>
+    from eval.bridge.lda_policy import RAW_SLICES, LDAInference
+ModuleNotFoundError: No module named 'eval'
+DIAG_EXIT=1

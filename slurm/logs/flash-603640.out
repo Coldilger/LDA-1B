@@ -1,0 +1,9 @@
+Using Python 3.10.20 environment at: /home/3295540/.conda/envs/lda
+Resolved 25 packages in 712ms
+   Building flash-attn==2.6.3
+      Built flash-attn==2.6.3
+Prepared 1 package in 61m 20s
+Installed 1 package in 10.60s
+ + flash-attn==2.6.3
+FLASH_ATTN_EXIT=0
+flash_attn 2.6.3

@@ -1,0 +1,25 @@
+/home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+07/26 [08:54:41] INFO     | >> [*] Loading from local         share_tools.py:264
+                          checkpoint path                                       
+                          `/mnt/beegfsnew/scratch/3295540/LDA                   
+                          -1B/outputs/lda_bridge/bridge_finet                   
+                          une/checkpoints/steps_100000_pytorc                   
+                          h_model.pt`                                           
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 10.56it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 10.33it/s]
+Total number of DiT parameters:  1772973056
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+denoising steps: 4 -> 50
+
+samples: 200
+ground truth: open(1) 100, closed(0) 100
+prediction:   min -0.032  max 1.063  mean 0.528
+
+agreement, as-is      :  52.0%   (50% = chance on a balanced set)
+agreement, inverted   :  48.0%
+correlation with truth: +0.038
+mean score | truth=open  : 0.545
+mean score | truth=closed: 0.510   (separation +0.036)
+
+VERDICT: neither polarity separates from the other -> undertrained, recheck later.
+GRIP_EXIT=0

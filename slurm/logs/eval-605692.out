@@ -1,0 +1,27 @@
+/home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+07/26 [02:12:55] INFO     | >> [*] Loading from local         share_tools.py:264
+                          checkpoint path                                       
+                          `/mnt/beegfsnew/scratch/3295540/LDA                   
+                          -1B/outputs/lda_bridge/bridge_finet                   
+                          une/checkpoints/steps_50000_pytorch                   
+                          _model.pt`                                            
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  2.46it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.13it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.16it/s]
+Total number of DiT parameters:  1772973056
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+Control mode:  arm_pd_ee_target_delta_pose_align2_gripper_pd_joint_pos
+Traceback (most recent call last):
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/eval/bridge/main_inference.py", line 88, in <module>
+    success_arr = maniskill2_evaluator(model, args)
+  File "/mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv/simpler_env/evaluation/maniskill2_evaluator.py", line 244, in maniskill2_evaluator
+    success_arr.append(run_maniskill2_eval_single_episode(obj_episode_id=obj_episode_id, **kwargs))
+  File "/mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv/simpler_env/evaluation/maniskill2_evaluator.py", line 60, in run_maniskill2_eval_single_episode
+    r, p, y = quat2euler(robot_init_quat)
+  File "/home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages/transforms3d/euler.py", line 404, in quat2euler
+    return mat2euler(quat2mat(quaternion), axes)
+  File "/home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages/transforms3d/euler.py", line 277, in mat2euler
+    M = np.array(mat, dtype=np.float64, copy=False)[:3, :3]
+ValueError: Unable to avoid copy while creating an array as requested.
+If using `np.array(obj, copy=False)` replace it with `np.asarray(obj)` to allow a copy when needed (no behavior change in NumPy 1.x).
+For more details, see https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword.
+EVAL_EXIT=1 TASK=PutCarrotOnPlateInScene-v0 SEED=0

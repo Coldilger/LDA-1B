@@ -1,0 +1,213 @@
+Warning: The cache directory for DeepSpeed Triton autotune, /home/3295540/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+07/31 [00:19:58] INFO     | >> gcc -pthread -B                       spawn.py:75
+                          /home/3295540/.conda/envs/lda/compiler_com            
+                          pat -Wno-unused-result -Wsign-compare                 
+                          -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2                  
+                          -isystem                                              
+                          /home/3295540/.conda/envs/lda/include                 
+                          -fPIC -O2 -isystem                                    
+                          /home/3295540/.conda/envs/lda/include                 
+                          -fPIC -c /tmp/tmps7zowzg7/test.c -o                   
+                          /tmp/tmps7zowzg7/test.o                               
+                 INFO     | >> gcc -pthread -B                       spawn.py:75
+                          /home/3295540/.conda/envs/lda/compiler_com            
+                          pat /tmp/tmps7zowzg7/test.o -laio -o                  
+                          /tmp/tmps7zowzg7/a.out                                
+07/31 [00:19:59] INFO     | >> gcc -pthread -B                       spawn.py:75
+                          /home/3295540/.conda/envs/lda/compiler_com            
+                          pat -Wno-unused-result -Wsign-compare                 
+                          -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2                  
+                          -isystem                                              
+                          /home/3295540/.conda/envs/lda/include                 
+                          -fPIC -O2 -isystem                                    
+                          /home/3295540/.conda/envs/lda/include                 
+                          -fPIC -c /tmp/tmprv2pp1ni/test.c -o                   
+                          /tmp/tmprv2pp1ni/test.o                               
+                 INFO     | >> gcc -pthread -B                       spawn.py:75
+                          /home/3295540/.conda/envs/lda/compiler_com            
+                          pat /tmp/tmprv2pp1ni/test.o                           
+                          -L/home/3295540/.conda/envs/cuda_env                  
+                          -L/home/3295540/.conda/envs/cuda_env/lib64            
+                          -lcufile -o /tmp/tmprv2pp1ni/a.out                    
+Distributed environment: DEEPSPEED  Backend: nccl
+Num processes: 1
+Process index: 0
+Local process index: 0
+Device: cuda:0
+
+Mixed precision type: bf16
+ds_config: {'fp16': {'enabled': False}, 'bf16': {'enabled': True}, 'train_micro_batch_size_per_gpu': 16, 'train_batch_size': 96, 'gradient_accumulation_steps': 6, 'zero_optimization': {'stage': 2, 'allgather_partitions': True, 'allgather_bucket_size': 500000000.0, 'reduce_scatter': True, 'reduce_bucket_size': 500000000.0, 'overlap_comm': True, 'contiguous_gradients': True, 'cpu_offload': False}, 'gradient_clipping': 1.0, 'steps_per_print': inf}
+
+/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+07/31 [00:20:18] INFO     | >> VLA Training :: Warming Up       train_LDA.py:490
+                 INFO     | >> ✅ Configuration wrapped for     train_LDA.py:494
+                          access tracking                                       
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  2.21it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.91it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.94it/s]
+Total number of DiT parameters:  1772973056
+07/31 [00:20:29] INFO     | >> Creating VLA Dataset with Mixture train_LDA.py:94
+                          `bridge_lda`                                          
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+Dataset lengths: [447733]
+Dataset lengths: [447733]
+Merged dataset statistics saved to: outputs/lda_bridge_griptest/bridge_griptest/dataset_statistics.json
+Used action keys (reordered): ['left_eef_position', 'left_eef_rotation', 'left_gripper', 'right_eef_position', 'right_eef_rotation', 'right_gripper']
+Used state keys (reordered): ['left_eef_position', 'left_eef_rotation', 'left_gripper', 'right_eef_position', 'right_eef_rotation', 'right_gripper']
+[rank0]:[W731 00:20:31.411508412 ProcessGroupNCCL.cpp:4561] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+07/31 [00:20:32] INFO     | >> LR Group action_model:           train_LDA.py:122
+                          lr=0.0001, num_params=512                             
+No checkpoints found in outputs/lda_bridge_griptest/bridge_griptest/checkpoints
+                 WARNING  | >> No valid checkpoint found in     train_LDA.py:234
+                          outputs/lda_bridge_griptest/bridge_gr                 
+                          iptest/checkpoints. Starting training                 
+                          from scratch.                                         
+📦 loading checkpoint: outputs/lda_bridge/bridge_finetune/final_model/pytorch_model.pt
+✅ loaded <full_model> model parameters
+07/31 [00:21:27] WARNING  | >> Could not parse steps from       train_LDA.py:244
+                          pretrained checkpoint:                                
+                          outputs/lda_bridge/bridge_finetune/fi                 
+                          nal_model/pytorch_model.pt                            
+                 INFO     | >> Loaded pretrained checkpoint:    train_LDA.py:247
+                          outputs/lda_bridge/bridge_finetune/fi                 
+                          nal_model/pytorch_model.pt, steps: 0                  
+##############################
+qwen_vl_interface,action_model.vision_encoder
+📊 model parameter statistics:
+# Parameters (in millions): 6691.322 Total, 2231.910 Trainable
+[2026-07-31 00:21:27,955] [WARNING] [config_utils.py:70:_process_deprecated_field] Config parameter cpu_offload is deprecated use offload_optimizer instead
+wandb: Currently logged in as: coldilger (coldilger-bocconi-university) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run lda_bridge_griptest
+wandb: Tracking run with wandb version 0.23.0
+wandb: Run data is saved locally in outputs/lda_bridge_griptest/bridge_griptest/wandb/wandb/run-20260731_002133-lda_bridge_griptest
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run bridge_griptest
+wandb: ⭐️ View project at https://wandb.ai/coldilger-bocconi-university/lda-bridge-griptest
+wandb: 🚀 View run at https://wandb.ai/coldilger-bocconi-university/lda-bridge-griptest/runs/lda_bridge_griptest
+07/31 [00:21:48] INFO     | >> ***** Training Configuration     train_LDA.py:427
+                          *****                                                 
+                 INFO     | >>   Total optimization steps =     train_LDA.py:428
+                          8000                                                  
+                 INFO     | >>   Per device batch size = 16     train_LDA.py:429
+                 INFO     | >>   Gradient accumulation steps =  train_LDA.py:430
+                          6                                                     
+                 INFO     | >>   Total batch size = 16          train_LDA.py:431
+  0%|          | 0/8000 [00:00<?, ?it/s][2026-07-31 00:22:10,630] [WARNING] [torch_autocast.py:124:autocast_if_enabled] torch.autocast is enabled outside DeepSpeed but disabled within the DeepSpeed engine. If you are using DeepSpeed's built-in mixed precision, the engine will follow the settings in bf16/fp16 section. To use torch's native autocast instead, configure the `torch_autocast` section in the DeepSpeed config.
+  0%|          | 1/8000 [00:40<89:31:06, 40.29s/it]  0%|          | 1/8000 [00:40<89:31:06, 40.29s/it, data_times=22.430, model_times=17.858]  0%|          | 2/8000 [00:40<37:21:46, 16.82s/it, data_times=22.430, model_times=17.858]  0%|          | 2/8000 [00:40<37:21:46, 16.82s/it, data_times=0.001, model_times=0.381]    0%|          | 3/8000 [00:41<20:38:50,  9.29s/it, data_times=0.001, model_times=0.381]  0%|          | 3/8000 [00:41<20:38:50,  9.29s/it, data_times=0.011, model_times=0.326]  0%|          | 4/8000 [00:41<12:47:51,  5.76s/it, data_times=0.011, model_times=0.326]  0%|          | 4/8000 [00:41<12:47:51,  5.76s/it, data_times=0.001, model_times=0.339]  0%|          | 5/8000 [00:41<8:27:23,  3.81s/it, data_times=0.001, model_times=0.339]   0%|          | 5/8000 [00:41<8:27:23,  3.81s/it, data_times=0.001, model_times=0.334]  0%|          | 6/8000 [00:43<6:44:24,  3.04s/it, data_times=0.001, model_times=0.334]  0%|          | 6/8000 [00:43<6:44:24,  3.04s/it, data_times=0.011, model_times=1.520]  0%|          | 7/8000 [00:43<4:47:51,  2.16s/it, data_times=0.011, model_times=1.520]  0%|          | 7/8000 [00:43<4:47:51,  2.16s/it, data_times=0.016, model_times=0.338]  0%|          | 8/8000 [00:43<3:31:58,  1.59s/it, data_times=0.016, model_times=0.338]  0%|          | 8/8000 [00:43<3:31:58,  1.59s/it, data_times=0.011, model_times=0.355]  0%|          | 9/8000 [00:44<2:42:38,  1.22s/it, data_times=0.011, model_times=0.355]  0%|          | 9/8000 [00:44<2:42:38,  1.22s/it, data_times=0.045, model_times=0.356]  0%|          | 10/8000 [00:44<2:06:14,  1.05it/s, data_times=0.045, model_times=0.356]  0%|          | 10/8000 [00:44<2:06:14,  1.05it/s, data_times=0.001, model_times=0.331]  0%|          | 11/8000 [00:45<1:44:30,  1.27it/s, data_times=0.001, model_times=0.331]  0%|          | 11/8000 [00:45<1:44:30,  1.27it/s, data_times=0.011, model_times=0.396]  0%|          | 12/8000 [00:45<1:32:48,  1.43it/s, data_times=0.011, model_times=0.396]  0%|          | 12/8000 [00:45<1:32:48,  1.43it/s, data_times=0.001, model_times=0.491]  0%|          | 13/8000 [00:45<1:18:34,  1.69it/s, data_times=0.001, model_times=0.491]  0%|          | 13/8000 [00:45<1:18:34,  1.69it/s, data_times=0.001, model_times=0.338]  0%|          | 14/8000 [00:46<1:09:50,  1.91it/s, data_times=0.001, model_times=0.338]  0%|          | 14/8000 [00:46<1:09:50,  1.91it/s, data_times=0.011, model_times=0.357]  0%|          | 15/8000 [00:46<1:02:46,  2.12it/s, data_times=0.011, model_times=0.357]  0%|          | 15/8000 [00:46<1:02:46,  2.12it/s, data_times=0.012, model_times=0.334]  0%|          | 16/8000 [00:47<58:42,  2.27it/s, data_times=0.012, model_times=0.334]    0%|          | 16/8000 [00:47<58:42,  2.27it/s, data_times=0.011, model_times=0.354]  0%|          | 17/8000 [00:47<56:43,  2.35it/s, data_times=0.011, model_times=0.354]  0%|          | 17/8000 [00:47<56:43,  2.35it/s, data_times=0.040, model_times=0.346]  0%|          | 18/8000 [00:47<59:46,  2.23it/s, data_times=0.040, model_times=0.346]  0%|          | 18/8000 [00:47<59:46,  2.23it/s, data_times=0.001, model_times=0.497]  0%|          | 19/8000 [00:48<56:17,  2.36it/s, data_times=0.001, model_times=0.497]  0%|          | 19/8000 [00:48<56:17,  2.36it/s, data_times=0.011, model_times=0.347]  0%|          | 20/8000 [00:48<53:48,  2.47it/s, data_times=0.011, model_times=0.347]  0%|          | 20/8000 [00:48<53:48,  2.47it/s, data_times=0.001, model_times=0.356]  0%|          | 21/8000 [00:49<52:19,  2.54it/s, data_times=0.001, model_times=0.356]  0%|          | 21/8000 [00:49<52:19,  2.54it/s, data_times=0.001, model_times=0.360]  0%|          | 22/8000 [00:49<51:16,  2.59it/s, data_times=0.001, model_times=0.360]  0%|          | 22/8000 [00:49<51:16,  2.59it/s, data_times=0.011, model_times=0.352]  0%|          | 23/8000 [00:49<51:34,  2.58it/s, data_times=0.011, model_times=0.352]  0%|          | 23/8000 [00:49<51:34,  2.58it/s, data_times=0.012, model_times=0.376]  0%|          | 24/8000 [00:50<55:49,  2.38it/s, data_times=0.012, model_times=0.376]  0%|          | 24/8000 [00:50<55:49,  2.38it/s, data_times=0.012, model_times=0.470]  0%|          | 25/8000 [00:50<54:16,  2.45it/s, data_times=0.012, model_times=0.470]  0%|          | 25/8000 [00:50<54:16,  2.45it/s, data_times=0.040, model_times=0.335]  0%|          | 26/8000 [00:51<56:07,  2.37it/s, data_times=0.040, model_times=0.335]  0%|          | 26/8000 [00:51<56:07,  2.37it/s, data_times=0.001, model_times=0.449]  0%|          | 27/8000 [00:51<53:45,  2.47it/s, data_times=0.001, model_times=0.449]  0%|          | 27/8000 [00:51<53:45,  2.47it/s, data_times=0.011, model_times=0.347]  0%|          | 28/8000 [00:51<50:51,  2.61it/s, data_times=0.011, model_times=0.347]  0%|          | 28/8000 [00:51<50:51,  2.61it/s, data_times=0.001, model_times=0.326]  0%|          | 29/8000 [00:52<49:07,  2.70it/s, data_times=0.001, model_times=0.326]  0%|          | 29/8000 [00:52<49:07,  2.70it/s, data_times=0.001, model_times=0.333]  0%|          | 30/8000 [00:52<53:25,  2.49it/s, data_times=0.001, model_times=0.333]  0%|          | 30/8000 [00:52<53:25,  2.49it/s, data_times=0.011, model_times=0.461]  0%|          | 31/8000 [00:53<51:19,  2.59it/s, data_times=0.011, model_times=0.461]  0%|          | 31/8000 [00:53<51:19,  2.59it/s, data_times=0.011, model_times=0.333]  0%|          | 32/8000 [00:53<51:20,  2.59it/s, data_times=0.011, model_times=0.333]  0%|          | 32/8000 [00:53<51:20,  2.59it/s, data_times=0.011, model_times=0.370]  0%|          | 33/8000 [00:53<51:35,  2.57it/s, data_times=0.011, model_times=0.370]  0%|          | 33/8000 [00:53<51:35,  2.57it/s, data_times=0.043, model_times=0.345]  0%|          | 34/8000 [00:54<50:05,  2.65it/s, data_times=0.043, model_times=0.345]  0%|          | 34/8000 [00:54<50:05,  2.65it/s, data_times=0.001, model_times=0.345]  0%|          | 35/8000 [00:54<50:57,  2.61it/s, data_times=0.001, model_times=0.345]  0%|          | 35/8000 [00:54<50:57,  2.61it/s, data_times=0.011, model_times=0.382]  0%|          | 36/8000 [00:55<55:27,  2.39it/s, data_times=0.011, model_times=0.382]  0%|          | 36/8000 [00:55<55:27,  2.39it/s, data_times=0.001, model_times=0.491]  0%|          | 37/8000 [00:55<52:29,  2.53it/s, data_times=0.001, model_times=0.491]  0%|          | 37/8000 [00:55<52:29,  2.53it/s, data_times=0.001, model_times=0.337]  0%|          | 38/8000 [00:55<52:16,  2.54it/s, data_times=0.001, model_times=0.337]  0%|          | 38/8000 [00:55<52:16,  2.54it/s, data_times=0.012, model_times=0.374]  0%|          | 39/8000 [00:56<50:35,  2.62it/s, data_times=0.012, model_times=0.374]  0%|          | 39/8000 [00:56<50:35,  2.62it/s, data_times=0.011, model_times=0.332]  0%|          | 40/8000 [00:56<49:21,  2.69it/s, data_times=0.011, model_times=0.332]  0%|          | 40/8000 [00:56<49:21,  2.69it/s, data_times=0.011, model_times=0.334]  1%|          | 41/8000 [00:56<49:39,  2.67it/s, data_times=0.011, model_times=0.334]  1%|          | 41/8000 [00:56<49:39,  2.67it/s, data_times=0.041, model_times=0.334]  1%|          | 42/8000 [00:57<53:30,  2.48it/s, data_times=0.041, model_times=0.334]  1%|          | 42/8000 [00:57<53:30,  2.48it/s, data_times=0.001, model_times=0.463]  1%|          | 43/8000 [00:57<53:23,  2.48it/s, data_times=0.001, model_times=0.463]  1%|          | 43/8000 [00:57<53:23,  2.48it/s, data_times=0.011, model_times=0.384]  1%|          | 44/8000 [00:58<52:52,  2.51it/s, data_times=0.011, model_times=0.384]  1%|          | 44/8000 [00:58<52:52,  2.51it/s, data_times=0.001, model_times=0.385]  1%|          | 45/8000 [00:58<51:03,  2.60it/s, data_times=0.001, model_times=0.385]  1%|          | 45/8000 [00:58<51:03,  2.60it/s, data_times=0.001, model_times=0.348]  1%|          | 46/8000 [00:58<49:28,  2.68it/s, data_times=0.001, model_times=0.348]  1%|          | 46/8000 [00:58<49:28,  2.68it/s, data_times=0.011, model_times=0.329]  1%|          | 47/8000 [00:59<48:24,  2.74it/s, data_times=0.011, model_times=0.329]  1%|          | 47/8000 [00:59<48:24,  2.74it/s, data_times=0.012, model_times=0.328]  1%|          | 48/8000 [00:59<55:53,  2.37it/s, data_times=0.012, model_times=0.328]  1%|          | 48/8000 [00:59<55:53,  2.37it/s, data_times=0.011, model_times=0.538]  1%|          | 49/8000 [01:00<54:21,  2.44it/s, data_times=0.011, model_times=0.538]  1%|          | 49/8000 [01:00<54:21,  2.44it/s, data_times=0.041, model_times=0.336]  1%|          | 50/8000 [01:00<52:32,  2.52it/s, data_times=0.041, model_times=0.336]  1%|          | 50/8000 [01:00<52:32,  2.52it/s, data_times=0.001, model_times=0.358]  1%|          | 51/8000 [01:00<50:28,  2.62it/s, data_times=0.001, model_times=0.358]  1%|          | 51/8000 [01:00<50:28,  2.62it/s, data_times=0.011, model_times=0.328]  1%|          | 52/8000 [01:01<48:37,  2.72it/s, data_times=0.011, model_times=0.328]  1%|          | 52/8000 [01:01<48:37,  2.72it/s, data_times=0.001, model_times=0.328]  1%|          | 53/8000 [01:01<47:25,  2.79it/s, data_times=0.001, model_times=0.328]  1%|          | 53/8000 [01:01<47:25,  2.79it/s, data_times=0.001, model_times=0.331]  1%|          | 54/8000 [01:01<52:34,  2.52it/s, data_times=0.001, model_times=0.331]  1%|          | 54/8000 [01:01<52:34,  2.52it/s, data_times=0.011, model_times=0.470]  1%|          | 55/8000 [01:02<52:09,  2.54it/s, data_times=0.011, model_times=0.470]  1%|          | 55/8000 [01:02<52:09,  2.54it/s, data_times=0.011, model_times=0.371]  1%|          | 56/8000 [01:02<53:31,  2.47it/s, data_times=0.011, model_times=0.371]  1%|          | 56/8000 [01:02<53:31,  2.47it/s, data_times=0.011, model_times=0.411]  1%|          | 57/8000 [01:03<54:35,  2.42it/s, data_times=0.011, model_times=0.411]  1%|          | 57/8000 [01:03<54:35,  2.42it/s, data_times=0.040, model_times=0.386]  1%|          | 58/8000 [01:03<51:48,  2.56it/s, data_times=0.040, model_times=0.386]  1%|          | 58/8000 [01:03<51:48,  2.56it/s, data_times=0.001, model_times=0.336]  1%|          | 59/8000 [01:03<49:50,  2.66it/s, data_times=0.001, model_times=0.336]  1%|          | 59/8000 [01:03<49:50,  2.66it/s, data_times=0.011, model_times=0.326]  1%|          | 60/8000 [01:04<53:56,  2.45it/s, data_times=0.011, model_times=0.326]  1%|          | 60/8000 [01:04<53:56,  2.45it/s, data_times=0.001, model_times=0.473]  1%|          | 61/8000 [01:04<51:18,  2.58it/s, data_times=0.001, model_times=0.473]  1%|          | 61/8000 [01:04<51:18,  2.58it/s, data_times=0.001, model_times=0.336]  1%|          | 62/8000 [01:05<50:52,  2.60it/s, data_times=0.001, model_times=0.336]  1%|          | 62/8000 [01:05<50:52,  2.60it/s, data_times=0.011, model_times=0.363]  1%|          | 63/8000 [01:05<49:16,  2.68it/s, data_times=0.011, model_times=0.363]  1%|          | 63/8000 [01:05<49:16,  2.68it/s, data_times=0.012, model_times=0.328]  1%|          | 64/8000 [01:05<48:15,  2.74it/s, data_times=0.012, model_times=0.328]  1%|          | 64/8000 [01:05<48:15,  2.74it/s, data_times=0.011, model_times=0.330]  1%|          | 65/8000 [01:06<50:50,  2.60it/s, data_times=0.011, model_times=0.330]  1%|          | 65/8000 [01:06<50:50,  2.60it/s, data_times=0.039, model_times=0.386]  1%|          | 66/8000 [01:06<55:50,  2.37it/s, data_times=0.039, model_times=0.386]  1%|          | 66/8000 [01:06<55:50,  2.37it/s, data_times=0.001, model_times=0.505]  1%|          | 67/8000 [01:07<53:21,  2.48it/s, data_times=0.001, model_times=0.505]  1%|          | 67/8000 [01:07<53:21,  2.48it/s, data_times=0.012, model_times=0.342]  1%|          | 68/8000 [01:07<52:44,  2.51it/s, data_times=0.012, model_times=0.342]  1%|          | 68/8000 [01:07<52:44,  2.51it/s, data_times=0.001, model_times=0.382]  1%|          | 69/8000 [01:07<50:45,  2.60it/s, data_times=0.001, model_times=0.382]  1%|          | 69/8000 [01:07<50:45,  2.60it/s, data_times=0.001, model_times=0.344]  1%|          | 70/8000 [01:08<51:44,  2.55it/s, data_times=0.001, model_times=0.344]  1%|          | 70/8000 [01:08<51:44,  2.55it/s, data_times=0.012, model_times=0.390]  1%|          | 71/8000 [01:08<50:01,  2.64it/s, data_times=0.012, model_times=0.390]  1%|          | 71/8000 [01:08<50:01,  2.64it/s, data_times=0.012, model_times=0.332]  1%|          | 72/8000 [01:09<55:27,  2.38it/s, data_times=0.012, model_times=0.332]  1%|          | 72/8000 [01:09<55:27,  2.38it/s, data_times=0.011, model_times=0.499]  1%|          | 73/8000 [01:09<54:24,  2.43it/s, data_times=0.011, model_times=0.499]  1%|          | 73/8000 [01:09<54:24,  2.43it/s, data_times=0.040, model_times=0.348]  1%|          | 74/8000 [01:09<54:09,  2.44it/s, data_times=0.040, model_times=0.348]  1%|          | 74/8000 [01:09<54:09,  2.44it/s, data_times=0.001, model_times=0.399]  1%|          | 75/8000 [01:10<52:11,  2.53it/s, data_times=0.001, model_times=0.399]  1%|          | 75/8000 [01:10<52:11,  2.53it/s, data_times=0.011, model_times=0.342]  1%|          | 76/8000 [01:10<51:15,  2.58it/s, data_times=0.011, model_times=0.342]  1%|          | 76/8000 [01:10<51:15,  2.58it/s, data_times=0.001, model_times=0.366]  1%|          | 77/8000 [01:11<50:58,  2.59it/s, data_times=0.001, model_times=0.366]  1%|          | 77/8000 [01:11<50:58,  2.59it/s, data_times=0.001, model_times=0.375]  1%|          | 78/8000 [01:11<54:51,  2.41it/s, data_times=0.001, model_times=0.375]  1%|          | 78/8000 [01:11<54:51,  2.41it/s, data_times=0.012, model_times=0.466]  1%|          | 79/8000 [01:11<54:40,  2.41it/s, data_times=0.012, model_times=0.466]  1%|          | 79/8000 [01:11<54:40,  2.41it/s, data_times=0.012, model_times=0.394]  1%|          | 80/8000 [01:12<53:24,  2.47it/s, data_times=0.012, model_times=0.394]  1%|          | 80/8000 [01:12<53:24,  2.47it/s, data_times=0.012, model_times=0.365]  1%|          | 81/8000 [01:12<52:45,  2.50it/s, data_times=0.012, model_times=0.365]  1%|          | 81/8000 [01:12<52:45,  2.50it/s, data_times=0.041, model_times=0.342]  1%|          | 82/8000 [01:13<50:12,  2.63it/s, data_times=0.041, model_times=0.342]  1%|          | 82/8000 [01:13<50:12,  2.63it/s, data_times=0.001, model_times=0.329]  1%|          | 83/8000 [01:13<50:31,  2.61it/s, data_times=0.001, model_times=0.329]  1%|          | 83/8000 [01:13<50:31,  2.61it/s, data_times=0.012, model_times=0.372]  1%|          | 84/8000 [01:13<53:57,  2.44it/s, data_times=0.012, model_times=0.372]  1%|          | 84/8000 [01:13<53:57,  2.44it/s, data_times=0.001, model_times=0.464]  1%|          | 85/8000 [01:14<52:09,  2.53it/s, data_times=0.001, model_times=0.464]  1%|          | 85/8000 [01:14<52:09,  2.53it/s, data_times=0.001, model_times=0.357]  1%|          | 86/8000 [01:14<54:01,  2.44it/s, data_times=0.001, model_times=0.357]  1%|          | 86/8000 [01:14<54:01,  2.44it/s, data_times=0.012, model_times=0.426]  1%|          | 87/8000 [01:15<52:03,  2.53it/s, data_times=0.012, model_times=0.426]  1%|          | 87/8000 [01:15<52:03,  2.53it/s, data_times=0.012, model_times=0.343]  1%|          | 88/8000 [01:15<50:37,  2.60it/s, data_times=0.012, model_times=0.343]  1%|          | 88/8000 [01:15<50:37,  2.60it/s, data_times=0.011, model_times=0.342]  1%|          | 89/8000 [01:15<50:38,  2.60it/s, data_times=0.011, model_times=0.342]  1%|          | 89/8000 [01:15<50:38,  2.60it/s, data_times=0.040, model_times=0.339]  1%|          | 90/8000 [01:16<55:45,  2.36it/s, data_times=0.040, model_times=0.339]  1%|          | 90/8000 [01:16<55:45,  2.36it/s, data_times=0.001, model_times=0.508]  1%|          | 91/8000 [01:16<53:52,  2.45it/s, data_times=0.001, model_times=0.508]  1%|          | 91/8000 [01:16<53:52,  2.45it/s, data_times=0.010, model_times=0.359]  1%|          | 92/8000 [01:17<52:31,  2.51it/s, data_times=0.010, model_times=0.359]  1%|          | 92/8000 [01:17<52:31,  2.51it/s, data_times=0.001, model_times=0.366]  1%|          | 93/8000 [01:17<50:53,  2.59it/s, data_times=0.001, model_times=0.366]  1%|          | 93/8000 [01:17<50:53,  2.59it/s, data_times=0.001, model_times=0.351]  1%|          | 94/8000 [01:17<49:16,  2.67it/s, data_times=0.001, model_times=0.351]  1%|          | 94/8000 [01:17<49:16,  2.67it/s, data_times=0.012, model_times=0.328]  1%|          | 95/8000 [01:18<48:15,  2.73it/s, data_times=0.012, model_times=0.328]  1%|          | 95/8000 [01:18<48:15,  2.73it/s, data_times=0.011, model_times=0.332]  1%|          | 96/8000 [01:18<53:48,  2.45it/s, data_times=0.011, model_times=0.332]  1%|          | 96/8000 [01:18<53:48,  2.45it/s, data_times=0.012, model_times=0.482]  1%|          | 97/8000 [01:19<55:06,  2.39it/s, data_times=0.012, model_times=0.482]  1%|          | 97/8000 [01:19<55:06,  2.39it/s, data_times=0.044, model_times=0.392]  1%|          | 98/8000 [01:19<55:52,  2.36it/s, data_times=0.044, model_times=0.392]  1%|          | 98/8000 [01:19<55:52,  2.36it/s, data_times=0.001, model_times=0.430]  1%|          | 99/8000 [01:19<52:51,  2.49it/s, data_times=0.001, model_times=0.430]  1%|          | 99/8000 [01:19<52:51,  2.49it/s, data_times=0.011, model_times=0.332]  1%|▏         | 100/8000 [01:20<50:36,  2.60it/s, data_times=0.011, model_times=0.332]  1%|▏         | 100/8000 [01:20<50:36,  2.60it/s, data_times=0.001, model_times=0.338]07/31 [00:23:08] INFO     | >> Step 100, Loss:                  train_LDA.py:305
+                          {'action_dit_loss':                                   
+                          0.23826046288013458, 'dynamics_loss':                 
+                          0.09827729314565659, 'loss':                          
+                          0.5598401427268982, 'data_time':                      
+                          0.0007714139646850526, 'model_time':                  
+                          0.3381341599742882, 'learning_rate':                  
+                          3.3333333333333335e-05, 'epoch':                      
+                          0.0})                                                 
+  1%|▏         | 101/8000 [01:20<49:23,  2.67it/s, data_times=0.001, model_times=0.338]  1%|▏         | 101/8000 [01:20<49:23,  2.67it/s, data_times=0.001, model_times=0.340]  1%|▏         | 102/8000 [01:21<53:34,  2.46it/s, data_times=0.001, model_times=0.340]  1%|▏         | 102/8000 [01:21<53:34,  2.46it/s, data_times=0.011, model_times=0.464]  1%|▏         | 103/8000 [01:21<51:44,  2.54it/s, data_times=0.011, model_times=0.464]  1%|▏         | 103/8000 [01:21<51:44,  2.54it/s, data_times=0.012, model_times=0.343]  1%|▏         | 104/8000 [01:21<50:58,  2.58it/s, data_times=0.012, model_times=0.343]  1%|▏         | 104/8000 [01:21<50:58,  2.58it/s, data_times=0.012, model_times=0.357]  1%|▏         | 105/8000 [01:22<51:16,  2.57it/s, data_times=0.012, model_times=0.357]  1%|▏         | 105/8000 [01:22<51:16,  2.57it/s, data_times=0.041, model_times=0.350]  1%|▏         | 106/8000 [01:22<50:56,  2.58it/s, data_times=0.041, model_times=0.350]  1%|▏         | 106/8000 [01:22<50:56,  2.58it/s, data_times=0.001, model_times=0.375]  1%|▏         | 107/8000 [01:22<50:19,  2.61it/s, data_times=0.001, model_times=0.375]  1%|▏         | 107/8000 [01:22<50:19,  2.61it/s, data_times=0.011, model_times=0.355]  1%|▏         | 108/8000 [01:23<53:52,  2.44it/s, data_times=0.011, model_times=0.355]  1%|▏         | 108/8000 [01:23<53:52,  2.44it/s, data_times=0.001, model_times=0.466]  1%|▏         | 109/8000 [01:23<51:52,  2.54it/s, data_times=0.001, model_times=0.466]  1%|▏         | 109/8000 [01:23<51:52,  2.54it/s, data_times=0.001, model_times=0.354]  1%|▏         | 110/8000 [01:24<51:22,  2.56it/s, data_times=0.001, model_times=0.354]  1%|▏         | 110/8000 [01:24<51:22,  2.56it/s, data_times=0.011, model_times=0.366]  1%|▏         | 111/8000 [01:24<51:36,  2.55it/s, data_times=0.011, model_times=0.366]  1%|▏         | 111/8000 [01:24<51:36,  2.55it/s, data_times=0.012, model_times=0.380]  1%|▏         | 112/8000 [01:24<49:50,  2.64it/s, data_times=0.012, model_times=0.380]  1%|▏         | 112/8000 [01:24<49:50,  2.64it/s, data_times=0.012, model_times=0.332]  1%|▏         | 113/8000 [01:25<49:53,  2.64it/s, data_times=0.012, model_times=0.332]  1%|▏         | 113/8000 [01:25<49:53,  2.64it/s, data_times=0.040, model_times=0.336]  1%|▏         | 114/8000 [01:25<53:53,  2.44it/s, data_times=0.040, model_times=0.336]  1%|▏         | 114/8000 [01:25<53:53,  2.44it/s, data_times=0.001, model_times=0.474]  1%|▏         | 115/8000 [01:26<51:31,  2.55it/s, data_times=0.001, model_times=0.474]  1%|▏         | 115/8000 [01:26<51:31,  2.55it/s, data_times=0.010, model_times=0.335]  1%|▏         | 116/8000 [01:26<52:51,  2.49it/s, data_times=0.010, model_times=0.335]  1%|▏         | 116/8000 [01:26<52:51,  2.49it/s, data_times=0.001, model_times=0.421]  1%|▏         | 117/8000 [01:26<51:08,  2.57it/s, data_times=0.001, model_times=0.421]  1%|▏         | 117/8000 [01:26<51:08,  2.57it/s, data_times=0.001, model_times=0.352]  1%|▏         | 118/8000 [01:27<50:05,  2.62it/s, data_times=0.001, model_times=0.352]  1%|▏         | 118/8000 [01:27<50:05,  2.62it/s, data_times=0.011, model_times=0.346]  1%|▏         | 119/8000 [01:27<49:08,  2.67it/s, data_times=0.011, model_times=0.346]  1%|▏         | 119/8000 [01:27<49:08,  2.67it/s, data_times=0.012, model_times=0.340]  2%|▏         | 120/8000 [01:28<53:21,  2.46it/s, data_times=0.012, model_times=0.340]  2%|▏         | 120/8000 [01:28<53:21,  2.46it/s, data_times=0.011, model_times=0.464]  2%|▏         | 121/8000 [01:28<53:17,  2.46it/s, data_times=0.011, model_times=0.464]  2%|▏         | 121/8000 [01:28<53:17,  2.46it/s, data_times=0.041, model_times=0.358]  2%|▏         | 122/8000 [01:28<53:26,  2.46it/s, data_times=0.041, model_times=0.358]  2%|▏         | 122/8000 [01:28<53:26,  2.46it/s, data_times=0.001, model_times=0.404]  2%|▏         | 123/8000 [01:29<53:13,  2.47it/s, data_times=0.001, model_times=0.404]  2%|▏         | 123/8000 [01:29<53:13,  2.47it/s, data_times=0.011, model_times=0.385]  2%|▏         | 124/8000 [01:29<50:34,  2.60it/s, data_times=0.011, model_times=0.385]  2%|▏         | 124/8000 [01:29<50:34,  2.60it/s, data_times=0.001, model_times=0.332]  2%|▏         | 125/8000 [01:30<52:13,  2.51it/s, data_times=0.001, model_times=0.332]  2%|▏         | 125/8000 [01:30<52:13,  2.51it/s, data_times=0.001, model_times=0.415]Traceback (most recent call last):
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/training/train_LDA.py", line 546, in <module>
+    main(cfg)
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/training/train_LDA.py", line 520, in main
+    trainer.train()
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/training/train_LDA.py", line 351, in train
+    step_metrics = self._train_step(batch_vla)
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/training/train_LDA.py", line 449, in _train_step
+    self.accelerator.backward(total_loss)
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/accelerate/accelerator.py", line 2351, in backward
+    self.deepspeed_engine_wrapped.backward(loss, **kwargs)
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/accelerate/utils/deepspeed.py", line 275, in backward
+    self.engine.step()
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/deepspeed/runtime/engine.py", line 2495, in step
+    self._take_model_step(lr_kwargs)
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/deepspeed/runtime/engine.py", line 2390, in _take_model_step
+    self.optimizer.step()
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 2086, in step
+    self._optimizer_step(i)
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 1989, in _optimizer_step
+    self.optimizer.step()
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/lr_scheduler.py", line 140, in wrapper
+    return func.__get__(opt, opt.__class__)(*args, **kwargs)
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/optimizer.py", line 493, in wrapper
+    out = func(*args, **kwargs)
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/optimizer.py", line 91, in _use_grad
+    ret = func(self, *args, **kwargs)
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/adamw.py", line 243, in step
+    adamw(
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/optimizer.py", line 154, in maybe_fallback
+    return func(*args, **kwargs)
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/adamw.py", line 875, in adamw
+    func(
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/adamw.py", line 699, in _multi_tensor_adamw
+    exp_avg_sq_sqrt = torch._foreach_sqrt(device_exp_avg_sqs)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 8.32 GiB. GPU 0 has a total capacity of 93.08 GiB of which 5.09 GiB is free. Process 666528 has 15.69 GiB memory in use. Process 666478 has 3.89 GiB memory in use. Including non-PyTorch memory, this process has 68.32 GiB memory in use. Of the allocated memory 45.86 GiB is allocated by PyTorch, and 21.07 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/training/train_LDA.py", line 546, in <module>
+[rank0]:     main(cfg)
+[rank0]:   File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/training/train_LDA.py", line 520, in main
+[rank0]:     trainer.train()
+[rank0]:   File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/training/train_LDA.py", line 351, in train
+[rank0]:     step_metrics = self._train_step(batch_vla)
+[rank0]:   File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/training/train_LDA.py", line 449, in _train_step
+[rank0]:     self.accelerator.backward(total_loss)
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/accelerate/accelerator.py", line 2351, in backward
+[rank0]:     self.deepspeed_engine_wrapped.backward(loss, **kwargs)
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/accelerate/utils/deepspeed.py", line 275, in backward
+[rank0]:     self.engine.step()
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/deepspeed/runtime/engine.py", line 2495, in step
+[rank0]:     self._take_model_step(lr_kwargs)
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/deepspeed/runtime/engine.py", line 2390, in _take_model_step
+[rank0]:     self.optimizer.step()
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 2086, in step
+[rank0]:     self._optimizer_step(i)
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 1989, in _optimizer_step
+[rank0]:     self.optimizer.step()
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/lr_scheduler.py", line 140, in wrapper
+[rank0]:     return func.__get__(opt, opt.__class__)(*args, **kwargs)
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/optimizer.py", line 493, in wrapper
+[rank0]:     out = func(*args, **kwargs)
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/optimizer.py", line 91, in _use_grad
+[rank0]:     ret = func(self, *args, **kwargs)
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/adamw.py", line 243, in step
+[rank0]:     adamw(
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/optimizer.py", line 154, in maybe_fallback
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/adamw.py", line 875, in adamw
+[rank0]:     func(
+[rank0]:   File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/optim/adamw.py", line 699, in _multi_tensor_adamw
+[rank0]:     exp_avg_sq_sqrt = torch._foreach_sqrt(device_exp_avg_sqs)
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 8.32 GiB. GPU 0 has a total capacity of 93.08 GiB of which 5.09 GiB is free. Process 666528 has 15.69 GiB memory in use. Process 666478 has 3.89 GiB memory in use. Including non-PyTorch memory, this process has 68.32 GiB memory in use. Of the allocated memory 45.86 GiB is allocated by PyTorch, and 21.07 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mbridge_griptest[0m at: [34m[0m
+[rank0]:[W731 00:24:47.596033822 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+E0731 00:24:58.174000 2905983 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 2906090) of binary: /home/3295540/.conda/envs/lda/bin/python
+Warning: The cache directory for DeepSpeed Triton autotune, /home/3295540/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+Traceback (most recent call last):
+  File "/home/3295540/.conda/envs/lda/bin/accelerate", line 10, in <module>
+    sys.exit(main())
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/accelerate/commands/accelerate_cli.py", line 48, in main
+    args.func(args)
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1177, in launch_command
+    deepspeed_launcher(args)
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/accelerate/commands/launch.py", line 863, in deepspeed_launcher
+    distrib_run.run(args)
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/distributed/run.py", line 909, in run
+    elastic_launch(
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+lda/training/train_LDA.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-07-31_00:24:58
+  host      : gnode07.hpc.unibocconi.it
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 2906090)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+GRIPTEST_EXIT=1

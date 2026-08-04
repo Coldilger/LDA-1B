@@ -1,0 +1,13 @@
+The cache for model files in Transformers v4.22.0 has been updated. Migrating your old cache. This is a one-time only operation. You can interrupt this and resume the migration later on by calling `transformers.utils.move_cache()`.
+0it [00:00, ?it/s]0it [00:00, ?it/s]
+Traceback (most recent call last):
+  File "/home/3295540/.local/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+  File "/home/3295540/.local/lib/python3.9/site-packages/accelerate/commands/accelerate_cli.py", line 50, in main
+    args.func(args)
+  File "/home/3295540/.local/lib/python3.9/site-packages/accelerate/commands/launch.py", line 1220, in launch_command
+    deepspeed_launcher(args)
+  File "/home/3295540/.local/lib/python3.9/site-packages/accelerate/commands/launch.py", line 867, in deepspeed_launcher
+    raise ImportError("DeepSpeed is not installed => run `pip3 install deepspeed` or build it from source.")
+ImportError: DeepSpeed is not installed => run `pip3 install deepspeed` or build it from source.
+FT_EXIT=1

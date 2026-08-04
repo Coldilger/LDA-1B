@@ -1,0 +1,30 @@
+/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+07/24 [22:10:08] INFO     | >> [*] Loading from local         share_tools.py:264
+                          checkpoint path                                       
+                          `outputs/lda_pretrain_run/checkpoin                   
+                          ts/LDA-pretrain.pt`                                   
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  4.42it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  3.43it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  3.43it/s]
+Total number of DiT parameters:  1772973056
+evaluating 12 trajectories of 51107 eligible
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/bridge_openloop/traj_17588/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_17588/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_17588/states_across_time.npy
+Position L1 Loss:     0.286967
+Orientation L1 Loss:  0.378502
+Gripper L1 Loss:      0.663939
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_17588/plot_traj.png
+Traceback (most recent call last):
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/eval/eval_bridge_openloop.py", line 166, in <module>
+    main()
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/eval/eval_bridge_openloop.py", line 128, in main
+    gt = np.load(os.path.join(traj_dir, "gt_action_across_time.npy"))
+  File "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/numpy/lib/npyio.py", line 427, in load
+    fid = stack.enter_context(open(os_fspath(file), "rb"))
+FileNotFoundError: [Errno 2] No such file or directory: 'outputs/bridge_openloop/oxe/traj_17588/gt_action_across_time.npy'
+PROBE_EXIT=1

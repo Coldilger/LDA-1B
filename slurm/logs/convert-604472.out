@@ -1,0 +1,62 @@
+chunks to convert: 54
+[1/54] chunk-013: 1000 episodes
+[2/54] chunk-005: 1000 episodes
+[3/54] chunk-007: 1000 episodes
+[4/54] chunk-009: 1000 episodes
+[5/54] chunk-015: 1000 episodes
+[6/54] chunk-003: 1000 episodes
+[7/54] chunk-006: 1000 episodes
+[8/54] chunk-000: 1000 episodes
+[9/54] chunk-008: 1000 episodes
+[10/54] chunk-010: 1000 episodes
+[11/54] chunk-004: 1000 episodes
+[12/54] chunk-014: 1000 episodes
+[13/54] chunk-001: 1000 episodes
+[14/54] chunk-012: 1000 episodes
+[15/54] chunk-002: 1000 episodes
+[16/54] chunk-011: 1000 episodes
+[17/54] chunk-016: 1000 episodes
+[18/54] chunk-017: 1000 episodes
+[19/54] chunk-018: 1000 episodes
+[20/54] chunk-020: 1000 episodes
+[21/54] chunk-023: 1000 episodes
+[22/54] chunk-026: 1000 episodes
+[23/54] chunk-021: 1000 episodes
+[24/54] chunk-027: 1000 episodes
+[25/54] chunk-019: 1000 episodes
+[26/54] chunk-025: 1000 episodes
+[27/54] chunk-024: 1000 episodes
+[28/54] chunk-022: 1000 episodes
+[29/54] chunk-030: 1000 episodes
+[30/54] chunk-029: 1000 episodes
+[31/54] chunk-028: 1000 episodes
+[32/54] chunk-031: 1000 episodes
+[33/54] chunk-032: 1000 episodes
+[34/54] chunk-033: 1000 episodes
+[35/54] chunk-035: 1000 episodes
+[36/54] chunk-042: 1000 episodes
+[37/54] chunk-037: 1000 episodes
+[38/54] chunk-036: 1000 episodes
+[39/54] chunk-034: 1000 episodes
+[40/54] chunk-041: 1000 episodes
+[41/54] chunk-038: 1000 episodes
+[42/54] chunk-039: 1000 episodes
+[43/54] chunk-043: 1000 episodes
+[44/54] chunk-040: 1000 episodes
+[45/54] chunk-044: 1000 episodes
+[46/54] chunk-046: 1000 episodes
+[47/54] chunk-045: 1000 episodes
+[48/54] chunk-047: 1000 episodes
+[49/54] chunk-053: 192 episodes
+[50/54] chunk-048: 1000 episodes
+[51/54] chunk-049: 1000 episodes
+[52/54] chunk-050: 1000 episodes
+[53/54] chunk-051: 1000 episodes
+[54/54] chunk-052: 1000 episodes
+converted 53192 episodes / 1893026 frames
+symlinked 54 chunk video dirs
+episodes.jsonl: kept 53192 of 53192
+--- gripper sanity check (must NOT be constant zero) ---
+state.left_gripper: min=0.0464 max=1.1121 mean=0.7081
+DONE
+CONVERT_EXIT=0

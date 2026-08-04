@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/eval/eval_policy.py", line 26, in <module>
+    from lda.training.trainer_utils.trainer_tools import normalize_dotlist_args
+ModuleNotFoundError: No module named 'lda'
+SMOKE_EXIT=1

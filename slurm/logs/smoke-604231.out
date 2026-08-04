@@ -1,0 +1,21 @@
+/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+Initialized dataset sim_pick_place with EmbodimentTag.NEW_EMBODIMENT
+Initialized dataset sim_pick_place with EmbodimentTag.NEW_EMBODIMENT
+Dataset lengths: [1667]
+Dataset lengths: [1667]
+07/24 [19:43:16] INFO     | >> [*] Loading from local         share_tools.py:264
+                          checkpoint path                                       
+                          `checkpoints/LDA-pretrain/LDA-pretr                   
+                          ain.pt`                                               
+Traceback (most recent call last):
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/eval/eval_policy.py", line 217, in <module>
+    main(cfg)
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/eval/eval_policy.py", line 120, in main
+    policy = baseframework.from_pretrained(pretrained_checkpoint = config.evaluation.model_path)
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/model/framework/base_framework.py", line 84, in from_pretrained
+    model_config, norm_stats = read_mode_config(pretrained_checkpoint)  # read config and norm_stats
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/model/framework/share_tools.py", line 272, in read_mode_config
+    assert config_yaml.exists(), f"Missing `config.yaml` for `{run_dir = }`"
+AssertionError: Missing `config.yaml` for `run_dir = PosixPath('checkpoints')`
+SMOKE_EXIT=1

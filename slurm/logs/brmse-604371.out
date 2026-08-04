@@ -1,0 +1,39 @@
+/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+Dataset lengths: [447733]
+Dataset lengths: [447733]
+07/24 [21:17:09] INFO     | >> [*] Loading from local         share_tools.py:264
+                          checkpoint path                                       
+                          `outputs/lda_pretrain_run/checkpoin                   
+                          ts/LDA-pretrain.pt`                                   
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  2.36it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.15it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.16it/s]
+Total number of DiT parameters:  1772973056
+Applied checkpoint action normalization stats to 1 dataset transforms.
+Delta Action Evaluation
+Dataset Embodiment Tags: defaultdict(<class 'list'>, {'oxe': [0]})
+Total trajectories: 53192
+All trajectories: [26 45 45 ... 48 32 36]
+Running trajectory: 15795
+inferencing at step:  0
+inferencing at step:  16
+gt_action_across_time saved to outputs/bridge_mse/plots/oxe/traj_15795/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_mse/plots/oxe/traj_15795/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_mse/plots/oxe/traj_15795/states_across_time.npy
+Position L1 Loss:     0.024082
+Orientation L1 Loss:  0.031564
+Gripper L1 Loss:      0.707062
+Creating visualization...
+saving plot to outputs/bridge_mse/plots/oxe/traj_15795/plot_traj.png
+Position L1 lOSS: 0.024082102115582923
+Orientation L1 Loss: 0.03156394753430157
+Gripper L1 Loss: 0.7070615283752743
+Average Position L1 Loss across all trajs for dataset 0 : 0.024082102115582923
+Average Orientation L1 Loss across all trajs for dataset 0 : 0.03156394753430157
+Average Gripper L1 Loss across all trajs for dataset 0 : 0.7070615283752743
+Average Position L1 Loss across all trajs: 0.024082102115582923
+Average Orientation L1 Loss across all trajs: 0.03156394753430157
+Average Gripper L1 Loss across all trajs: 0.7070615283752743
+Done
+BRMSE_EXIT=0

@@ -1,0 +1,15 @@
+/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+Traceback (most recent call last):
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/eval/eval_policy.py", line 217, in <module>
+    main(cfg)
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/eval/eval_policy.py", line 118, in main
+    dataset = get_vla_dataset(data_cfg, model_cfg=model_cfg, model_id=config.framework.qwenvl.base_vlm)
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/dataloader/lerobot_datasets.py", line 187, in get_vla_dataset
+    dataset_mixture.append((make_LeRobotSingleDataset(Path(data_root_dir), d_name, robot_type, delete_pause_frame=delete_pause_frame, data_cfg=data_cfg, CoT_prompt=CoT_prompt), d_weight))
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/dataloader/lerobot_datasets.py", line 136, in make_LeRobotSingleDataset
+    return LeRobotSingleDataset(
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/dataloader/gr00t_lerobot/datasets.py", line 272, in __init__
+    self._trajectory_ids, self._trajectory_lengths = self._get_trajectories()
+TypeError: cannot unpack non-iterable NoneType object
+SMOKE_EXIT=1

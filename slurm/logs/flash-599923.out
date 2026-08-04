@@ -1,0 +1,1087 @@
+Using Python 3.10.20 environment at: /home/3295540/.conda/envs/lda
+Resolved 25 packages in 167ms
+   Building flash-attn==2.6.3
+  × Failed to build `flash-attn==2.6.3`
+  ├─▶ The build backend returned an error
+  ╰─▶ Call to `setuptools.build_meta:__legacy__.build_wheel` failed (exit
+      status: 1)
+
+      [stdout]
+
+
+      torch.__version__  = 2.6.0+cu124
+
+
+      running bdist_wheel
+      Guessing wheel URL:
+      https://github.com/Dao-AILab/flash-attention/releases/download/v2.6.3/flash_attn-2.6.3+cu123torch2.6cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
+      Precompiled wheel not found. Building from source...
+      running build
+      running build_py
+      copying flash_attn/__init__.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn
+      copying flash_attn/bert_padding.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn
+      copying flash_attn/flash_attn_interface.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn
+      copying flash_attn/flash_attn_triton.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn
+      copying flash_attn/flash_attn_triton_og.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn
+      copying flash_attn/flash_blocksparse_attention.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn
+      copying flash_attn/flash_blocksparse_attn_interface.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn
+      copying flash_attn/fused_softmax.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn
+      copying hopper/__init__.py -> build/lib.linux-x86_64-cpython-310/hopper
+      copying hopper/benchmark_attn.py ->
+      build/lib.linux-x86_64-cpython-310/hopper
+      copying hopper/flash_attn_interface.py ->
+      build/lib.linux-x86_64-cpython-310/hopper
+      copying hopper/setup.py -> build/lib.linux-x86_64-cpython-310/hopper
+      copying hopper/test_flash_attn.py ->
+      build/lib.linux-x86_64-cpython-310/hopper
+      copying flash_attn/layers/__init__.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/layers
+      copying flash_attn/layers/patch_embed.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/layers
+      copying flash_attn/layers/rotary.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/layers
+      copying flash_attn/losses/__init__.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/losses
+      copying flash_attn/losses/cross_entropy.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/losses
+      copying flash_attn/models/__init__.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/models/baichuan.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/models/bert.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/models/bigcode.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/models/btlm.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/models/falcon.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/models/gpt.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/models/gpt_neox.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/models/gptj.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/models/llama.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/models/opt.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/models/vit.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/models
+      copying flash_attn/modules/__init__.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/modules
+      copying flash_attn/modules/block.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/modules
+      copying flash_attn/modules/embedding.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/modules
+      copying flash_attn/modules/mha.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/modules
+      copying flash_attn/modules/mlp.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/modules
+      copying flash_attn/ops/__init__.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops
+      copying flash_attn/ops/activations.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops
+      copying flash_attn/ops/fused_dense.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops
+      copying flash_attn/ops/layer_norm.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops
+      copying flash_attn/ops/rms_norm.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops
+      copying flash_attn/utils/__init__.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/utils
+      copying flash_attn/utils/benchmark.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/utils
+      copying flash_attn/utils/distributed.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/utils
+      copying flash_attn/utils/generation.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/utils
+      copying flash_attn/utils/pretrained.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/utils
+      copying flash_attn/ops/triton/__init__.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops/triton
+      copying flash_attn/ops/triton/cross_entropy.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops/triton
+      copying flash_attn/ops/triton/k_activations.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops/triton
+      copying flash_attn/ops/triton/layer_norm.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops/triton
+      copying flash_attn/ops/triton/linear.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops/triton
+      copying flash_attn/ops/triton/mlp.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops/triton
+      copying flash_attn/ops/triton/rotary.py ->
+      build/lib.linux-x86_64-cpython-310/flash_attn/ops/triton
+      running build_ext
+      building 'flash_attn_2_cuda' extension
+      [1/85] c++ -MMD -MF
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/flash_api.o.d
+      -pthread -B /home/3295540/.conda/envs/lda/compiler_compat
+      -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall
+      -fPIC -O2 -isystem /home/3295540/.conda/envs/lda/include
+      -fPIC -O2 -isystem /home/3295540/.conda/envs/lda/include -fPIC
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/flash_api.cpp
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/flash_api.o
+      -O3 -std=c++17 -DTORCH_API_INCLUDE_EXTENSION_H
+      '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"'
+      '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=1]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/flash_api.o
+      c++ -MMD -MF
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/flash_api.o.d
+      -pthread -B /home/3295540/.conda/envs/lda/compiler_compat
+      -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall
+      -fPIC -O2 -isystem /home/3295540/.conda/envs/lda/include
+      -fPIC -O2 -isystem /home/3295540/.conda/envs/lda/include -fPIC
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/flash_api.cpp
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/flash_api.o
+      -O3 -std=c++17 -DTORCH_API_INCLUDE_EXTENSION_H
+      '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"'
+      '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      In file included from
+      /home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/ATen/cuda/CUDAContext.h:3,
+                       from
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/flash_api.cpp:8:
+      /home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/ATen/cuda/CUDAContextLight.h:6:10:
+      fatal error: cuda_runtime_api.h: No such file or directory
+          6 | #include <cuda_runtime_api.h>
+            |          ^~~~~~~~~~~~~~~~~~~~
+      compilation terminated.
+      [2/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_bf16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim192_bf16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_bf16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_bf16_causal_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_bf16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim192_bf16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_bf16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [3/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_bf16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim128_bf16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_bf16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_bf16_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_bf16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim128_bf16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_bf16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [4/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_fp16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim160_fp16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_fp16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_fp16_causal_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_fp16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim160_fp16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_fp16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [5/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_bf16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim192_bf16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_bf16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_bf16_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_bf16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim192_bf16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_bf16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [6/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_bf16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim160_bf16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_bf16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_bf16_causal_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_bf16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim160_bf16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_bf16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [7/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_fp16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim192_fp16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_fp16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_fp16_causal_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_fp16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim192_fp16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_fp16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [8/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim256_bf16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim256_bf16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim256_bf16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim256_bf16_causal_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim256_bf16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim256_bf16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim256_bf16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [9/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_fp16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim128_fp16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_fp16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_fp16_causal_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_fp16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim128_fp16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_fp16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [10/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_bf16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim128_bf16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_bf16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_bf16_causal_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_bf16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim128_bf16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_bf16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [11/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_bf16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim160_bf16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_bf16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_bf16_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_bf16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim160_bf16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_bf16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [12/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_fp16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim160_fp16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_fp16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_fp16_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_fp16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim160_fp16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim160_fp16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [13/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim256_fp16_causal_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim256_fp16_causal_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim256_fp16_causal_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [14/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_fp16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim192_fp16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_fp16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: [code=255]
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_fp16_sm80.o
+      /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_fp16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim192_fp16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim192_fp16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [15/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_fp16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim128_fp16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim128_fp16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      [16/85] /home/3295540/.conda/envs/cuda_env/bin/nvcc
+      --generate-dependencies-with-compile --dependency-output
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim256_bf16_sm80.o.d
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src
+      -I/home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/cutlass/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/TH
+      -I/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/include/THC
+      -I/home/3295540/.conda/envs/cuda_env/include
+      -I/home/3295540/.conda/envs/lda/include/python3.10 -c -c
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/csrc/flash_attn/src/flash_bwd_hdim256_bf16_sm80.cu
+      -o
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/csrc/flash_attn/src/flash_bwd_hdim256_bf16_sm80.o
+      -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__
+      -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__
+      --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3
+      -std=c++17 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__
+      -U__CUDA_NO_HALF2_OPERATORS__ -U__CUDA_NO_BFLOAT16_CONVERSIONS__
+      --expt-relaxed-constexpr --expt-extended-lambda --use_fast_math -gencode
+      arch=compute_80,code=sm_80 -gencode arch=compute_90,code=sm_90 --threads
+      4 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"'
+      '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"'
+      -DTORCH_EXTENSION_NAME=flash_attn_2_cuda -D_GLIBCXX_USE_CXX11_ABI=0
+      ninja: build stopped: subcommand failed.
+
+      [stderr]
+      /home/3295540/.conda/envs/lda/lib/python3.10/site-packages/wheel/bdist_wheel.py:4:
+      FutureWarning: The 'wheel' package is no longer the canonical location
+      of the 'bdist_wheel' command, and will be removed in a future release.
+      Please update to setuptools v70.1 or later which contains an integrated
+      version of this command.
+        warn(
+      No CUDA runtime is found, using
+      CUDA_HOME='/home/3295540/.conda/envs/cuda_env'
+      fatal: invalid gitfile format: /home/3295540/.cache/uv/sdists-v9/.git
+      /home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/dist.py:765:
+      SetuptoolsDeprecationWarning: License classifiers are deprecated.
+      !!
+
+      
+      ********************************************************************************
+              Please consider removing the following classifiers in favor of a
+      SPDX license expression:
+
+              License :: OSI Approved :: BSD License
+
+              See
+      https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license
+      for details.
+      
+      ********************************************************************************
+
+      !!
+        self._finalize_license_expression()
+      /home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/utils/cpp_extension.py:458:
+      UserWarning: There are no g++ version bounds defined for CUDA version
+      12.4
+        warnings.warn(f'There are no {compiler_name} version bounds defined
+      for CUDA version {cuda_str_version}')
+      Emitting ninja build file
+      /home/3295540/.cache/uv/sdists-v9/pypi/flash-attn/2.6.3/sJlx142HH5QwBwnZw2suP/src/build/temp.linux-x86_64-cpython-310/build.ninja...
+      Compiling objects...
+      Using envvar MAX_JOBS (16) as the number of workers...
+      Traceback (most recent call last):
+        File "<string>", line 450, in run
+        File "/home/3295540/.conda/envs/lda/lib/python3.10/urllib/request.py",
+      line 241, in urlretrieve
+          with contextlib.closing(urlopen(url, data)) as fp:
+        File "/home/3295540/.conda/envs/lda/lib/python3.10/urllib/request.py",
+      line 216, in urlopen
+          return opener.open(url, data, timeout)
+        File "/home/3295540/.conda/envs/lda/lib/python3.10/urllib/request.py",
+      line 525, in open
+          response = meth(req, response)
+        File "/home/3295540/.conda/envs/lda/lib/python3.10/urllib/request.py",
+      line 634, in http_response
+          response = self.parent.error(
+        File "/home/3295540/.conda/envs/lda/lib/python3.10/urllib/request.py",
+      line 563, in error
+          return self._call_chain(*args)
+        File "/home/3295540/.conda/envs/lda/lib/python3.10/urllib/request.py",
+      line 496, in _call_chain
+          result = func(*args)
+        File "/home/3295540/.conda/envs/lda/lib/python3.10/urllib/request.py",
+      line 643, in http_error_default
+          raise HTTPError(req.full_url, code, msg, hdrs, fp)
+      urllib.error.HTTPError: HTTP Error 404: Not Found
+
+      During handling of the above exception, another exception occurred:
+
+      Traceback (most recent call last):
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/utils/cpp_extension.py",
+      line 2209, in _run_ninja_build
+          subprocess.run(
+        File "/home/3295540/.conda/envs/lda/lib/python3.10/subprocess.py",
+      line 526, in run
+          raise CalledProcessError(retcode, process.args,
+      subprocess.CalledProcessError: Command '['ninja', '-v', '-j', '16']'
+      returned non-zero exit status 255.
+
+      The above exception was the direct cause of the following exception:
+
+      Traceback (most recent call last):
+        File "<string>", line 11, in <module>
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/build_meta.py",
+      line 438, in build_wheel
+          return _build(['bdist_wheel'])
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/build_meta.py",
+      line 429, in _build
+          return self._build_with_temp_dir(
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/build_meta.py",
+      line 410, in _build_with_temp_dir
+          self.run_setup()
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/build_meta.py",
+      line 520, in run_setup
+          super().run_setup(setup_script=setup_script)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/build_meta.py",
+      line 317, in run_setup
+          exec(code, locals())
+        File "<string>", line 490, in <module>
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/__init__.py",
+      line 117, in setup
+          return distutils.core.setup(**attrs)  # type: ignore[return-value]
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/core.py",
+      line 186, in setup
+          return run_commands(dist)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/core.py",
+      line 202, in run_commands
+          dist.run_commands()
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1001, in run_commands
+          self.run_command(cmd)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/dist.py",
+      line 1107, in run_command
+          super().run_command(command)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1020, in run_command
+          cmd_obj.run()
+        File "<string>", line 467, in run
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/command/bdist_wheel.py",
+      line 370, in run
+          self.run_command("build")
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/cmd.py",
+      line 341, in run_command
+          self.distribution.run_command(command)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/dist.py",
+      line 1107, in run_command
+          super().run_command(command)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1020, in run_command
+          cmd_obj.run()
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/command/build.py",
+      line 135, in run
+          self.run_command(cmd_name)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/cmd.py",
+      line 341, in run_command
+          self.distribution.run_command(command)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/dist.py",
+      line 1107, in run_command
+          super().run_command(command)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1020, in run_command
+          cmd_obj.run()
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/command/build_ext.py",
+      line 97, in run
+          _build_ext.run(self)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/command/build_ext.py",
+      line 367, in run
+          self.build_extensions()
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/utils/cpp_extension.py",
+      line 900, in build_extensions
+          build_ext.build_extensions(self)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/command/build_ext.py",
+      line 483, in build_extensions
+          self._build_extensions_serial()
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/command/build_ext.py",
+      line 509, in _build_extensions_serial
+          self.build_extension(ext)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/command/build_ext.py",
+      line 262, in build_extension
+          _build_ext.build_extension(self, ext)
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/setuptools/_distutils/command/build_ext.py",
+      line 564, in build_extension
+          objects = self.compiler.compile(
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/utils/cpp_extension.py",
+      line 713, in unix_wrap_ninja_compile
+          _write_ninja_file_and_compile_objects(
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/utils/cpp_extension.py",
+      line 1869, in _write_ninja_file_and_compile_objects
+          _run_ninja_build(
+        File
+      "/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/torch/utils/cpp_extension.py",
+      line 2225, in _run_ninja_build
+          raise RuntimeError(message) from e
+      RuntimeError: Error compiling objects for extension
+
+      hint: This usually indicates a problem with the package or the build
+      environment.
+FLASH_ATTN_EXIT=1
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'flash_attn'
+[2026-07-22T17:53:05.655] error: Detected 16 oom_kill events in StepId=599923.batch. Some of the step tasks have been OOM Killed.

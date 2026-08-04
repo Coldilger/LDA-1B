@@ -1,0 +1,167 @@
+/home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+07/26 [14:52:46] INFO     | >> [*] Loading from local         share_tools.py:264
+                          checkpoint path                                       
+                          `/mnt/beegfsnew/scratch/3295540/LDA                   
+                          -1B/outputs/lda_bridge/bridge_finet                   
+                          une/checkpoints/steps_150000_pytorc                   
+                          h_model.pt`                                           
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  9.20it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  9.07it/s]
+Total number of DiT parameters:  1772973056
+evaluating 12 trajectories of 51107 eligible
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_17588/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_17588/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_17588/states_across_time.npy
+Position L1 Loss:     0.022473
+Orientation L1 Loss:  0.057493
+Gripper L1 Loss:      0.659514
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_17588/plot_traj.png
+traj 17588: pos=0.04495 (stay-still 0.05313) rot=0.11499 grip=0.407 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_40715/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_40715/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_40715/states_across_time.npy
+Position L1 Loss:     0.040533
+Orientation L1 Loss:  0.078435
+Gripper L1 Loss:      0.525456
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_40715/plot_traj.png
+traj 40715: pos=0.08107 (stay-still 0.07829) rot=0.15687 grip=0.125 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_25904/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_25904/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_25904/states_across_time.npy
+Position L1 Loss:     0.016225
+Orientation L1 Loss:  0.043849
+Gripper L1 Loss:      0.565524
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_25904/plot_traj.png
+traj 25904: pos=0.03245 (stay-still 0.04489) rot=0.08770 grip=0.196 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_26087/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_26087/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_26087/states_across_time.npy
+Position L1 Loss:     0.014529
+Orientation L1 Loss:  0.047249
+Gripper L1 Loss:      0.618979
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_26087/plot_traj.png
+traj 26087: pos=0.02906 (stay-still 0.04637) rot=0.09450 grip=0.321 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_3961/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_3961/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_3961/states_across_time.npy
+Position L1 Loss:     0.016229
+Orientation L1 Loss:  0.064450
+Gripper L1 Loss:      0.794049
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_3961/plot_traj.png
+traj 3961: pos=0.03246 (stay-still 0.04485) rot=0.12890 grip=0.652 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_27334/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_27334/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_27334/states_across_time.npy
+Position L1 Loss:     0.018460
+Orientation L1 Loss:  0.042796
+Gripper L1 Loss:      0.644644
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_27334/plot_traj.png
+traj 27334: pos=0.03692 (stay-still 0.05748) rot=0.08559 grip=0.366 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_3241/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_3241/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_3241/states_across_time.npy
+Position L1 Loss:     0.022578
+Orientation L1 Loss:  0.054078
+Gripper L1 Loss:      0.569231
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_3241/plot_traj.png
+traj 3241: pos=0.04516 (stay-still 0.04884) rot=0.10816 grip=0.210 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_12159/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_12159/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_12159/states_across_time.npy
+Position L1 Loss:     0.013023
+Orientation L1 Loss:  0.040097
+Gripper L1 Loss:      0.897663
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_12159/plot_traj.png
+traj 12159: pos=0.02605 (stay-still 0.03713) rot=0.08019 grip=0.881 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_33151/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_33151/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_33151/states_across_time.npy
+Position L1 Loss:     0.008724
+Orientation L1 Loss:  0.098771
+Gripper L1 Loss:      0.547835
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_33151/plot_traj.png
+traj 33151: pos=0.01745 (stay-still 0.01914) rot=0.19754 grip=0.191 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_15814/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_15814/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_15814/states_across_time.npy
+Position L1 Loss:     0.010277
+Orientation L1 Loss:  0.021545
+Gripper L1 Loss:      0.665031
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_15814/plot_traj.png
+traj 15814: pos=0.02055 (stay-still 0.04592) rot=0.04309 grip=0.395 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_18519/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_18519/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_18519/states_across_time.npy
+Position L1 Loss:     0.020187
+Orientation L1 Loss:  0.034685
+Gripper L1 Loss:      0.765464
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_18519/plot_traj.png
+traj 18519: pos=0.04037 (stay-still 0.05466) rot=0.06937 grip=0.612 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+gt_action_across_time saved to outputs/probe_ft150k_hist/traj_34457/gt_action_across_time.npy
+pred_action_across_time saved to outputs/probe_ft150k_hist/traj_34457/pred_action_across_time.npy
+states_across_time saved to outputs/probe_ft150k_hist/traj_34457/states_across_time.npy
+Position L1 Loss:     0.008269
+Orientation L1 Loss:  0.043041
+Gripper L1 Loss:      0.538223
+Creating visualization...
+saving plot to outputs/probe_ft150k_hist/traj_34457/plot_traj.png
+traj 34457: pos=0.01654 (stay-still 0.02036) rot=0.08608 grip=0.172 right_pred_max=1.000
+
+================ SUMMARY (left arm only) ================
+trajectories:            12
+position L1:             0.03525 m
+  stay-still baseline:   0.04592 m
+  model / baseline:      0.768   (<1 better than not moving)
+  gt position spread:    0.14414 m
+rotation L1:             0.10441 rad
+gripper L1:              0.377  (0.5 = coin flip)
+  if polarity inverted:  0.624
+right-arm gt max:        0.000  (WidowX has none)
+right-arm predicted max: 1.000  (invented motion)
+
+wrote outputs/probe_ft150k_hist/summary.json
+PROBE2_EXIT=0

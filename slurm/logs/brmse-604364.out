@@ -1,0 +1,27 @@
+/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+Dataset lengths: [447733]
+Dataset lengths: [447733]
+07/24 [20:57:08] INFO     | >> [*] Loading from local         share_tools.py:264
+                          checkpoint path                                       
+                          `outputs/lda_pretrain_run/checkpoin                   
+                          ts/LDA-pretrain.pt`                                   
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  2.23it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.96it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.98it/s]
+Total number of DiT parameters:  1772973056
+Applied checkpoint action normalization stats to 1 dataset transforms.
+Dataset Embodiment Tags: defaultdict(<class 'list'>, {'oxe': [0]})
+Total trajectories: 53192
+All trajectories: [26 45 45 ... 48 32 36]
+Running trajectory: 15795
+inferencing at step:  0
+Traceback (most recent call last):
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/eval/eval_policy.py", line 217, in <module>
+    main(cfg)
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/eval/eval_policy.py", line 165, in main
+    l1_loss_dict = calc_mse_for_single_trajectory_relative_eef(
+  File "/mnt/beegfsnew/scratch/3295540/LDA-1B/lda/utils/eval_wo_postprocess.py", line 214, in calc_mse_for_single_trajectory
+    [action_chunk[f'action.{key}'][j] for key in modality_keys]
+UnboundLocalError: local variable 'modality_keys' referenced before assignment
+BRMSE_EXIT=1

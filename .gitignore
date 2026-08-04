@@ -244,5 +244,12 @@ examples/MultiRobot/*
 # Machine-local symlinks into the shared HF cache (see slurm/download_weights.slurm)
 /pretrained/
 /checkpoints/
-/slurm/logs/
 /outputs/
+
+# slurm/logs/ is tracked on purpose: it's the durable record of what actually
+# ran (job configs, checkpoints tested, measured numbers) and it's small
+# (double-digit MB of text), unlike /outputs/ which holds multi-GB checkpoints.
+# Re-include it from the generic *.out rule above (build-artifact convention,
+# unrelated to slurm -- narrowing that rule itself risked missing its real intent).
+!/slurm/logs/
+!/slurm/logs/*.out

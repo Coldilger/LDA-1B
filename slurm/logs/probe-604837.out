@@ -1,0 +1,165 @@
+/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+07/25 [13:58:16] INFO     | >> [*] Loading from local         share_tools.py:264
+                          checkpoint path                                       
+                          `outputs/lda_pretrain_run/checkpoin                   
+                          ts/LDA-pretrain.pt`                                   
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 10.29it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 10.14it/s]
+Total number of DiT parameters:  1772973056
+evaluating 12 trajectories of 51107 eligible
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/bridge_openloop/traj_17588/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_17588/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_17588/states_across_time.npy
+Position L1 Loss:     0.028515
+Orientation L1 Loss:  0.087629
+Gripper L1 Loss:      0.755480
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_17588/plot_traj.png
+traj 17588: pos=0.05703 (stay-still 0.05313) rot=0.17526 grip=0.599 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+gt_action_across_time saved to outputs/bridge_openloop/traj_40715/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_40715/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_40715/states_across_time.npy
+Position L1 Loss:     0.037665
+Orientation L1 Loss:  0.081318
+Gripper L1 Loss:      0.672228
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_40715/plot_traj.png
+traj 40715: pos=0.07533 (stay-still 0.07829) rot=0.16264 grip=0.419 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/bridge_openloop/traj_25904/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_25904/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_25904/states_across_time.npy
+Position L1 Loss:     0.023166
+Orientation L1 Loss:  0.068237
+Gripper L1 Loss:      0.732806
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_25904/plot_traj.png
+traj 25904: pos=0.04633 (stay-still 0.04489) rot=0.13647 grip=0.531 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/bridge_openloop/traj_26087/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_26087/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_26087/states_across_time.npy
+Position L1 Loss:     0.025012
+Orientation L1 Loss:  0.077475
+Gripper L1 Loss:      0.634762
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_26087/plot_traj.png
+traj 26087: pos=0.05002 (stay-still 0.04637) rot=0.15495 grip=0.353 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/bridge_openloop/traj_3961/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_3961/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_3961/states_across_time.npy
+Position L1 Loss:     0.019968
+Orientation L1 Loss:  0.102238
+Gripper L1 Loss:      0.620333
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_3961/plot_traj.png
+traj 3961: pos=0.03994 (stay-still 0.04485) rot=0.20448 grip=0.304 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+gt_action_across_time saved to outputs/bridge_openloop/traj_27334/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_27334/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_27334/states_across_time.npy
+Position L1 Loss:     0.029400
+Orientation L1 Loss:  0.044624
+Gripper L1 Loss:      0.680608
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_27334/plot_traj.png
+traj 27334: pos=0.05880 (stay-still 0.05748) rot=0.08925 grip=0.438 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/bridge_openloop/traj_3241/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_3241/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_3241/states_across_time.npy
+Position L1 Loss:     0.023005
+Orientation L1 Loss:  0.077876
+Gripper L1 Loss:      0.653471
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_3241/plot_traj.png
+traj 3241: pos=0.04601 (stay-still 0.04884) rot=0.15575 grip=0.378 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/bridge_openloop/traj_12159/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_12159/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_12159/states_across_time.npy
+Position L1 Loss:     0.022265
+Orientation L1 Loss:  0.057450
+Gripper L1 Loss:      0.648408
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_12159/plot_traj.png
+traj 12159: pos=0.04453 (stay-still 0.03713) rot=0.11490 grip=0.383 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+gt_action_across_time saved to outputs/bridge_openloop/traj_33151/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_33151/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_33151/states_across_time.npy
+Position L1 Loss:     0.021898
+Orientation L1 Loss:  0.111697
+Gripper L1 Loss:      0.645712
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_33151/plot_traj.png
+traj 33151: pos=0.04380 (stay-still 0.01914) rot=0.22339 grip=0.387 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/bridge_openloop/traj_15814/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_15814/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_15814/states_across_time.npy
+Position L1 Loss:     0.023043
+Orientation L1 Loss:  0.065253
+Gripper L1 Loss:      0.692105
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_15814/plot_traj.png
+traj 15814: pos=0.04609 (stay-still 0.04592) rot=0.13051 grip=0.449 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+inferencing at step:  32
+gt_action_across_time saved to outputs/bridge_openloop/traj_18519/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_18519/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_18519/states_across_time.npy
+Position L1 Loss:     0.027400
+Orientation L1 Loss:  0.053871
+Gripper L1 Loss:      0.623439
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_18519/plot_traj.png
+traj 18519: pos=0.05480 (stay-still 0.05466) rot=0.10774 grip=0.328 right_pred_max=1.000
+inferencing at step:  0
+inferencing at step:  16
+gt_action_across_time saved to outputs/bridge_openloop/traj_34457/gt_action_across_time.npy
+pred_action_across_time saved to outputs/bridge_openloop/traj_34457/pred_action_across_time.npy
+states_across_time saved to outputs/bridge_openloop/traj_34457/states_across_time.npy
+Position L1 Loss:     0.024402
+Orientation L1 Loss:  0.054188
+Gripper L1 Loss:      0.642904
+Creating visualization...
+saving plot to outputs/bridge_openloop/traj_34457/plot_traj.png
+traj 34457: pos=0.04880 (stay-still 0.02036) rot=0.10838 grip=0.381 right_pred_max=1.000
+
+================ SUMMARY (left arm only) ================
+trajectories:            12
+position L1:             0.05096 m
+  stay-still baseline:   0.04592 m
+  model / baseline:      1.110   (<1 better than not moving)
+  gt position spread:    0.14414 m
+rotation L1:             0.14698 rad
+gripper L1:              0.413  (0.5 = coin flip)
+  if polarity inverted:  0.587
+right-arm gt max:        0.000  (WidowX has none)
+right-arm predicted max: 1.000  (invented motion)
+
+wrote outputs/bridge_openloop/summary.json
+PROBE_EXIT=0

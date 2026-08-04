@@ -1,0 +1,15 @@
+/home/3295540/.conda/envs/lda/lib/python3.10/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 2.0.8 (you have 1.4.18). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+Initialized dataset bridge_lda with EmbodimentTag.OXE
+Dataset lengths: [447733]
+Dataset lengths: [447733]
+dataset length: 447733
+samples checked: 300
+constant-CLOSED windows seen: 33
+  -> masked True  (fix working):     33
+  -> masked False (fix NOT working): 0
+constant-OPEN windows seen: 101
+  -> masked True: 101
+VERIFY: PASS -- constant-closed windows now keep gripper supervision
+VERIFY_EXIT=0

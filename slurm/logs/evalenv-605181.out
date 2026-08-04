@@ -1,0 +1,173 @@
+2 channel Terms of Service accepted
+Retrieving notices: - \ done
+Source:      /home/3295540/.conda/envs/lda
+Destination: /home/3295540/.conda/envs/lda_eval
+Packages: 32
+Files: 45847
+
+Downloading and Extracting Packages: ...working... done
+
+## Package Plan ##
+
+  environment location: /home/3295540/.conda/envs/lda_eval
+
+  added / updated specs:
+    - pkgs/main/linux-64::_libgcc_mutex==0.1=main
+    - pkgs/main/linux-64::_openmp_mutex==5.1=52_gnu
+    - pkgs/main/linux-64::bzip2==1.0.8=h5eee18b_6
+    - pkgs/main/linux-64::ca-certificates==2026.7.16=h06a4308_0
+    - pkgs/main/linux-64::ld_impl_linux-64==2.44=h9e0c5a2_3
+    - pkgs/main/linux-64::libexpat==2.8.2=h7354ed3_1
+    - pkgs/main/linux-64::libffi==3.4.8=h06d3fd0_3
+    - pkgs/main/linux-64::libgcc-ng==15.2.0=h166f726_8
+    - pkgs/main/linux-64::libgcc==15.2.0=h69a1729_8
+    - pkgs/main/linux-64::libnsl==2.0.0=h5eee18b_0
+    - pkgs/main/linux-64::libstdcxx==15.2.0=h39759b7_8
+    - pkgs/main/linux-64::libuuid==1.41.5=h5eee18b_0
+    - pkgs/main/linux-64::libxcb==1.17.0=h9b100fa_0
+    - pkgs/main/linux-64::libzlib==1.3.2=h47b2149_0
+    - pkgs/main/linux-64::ncurses==6.5=h7934f7d_0
+    - pkgs/main/linux-64::openssl==3.5.7=h1b28b03_0
+    - pkgs/main/linux-64::packaging==26.0=py310h06a4308_0
+    - pkgs/main/linux-64::pthread-stubs==0.3=h0ce48e5_1
+    - pkgs/main/linux-64::python==3.10.20=h17756b0_1
+    - pkgs/main/linux-64::readline==8.3=hc2a1206_0
+    - pkgs/main/linux-64::setuptools==83.0.0=py310h06a4308_0
+    - pkgs/main/linux-64::sqlite==3.53.2=h795bf6d_0
+    - pkgs/main/linux-64::tk==8.6.15=h54e0aa7_0
+    - pkgs/main/linux-64::wheel==0.47.0=py310h06a4308_0
+    - pkgs/main/linux-64::xorg-libx11==1.8.12=h9b100fa_1
+    - pkgs/main/linux-64::xorg-libxau==1.0.12=h9b100fa_0
+    - pkgs/main/linux-64::xorg-libxdmcp==1.1.5=h9b100fa_0
+    - pkgs/main/linux-64::xorg-xorgproto==2024.1=h47b2149_2
+    - pkgs/main/linux-64::xz==5.8.2=h448239c_0
+    - pkgs/main/linux-64::zlib==1.3.2=h47b2149_0
+    - pkgs/main/noarch::pip==26.1.2=pyhc872135_0
+    - pkgs/main/noarch::tzdata==2026c=he532380_0
+
+
+The following NEW packages will be INSTALLED:
+
+  _libgcc_mutex      pkgs/main/linux-64::_libgcc_mutex-0.1-main 
+  _openmp_mutex      pkgs/main/linux-64::_openmp_mutex-5.1-52_gnu 
+  bzip2              pkgs/main/linux-64::bzip2-1.0.8-h5eee18b_6 
+  ca-certificates    pkgs/main/linux-64::ca-certificates-2026.7.16-h06a4308_0 
+  ld_impl_linux-64   pkgs/main/linux-64::ld_impl_linux-64-2.44-h9e0c5a2_3 
+  libexpat           pkgs/main/linux-64::libexpat-2.8.2-h7354ed3_1 
+  libffi             pkgs/main/linux-64::libffi-3.4.8-h06d3fd0_3 
+  libgcc             pkgs/main/linux-64::libgcc-15.2.0-h69a1729_8 
+  libgcc-ng          pkgs/main/linux-64::libgcc-ng-15.2.0-h166f726_8 
+  libnsl             pkgs/main/linux-64::libnsl-2.0.0-h5eee18b_0 
+  libstdcxx          pkgs/main/linux-64::libstdcxx-15.2.0-h39759b7_8 
+  libuuid            pkgs/main/linux-64::libuuid-1.41.5-h5eee18b_0 
+  libxcb             pkgs/main/linux-64::libxcb-1.17.0-h9b100fa_0 
+  libzlib            pkgs/main/linux-64::libzlib-1.3.2-h47b2149_0 
+  ncurses            pkgs/main/linux-64::ncurses-6.5-h7934f7d_0 
+  openssl            pkgs/main/linux-64::openssl-3.5.7-h1b28b03_0 
+  packaging          pkgs/main/linux-64::packaging-26.0-py310h06a4308_0 
+  pip                pkgs/main/noarch::pip-26.1.2-pyhc872135_0 
+  pthread-stubs      pkgs/main/linux-64::pthread-stubs-0.3-h0ce48e5_1 
+  python             pkgs/main/linux-64::python-3.10.20-h17756b0_1 
+  readline           pkgs/main/linux-64::readline-8.3-hc2a1206_0 
+  setuptools         pkgs/main/linux-64::setuptools-83.0.0-py310h06a4308_0 
+  sqlite             pkgs/main/linux-64::sqlite-3.53.2-h795bf6d_0 
+  tk                 pkgs/main/linux-64::tk-8.6.15-h54e0aa7_0 
+  tzdata             pkgs/main/noarch::tzdata-2026c-he532380_0 
+  wheel              pkgs/main/linux-64::wheel-0.47.0-py310h06a4308_0 
+  xorg-libx11        pkgs/main/linux-64::xorg-libx11-1.8.12-h9b100fa_1 
+  xorg-libxau        pkgs/main/linux-64::xorg-libxau-1.0.12-h9b100fa_0 
+  xorg-libxdmcp      pkgs/main/linux-64::xorg-libxdmcp-1.1.5-h9b100fa_0 
+  xorg-xorgproto     pkgs/main/linux-64::xorg-xorgproto-2024.1-h47b2149_2 
+  xz                 pkgs/main/linux-64::xz-5.8.2-h448239c_0 
+  zlib               pkgs/main/linux-64::zlib-1.3.2-h47b2149_0 
+
+
+
+Downloading and Extracting Packages: ...working... done
+Preparing transaction: / - \ | / done
+Verifying transaction: \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ done
+Executing transaction: / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ done
+#
+# To activate this environment, use
+#
+#     $ conda activate lda_eval
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+Collecting sapien==2.2.2
+  Using cached sapien-2.2.2-cp310-cp310-manylinux2014_x86_64.whl.metadata (9.6 kB)
+Collecting gymnasium==0.29.1
+  Using cached gymnasium-0.29.1-py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: transforms3d==0.4.2 in /home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages (0.4.2)
+Requirement already satisfied: numpy>=1.17 in /home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages (from sapien==2.2.2) (1.26.4)
+Requirement already satisfied: requests>=2.22 in /home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages (from sapien==2.2.2) (2.32.5)
+Collecting opencv-python>=4.0 (from sapien==2.2.2)
+  Using cached opencv_python-5.0.0.93-cp37-abi3-manylinux_2_28_x86_64.whl.metadata (19 kB)
+Requirement already satisfied: cloudpickle>=1.2.0 in /home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages (from gymnasium==0.29.1) (3.1.2)
+Requirement already satisfied: typing-extensions>=4.3.0 in /home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages (from gymnasium==0.29.1) (4.15.0)
+Requirement already satisfied: farama-notifications>=0.0.1 in /home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages (from gymnasium==0.29.1) (0.0.4)
+Collecting numpy>=1.17 (from sapien==2.2.2)
+  Using cached numpy-2.2.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (62 kB)
+Requirement already satisfied: charset_normalizer<4,>=2 in /home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages (from requests>=2.22->sapien==2.2.2) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in /home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages (from requests>=2.22->sapien==2.2.2) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages (from requests>=2.22->sapien==2.2.2) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in /home/3295540/.conda/envs/lda_eval/lib/python3.10/site-packages (from requests>=2.22->sapien==2.2.2) (2025.11.12)
+Using cached sapien-2.2.2-cp310-cp310-manylinux2014_x86_64.whl (39.1 MB)
+Using cached gymnasium-0.29.1-py3-none-any.whl (953 kB)
+Using cached opencv_python-5.0.0.93-cp37-abi3-manylinux_2_28_x86_64.whl (73.8 MB)
+Using cached numpy-2.2.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (16.8 MB)
+Installing collected packages: numpy, opencv-python, gymnasium, sapien
+  Attempting uninstall: numpy
+    Found existing installation: numpy 1.26.4
+    Uninstalling numpy-1.26.4:
+      Successfully uninstalled numpy-1.26.4
+  Attempting uninstall: gymnasium
+    Found existing installation: gymnasium 1.2.2
+    Uninstalling gymnasium-1.2.2:
+      Successfully uninstalled gymnasium-1.2.2
+
+Successfully installed gymnasium-0.29.1 numpy-2.2.6 opencv-python-5.0.0.93 sapien-2.2.2
+Obtaining file:///mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv/ManiSkill2_real2sim
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: mani_skill2_real2sim
+  Building editable for mani_skill2_real2sim (pyproject.toml): started
+  Building editable for mani_skill2_real2sim (pyproject.toml): finished with status 'done'
+  Created wheel for mani_skill2_real2sim: filename=mani_skill2_real2sim-0.5.3-0.editable-py3-none-any.whl size=7685 sha256=5bdf9bb8318092cbb684bae56611269059b0263a4fad0be342f4cb0ce36fcb2e
+  Stored in directory: /tmp/pip-ephem-wheel-cache-kuwssji5/wheels/b4/26/d3/bad193a759ae43045a228fef55198052d1c1977127de11f54c
+Successfully built mani_skill2_real2sim
+Installing collected packages: mani_skill2_real2sim
+Successfully installed mani_skill2_real2sim-0.5.3
+Obtaining file:///mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: simpler_env
+  Building editable for simpler_env (pyproject.toml): started
+  Building editable for simpler_env (pyproject.toml): finished with status 'done'
+  Created wheel for simpler_env: filename=simpler_env-0.0.1-0.editable-py3-none-any.whl size=3647 sha256=dbc652ec8056592c25fd25bcbcba1705bd3521b1196a1f0f9ffe2058648a5e71
+  Stored in directory: /tmp/pip-ephem-wheel-cache-hk7jatf6/wheels/13/37/10/7ba9da76f60676153392d47a3b59d5dbd903f5034cfcdd447d
+Successfully built simpler_env
+Installing collected packages: simpler_env
+Successfully installed simpler_env-0.0.1
+=== import check ===
+FAIL sapien: ImportError: libvulkan.so.1: cannot open shared object file: No such file or directory
+OK   mani_skill2_real2sim 
+FAIL simpler_env: ImportError: libvulkan.so.1: cannot open shared object file: No such file or directory
+OK   transformers 4.57.0
+OK   flash_attn 2.6.3
+OK   lda 
+EVALENV_EXIT=0
