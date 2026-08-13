@@ -197,6 +197,15 @@ class Qwen_GR00T(baseframework):
         curr_imgs = torch.from_numpy(np.array([example["image"] for example in examples]))
         batch_images = [to_pil_preserve(example["image"]) for example in examples]  #  [B，[PLT]]
         instructions = [example["lang"] for example in examples]  # [B, str]
+
+        # Oracle-injection ablation: if every example carries a real future
+        # frame (same "future_image" key forward() consumes for the
+        # inverse_dynamics task), thread it through to action_model.predict_action
+        # so it runs the inverse_dynamics path instead of the policy-only one.
+        # Default (key absent) is byte-for-byte the original behavior.
+        oracle_future_imgs = None
+        if all("future_image" in example for example in examples):
+            oracle_future_imgs = torch.from_numpy(np.array([example["future_image"] for example in examples]))
     
         state = [example["state"] for example in examples] if "state" in examples[0] else None  # [B, 1, state_dim]
         embodiment_ids = [example["embodiment_id"] for example in examples]
@@ -235,9 +244,14 @@ class Qwen_GR00T(baseframework):
         # state = examples['state'].to(last_hidden.device, dtype=last_hidden.dtype) if 'state' in examples else None
         curr_imgs = curr_imgs.to(last_hidden.device, dtype=last_hidden.dtype)
         attention_mask = attention_mask.to(last_hidden.device, dtype=last_hidden.dtype)
+        if oracle_future_imgs is not None:
+            oracle_future_imgs = oracle_future_imgs.to(last_hidden.device, dtype=last_hidden.dtype)
         # Step 4: Action Expert Forward and Loss
         with torch.autocast("cuda", dtype=torch.float32):
-            pred_actions = self.action_model.predict_action(last_hidden, state, curr_imgs, embodiment_ids, attention_mask)  # (B, chunk_len, action_dim)
+            pred_actions = self.action_model.predict_action(
+                last_hidden, state, curr_imgs, embodiment_ids, attention_mask,
+                oracle_future_imgs=oracle_future_imgs,
+            )  # (B, chunk_len, action_dim)
 
         normalized_actions = pred_actions.detach().cpu().float().numpy()
         return {"normalized_actions": normalized_actions}

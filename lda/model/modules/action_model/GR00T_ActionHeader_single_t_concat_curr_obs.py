@@ -804,9 +804,17 @@ class FlowmatchingActionHead(nn.Module):
         curr_imgs: torch.Tensor = None,
         embodiment_id: torch.Tensor = None,
         encoder_attention_mask: torch.Tensor = None,
+        oracle_future_imgs: torch.Tensor = None,
     ) -> torch.Tensor:
         """
-        Denoising diffusion sampling for action prediction (policy task only).
+        Denoising diffusion sampling for action prediction (policy task by
+        default). If oracle_future_imgs is given (same (b, v*t, c, h, w) shape
+        as curr_imgs, containing the REAL next frame), runs the natively-
+        trained inverse_dynamics task instead: task_embedding switches to
+        id_embedding and next_obs is encoded from the true future frame
+        (mirrors forward()'s inv_obs_feat = next_obs[inverse_dynamics_indices],
+        lines 648-654/711 above) rather than next_obs_learnable_tokens. Oracle-
+        injection ablation; default None preserves the original policy-only path.
         """
         device = vl_embs.device
         B = vl_embs.shape[0]
@@ -824,6 +832,18 @@ class FlowmatchingActionHead(nn.Module):
             curr_obs = rearrange(curr_obs, "(b v t) n c -> b (v t n) c", b=B, v=V)
 
         num_obs_tokens = curr_obs.shape[1]
+
+        oracle_next_obs = None
+        if oracle_future_imgs is not None:
+            next_obs = rearrange(oracle_future_imgs, "b (v t) c h w -> b v t c h w", v=self.num_views)
+            next_obs = self.transform_obs(next_obs, B, V, T)
+            next_obs = self.encode_future_img(next_obs)
+            if self.vision_encoder_type == "vjepa2":
+                next_obs = rearrange(next_obs, "(b v) t h w c -> b (v t h w) c", b=B, v=V)
+            else:
+                next_obs = rearrange(next_obs, "(b v t) n c -> b (v t n) c", b=B, v=V)
+            oracle_next_obs = next_obs
+
         # === 2. Initialize noisy action (sample from N(0, I)) ===
         actions = torch.randn(
             size=(B, self.config.action_horizon, self.config.action_dim),
@@ -837,8 +857,11 @@ class FlowmatchingActionHead(nn.Module):
         else:
             state_features = self.state_encoder(state) if self.state_dim is not None else None
 
-        # === 4. Task embedding: only "policy" during inference ===
-        task_embedding = self.policy_embedding.unsqueeze(0).expand(B, -1)  # (B, D)
+        # === 4. Task embedding: "policy" unless an oracle future frame was given ===
+        if oracle_next_obs is not None:
+            task_embedding = self.id_embedding.unsqueeze(0).expand(B, -1)  # (B, D)
+        else:
+            task_embedding = self.policy_embedding.unsqueeze(0).expand(B, -1)  # (B, D)
 
         # === 5. Denoising loop ===
         num_steps = self.num_inference_timesteps
@@ -855,8 +878,12 @@ class FlowmatchingActionHead(nn.Module):
             else:
                 action_features = self.action_encoder(actions, timesteps)  # (B, T_a, D)
 
-            # === 5.2 Noisy next obs: policy uses learnable tokens (same as forward) ===
-            noisy_next_obs = self.next_obs_learnable_tokens.unsqueeze(0).expand(B, num_obs_tokens, -1)  # (B, N_obs, D)
+            # === 5.2 Next obs: learnable placeholder for "policy", real
+            # encoded future frame for the oracle/inverse_dynamics path ===
+            if oracle_next_obs is not None:
+                noisy_next_obs = oracle_next_obs  # (B, N_obs, D), fixed across denoising steps
+            else:
+                noisy_next_obs = self.next_obs_learnable_tokens.unsqueeze(0).expand(B, num_obs_tokens, -1)  # (B, N_obs, D)
 
             # === 5.3 Future tokens ===
             future_tokens = self.future_tokens.weight.unsqueeze(0).expand(B, -1, -1)  # (B, T_f, D)

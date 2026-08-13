@@ -1,0 +1,113 @@
+# Clean from-scratch re-run of LDA_bridge.yaml, identical in every hyperparameter,
+# started AFTER the second (episode-level) gripper-masking fix landed in
+# lda/dataloader/gr00t_lerobot/datasets.py.
+#
+# Why this exists alongside the griptest run: the 8000-step griptest probe
+# (LDA_bridge_griptest.yaml) confirmed the fix decisively repairs the isolated
+# open-loop gripper-correlation metric (+0.1 -> +0.85), but closed-loop task
+# success on that same checkpoint was still 0/4 tasks -- plausibly because the
+# rest of the policy spent its entire 150k-step training history coordinating
+# around a broken gripper signal, and 8000-40000 steps of patching on top may
+# not be enough to undo that. This run answers the clean version of the
+# question: what does LDA-1B on Bridge look like if the fix is present for the
+# WHOLE training run, not bolted on at the end.
+#
+# Everything below is copied verbatim from LDA_bridge.yaml except run_id,
+# run_root_dir, wandb_project (kept separate so this run's numbers don't mix
+# with the finished fix-1-only run) and the two comments noting how those
+# differ. See LDA_bridge.yaml for the original rationale on every setting.
+
+run_id: bridge_finetune_v2
+run_root_dir: outputs/lda_bridge_v2
+seed: 42
+trackers: [jsonl, wandb]
+wandb_entity: null
+wandb_project: lda-bridge-v2
+is_debug: false
+
+framework:
+  name: QwenMMDiT
+  qwenvl:
+    base_vlm: pretrained/vlm/Qwen3-VL-4B-Instruct
+    attn_implementation: flash_attention_2
+
+  action_model:
+    action_model_type: DiT-L
+    hidden_size: 2560
+    add_pos_embed: true
+    max_seq_len: 1024
+    action_dim: 138
+    state_dim: null
+    action_horizon: 16
+    future_action_window_size: 15
+    past_action_window_size: 0
+    obs_horizon: 2
+    num_views: 1
+    future_obs_index: 5
+    max_num_embodiments: 32
+    num_target_vision_tokens: 32
+    num_timestep_buckets: 1000
+    num_inference_timesteps: 4
+    noise_beta_alpha: 1.5
+    noise_beta_beta: 1.0
+    noise_s: 0.999
+    obs_loss_weight: 1.0
+    only_policy: false
+    only_wo_video_gen: false
+    policy_and_video_gen: false
+    vision_encoder_type: dinov3
+    vision_encoder_size: s
+    vision_encoder_path: pretrained
+    diffusion_model_cfg:
+      cross_attention_dim: 2560
+      dropout: 0.2
+      final_dropout: true
+      interleave_self_attention: true
+      norm_type: ada_norm
+      num_layers: 16
+      output_dim: 2560
+      positional_embeddings: null
+
+datasets:
+  vla_data:
+    dataset_py: lerobot_datasets
+    data_root_dir: /mnt/beegfsnew/scratch/3295540/data
+    data_mix: bridge_lda
+    lerobot_version: v2.0
+    CoT_prompt: "Your task is {instruction}. To identify the key objects for your task. Locate their bounding boxes in [x1,y1,x2,y2] format."
+    image_size: [224, 224]
+    delete_pause_frame: false
+    use_delta_action: true
+    training_task_weights: [1, 1, 1, 1]
+    per_device_batch_size: 16
+
+trainer:
+  pretrained_checkpoint: checkpoints/LDA-pretrain/LDA-pretrain.pt
+  freeze_modules: 'qwen_vl_interface,action_model.vision_encoder'
+  max_train_steps: 150000
+  num_warmup_steps: 6000
+  save_interval: 10000
+  eval_interval: 1000
+  logging_frequency: 100
+  learning_rate:
+    base: 4.0e-05
+    qwen_vl_interface: 1.0e-05
+    action_model: 1.0e-04
+  lr_scheduler_type: cosine_with_min_lr
+  scheduler_specific_kwargs:
+    min_lr: 5.0e-07
+  repeated_diffusion_steps: 1
+  max_grad_norm: 1.0
+  gradient_clipping: 1.0
+  gradient_accumulation_steps: 6
+  weight_decay: 0.0
+  optimizer:
+    name: AdamW
+    betas: [0.9, 0.95]
+    eps: 1.0e-08
+    weight_decay: 1.0e-05
+  is_resume: false
+  resume_epoch: null
+  resume_step: null
+  enable_gradient_checkpointing: true
+  enable_mixed_precision_training: true

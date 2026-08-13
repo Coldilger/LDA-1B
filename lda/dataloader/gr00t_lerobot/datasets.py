@@ -104,12 +104,22 @@ def pad_action_state_to_max_length(action_state: np.ndarray, action_mask: np.nda
         action_mask_all[:, :] = action_mask
     return action_state, action_mask_all
 
-def pad_action_state_with_key(action_state: np.ndarray, action_key: str, single_arm: bool = False) -> np.ndarray:
+def pad_action_state_with_key(
+    action_state: np.ndarray,
+    action_key: str,
+    single_arm: bool = False,
+    modality_present: bool | None = None,
+) -> np.ndarray:
     """
     Pad the action and state to the max length.
     action_state: (T, D),
     action_key: indicate what the action_state is, e.g., "eef_position", "eef_rotation", "mano_hand_param", "mano_ee_2d", "mano_parameters", "arm", "left_hand", "right_hand", "waist", "sharpa_qpos", "qpos", "mano_keypoint" or "gripper"
     single_arm: if True, set the right arm to be zeros, only for "arm", "left_hand" and "right_hand" action keys
+    modality_present: whether this modality actually exists for the current episode, measured
+        over the full trajectory. When given, this replaces the local all-zero check below,
+        which otherwise mistakes a real but momentarily-constant signal (e.g. a gripper held
+        closed for an entire short window) for an absent modality. Leave None to keep the
+        old per-call behavior for callers that do not have episode-level context.
     """
     if "eef_position" in action_key:
         max_length = 3
@@ -155,13 +165,34 @@ def pad_action_state_with_key(action_state: np.ndarray, action_key: str, single_
     # not exist -- notably WidowX's zero-filled right arm, which reaches here
     # unmasked because the `single_arm` shortcut above only fires for the franka
     # and ur embodiment tags, not oxe.
-    modality_present = not np.all(action_state == 0)
+    #
+    # But `action_state` here is one training window (e.g. 16 steps), not the
+    # episode -- and a real, present modality can easily be constant for an entire
+    # window (a gripper held closed while carrying something). Measured on
+    # converted Bridge data: 16.5% of 16-step windows are constant-closed, so this
+    # local check silently re-drops that same fraction of "closed" supervision.
+    # Callers with episode-level context should pass `modality_present` explicitly;
+    # this local check is the fallback for callers that cannot.
+    if modality_present is None:
+        modality_present = not np.all(action_state == 0)
     if modality_present:
         if action_dim <= max_length:
             action_mask[:, :action_dim] = True
         else:
             action_mask[:, :] = True  # or handle truncation consistently
     return action_state, action_mask
+
+def episode_modality_present(traj_data: pd.DataFrame, action_key: str) -> bool:
+    """Whether `action_key` ever varies across the whole episode `traj_data` comes from.
+
+    Ground truth for `pad_action_state_with_key`'s presence check: a short training
+    window can be legitimately constant (gripper held closed throughout), but the full
+    episode essentially never is unless the modality truly does not apply.
+    """
+    if action_key not in traj_data.columns:
+        return True  # nothing to compare against; let the per-window fallback decide
+    arr = np.stack(traj_data[action_key].values)
+    return not np.all(arr == 0)
 
 def calculate_dataset_statistics(parquet_paths: list[Path]) -> dict:
     """Calculate the dataset statistics of all columns for a list of parquet files."""
@@ -2275,7 +2306,14 @@ class LeRobotMixtureDataset(Dataset):
                     dataset_single_arm = True
                 else:
                     dataset_single_arm = False
-                raw_data = dataset.get_step_data(trajectory_id, step)    
+                raw_data = dataset.get_step_data(trajectory_id, step)
+                # get_step_data just populated dataset.curr_traj_data with the full episode
+                # (see LeRobotSingleDataset.get_step_data); use it to judge modality presence
+                # instead of the current training window, which can be legitimately constant.
+                episode_action_present = {
+                    action_key: episode_modality_present(dataset.curr_traj_data, action_key)
+                    for action_key in dataset.modality_keys.get("action", [])
+                }
                 history_len = len(dataset.history_action_indices) if dataset.history_action_indices is not None else 0
                 if self.use_delta_action:
                     raw_data = self.get_delta_action_from_raw_data(raw_data, embodiment_tag, dataset.history_action_indices)
@@ -2325,8 +2363,14 @@ class LeRobotMixtureDataset(Dataset):
                         action = []
                         action_mask = []
                         for action_key in dataset.modality_keys["action"]:
-                            padded_action, mask = pad_action_state_with_key(data[action_key][history_len:], action_key, dataset_single_arm)
-                            padded_history_action, history_mask = pad_action_state_with_key(data[action_key][:history_len], action_key, dataset_single_arm)
+                            padded_action, mask = pad_action_state_with_key(
+                                data[action_key][history_len:], action_key, dataset_single_arm,
+                                modality_present=episode_action_present.get(action_key),
+                            )
+                            padded_history_action, history_mask = pad_action_state_with_key(
+                                data[action_key][:history_len], action_key, dataset_single_arm,
+                                modality_present=episode_action_present.get(action_key),
+                            )
                             if f"{action_key}_mask" in data.keys():
                                 if self.use_delta_action:
                                     wrist_mask = data[f"{action_key}_mask"].reshape(-1, 1)[history_len+2:] 
@@ -2362,7 +2406,10 @@ class LeRobotMixtureDataset(Dataset):
                         action = []
                         action_mask = []
                         for action_key in dataset.modality_keys["action"]:
-                            padded_action, mask = pad_action_state_with_key(data[action_key], action_key, dataset_single_arm)
+                            padded_action, mask = pad_action_state_with_key(
+                                data[action_key], action_key, dataset_single_arm,
+                                modality_present=episode_action_present.get(action_key),
+                            )
                             if f"{action_key}_mask" in data.keys():
                                 wrist_mask = raw_data[f"{action_key}_mask"].reshape(-1, 1)[1:]
                                 mask = mask & wrist_mask
