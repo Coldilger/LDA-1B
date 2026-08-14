@@ -79,6 +79,13 @@ def main() -> None:
     ap.add_argument("--n-trajs", type=int, default=24)
     ap.add_argument("--samples-per-traj", type=int, default=5)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument(
+        "--traj-ids",
+        type=str,
+        default=None,
+        help="Comma-separated explicit trajectory ids, bypassing random sampling. "
+        "For testing against a partial download where only some episodes have video yet.",
+    )
     args = ap.parse_args()
 
     np.random.seed(args.seed)
@@ -103,8 +110,11 @@ def main() -> None:
     policy.to("cuda")
 
     lengths = dataset.trajectory_lengths
-    eligible = [i for i, n in enumerate(lengths) if n >= 3]
-    chosen = np.random.choice(eligible, size=min(args.n_trajs, len(eligible)), replace=False)
+    if args.traj_ids is not None:
+        chosen = [int(x) for x in args.traj_ids.split(",")]
+    else:
+        eligible = [i for i, n in enumerate(lengths) if n >= 3]
+        chosen = np.random.choice(eligible, size=min(args.n_trajs, len(eligible)), replace=False)
 
     oracle_l1s, policy_l1s = [], []
 
