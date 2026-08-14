@@ -113,21 +113,52 @@ slightly imperfect self-predictions land there instead of ground truth,
 error could compound over time (exposure bias, a classic receding-horizon
 control problem).
 
-**Tested and NOT supported** (`diag_policy_wrapper_rollout.py`, 12
-episodes × 20 steps, real closed-loop via `LDAInference.step()`, history
-built from the wrapper's own predictions): position error does not grow
-over the rollout (first half L1 0.0097, second half 0.0084 — if
-anything, slightly better), staying in the 0.006-0.016 range throughout.
-The position side of the wrapper's predictions looks reasonable across
-the whole episode, not just at the start.
+**Growth (exposure-bias) hypothesis tested and NOT supported for position
+or rotation** (`diag_policy_wrapper_rollout.py`, 12 episodes × 20 steps,
+real closed-loop via `LDAInference.step()`, history built from the
+wrapper's own predictions): neither position nor rotation error grows
+over the rollout.
 
-**So exposure bias via `history_action` is not the main cause of 0% — or
-at least doesn't explain the position side.** Only position was checked;
-rotation and gripper through this same real, closed-loop path haven't
-been checked yet — and those are what actually determine whether the
-gripper closes on the right object at the right orientation, even if the
-arm is roughly heading the right way. Next step: the same rollout test,
-tracking rotation and gripper error, not just position.
+| | overall | first half | second half |
+|---|---|---|---|
+| position L1 | 0.0091 | 0.0097 | 0.0084 |
+| rotation L1 | 0.0326 | 0.0363 | 0.0285 |
+| gripper error | **0.4293** | 0.4771 | 0.3771 |
+
+Position and rotation look reasonable throughout and, if anything,
+improve slightly across the rollout — not the growing-error signature
+exposure bias would predict.
+
+**Gripper is a different story, and this is very likely the real cause
+of 0% closed-loop success.** 0.43 mean error on a ~[0,1]-scale prediction
+is close to what pure guessing would produce — the wrapper's gripper
+channel carries essentially no usable open/close signal, from step 0
+onward, not growing worse over time but never good either. This
+reconciles the two apparently contradictory measurements: the earlier
++0.86-correlation gripper result (`grip-*.out`) was measured with
+**ground-truth** `history_action` from the training pipeline
+(`get_step_data_with_transform`); this test uses the wrapper's own
+**self-generated** `history_action`, exactly as real closed-loop control
+must (you never have ground truth of your own past actions at
+deployment). Per `lda_policy.py`'s own documented measurement, gripper
+accuracy without `history_action` at all collapses to chance (51.5%
+accuracy / +0.026 correlation) versus 93.0% / +0.863 with the
+ground-truth version. This test shows that self-generated history does
+**not** recover that benefit — it behaves close to the "without" case
+even once several steps of self-predicted history have accumulated.
+
+**Read together, this points to a training/deployment mismatch rather
+than a wrapper bug**: the model appears to have learned to rely on
+`history_action` being accurate (i.e. implicitly on it being ground
+truth) for gripper state, which is information that is structurally
+unavailable in real closed-loop control. If so, this isn't something a
+code fix to `lda_policy.py` can resolve on its own — it would need
+either retraining with self-generated (noisy) history in the loop
+(scheduled sampling / DAgger-style), or removing the model's reliance on
+history_action for gripper by giving it a more direct channel (e.g.
+lifting `state_dim: null`, if the pre-trained backbone supports state
+conditioning at all). Worth checking with someone closer to the
+architecture before committing to either fix.
 
 ## Caveats
 

@@ -15,6 +15,15 @@ logged state delta. If per-step error grows across the rollout, that
 supports the exposure-bias hypothesis (history_action built from the
 model's own imperfect past predictions, not ground truth, diverges further
 from the training distribution the longer the rollout runs).
+
+Extended to also track ROTATION and GRIPPER error, not just position: the
+first pass (position-only) ruled out the growth hypothesis, but 0% closed-loop
+success can just as easily come from wrong orientation or a gripper that
+never actually closes on the object, even with roughly-correct positioning.
+`pred_full` (the raw 7-dim [dx,dy,dz,d_roll,d_pitch,d_yaw,gripper] LDAInference
+predicts before axangle/binarize conversion) is read straight off
+model.action_buffer right after step() -- step() never clears action_buffer
+to None, it only replaces it lazily on the next replan, so this is safe.
 """
 
 import pathlib
@@ -72,8 +81,8 @@ def main():
         seed=0,
     )
 
-    # errs_by_step[k] collects the position-delta L1 at the k-th env step of a
-    # rollout, pooled across episodes -- lets us see whether error trends up.
+    # errs_by_step[k] collects (pos_L1, rot_L1, grip_err) at the k-th env step
+    # of a rollout, pooled across episodes -- lets us see whether error trends up.
     errs_by_step = [[] for _ in range(rollout_len)]
 
     for pos_i, ep_id in enumerate(episode_ids):
@@ -103,22 +112,56 @@ def main():
             pred_pos_delta = sim_action["world_vector"]  # already base-frame, comparable to state deltas
             real_pos_delta = state_next[0:3] - state_t[0:3]
 
-            errs_by_step[k].append(np.abs(pred_pos_delta - real_pos_delta).mean())
+            # Raw 7-dim [dx,dy,dz,d_roll,d_pitch,d_yaw,gripper] the wrapper
+            # actually predicted for this step, before axangle/binarize
+            # conversion -- action_buffer is never cleared to None by step(),
+            # only replaced lazily on the next replan, so this read is safe.
+            pred_full = model.action_buffer[model.action_buffer_idx - 1]
+            pred_rot_delta = pred_full[3:6]
+            pred_gripper = pred_full[6]
+
+            from scipy.spatial.transform import Rotation
+
+            rot_t = Rotation.from_euler("xyz", state_t[3:6].astype(np.float64))
+            rot_next = Rotation.from_euler("xyz", state_next[3:6].astype(np.float64))
+            real_rot_delta = (rot_next * rot_t.inv()).as_euler("xyz")
+            real_gripper = state_next[7]
+
+            pos_l1 = np.abs(pred_pos_delta - real_pos_delta).mean()
+            rot_l1 = np.abs(pred_rot_delta - real_rot_delta).mean()
+            grip_err = abs(pred_gripper - real_gripper)
+
+            errs_by_step[k].append((pos_l1, rot_l1, grip_err))
 
     print(f"n episodes replayed: {n_episodes}, rollout_len: {rollout_len}")
-    print("step | mean position-delta L1 | n")
+    print("step | position L1        | rotation L1        | gripper err        | n")
     for k in range(rollout_len):
         if errs_by_step[k]:
-            arr = np.array(errs_by_step[k])
-            print(f"{k:4d} | {arr.mean():.4f}  (sd {arr.std():.4f}) | {len(arr)}")
+            arr = np.array(errs_by_step[k])  # (n, 3): pos, rot, grip
+            pos, rot, grip = arr[:, 0], arr[:, 1], arr[:, 2]
+            print(
+                f"{k:4d} | {pos.mean():.4f} (sd {pos.std():.4f}) "
+                f"| {rot.mean():.4f} (sd {rot.std():.4f}) "
+                f"| {grip.mean():.4f} (sd {grip.std():.4f}) | {len(arr)}"
+            )
 
-    first_half = np.concatenate([errs_by_step[k] for k in range(rollout_len // 2) if errs_by_step[k]])
-    second_half = np.concatenate([errs_by_step[k] for k in range(rollout_len // 2, rollout_len) if errs_by_step[k]])
+    all_rows = np.concatenate([errs_by_step[k] for k in range(rollout_len) if errs_by_step[k]], axis=0)
+    half = rollout_len // 2
+    first_half = np.concatenate([errs_by_step[k] for k in range(half) if errs_by_step[k]], axis=0)
+    second_half = np.concatenate([errs_by_step[k] for k in range(half, rollout_len) if errs_by_step[k]], axis=0)
     print()
-    print(f"first half mean L1:  {first_half.mean():.4f}")
-    print(f"second half mean L1: {second_half.mean():.4f}")
-    print("(if second half is clearly worse than first half, error compounds over the rollout --")
-    print(" supports the exposure-bias / self-generated-history-action hypothesis.)")
+    for name, idx in [("position", 0), ("rotation", 1), ("gripper", 2)]:
+        print(
+            f"{name}: overall mean {all_rows[:, idx].mean():.4f} | "
+            f"first half {first_half[:, idx].mean():.4f} | "
+            f"second half {second_half[:, idx].mean():.4f}"
+        )
+    print("(if second half is clearly worse than first half for a metric, error compounds over")
+    print(" the rollout for that metric -- supports the exposure-bias hypothesis for it.)")
+    print()
+    print("Gripper error is on the model's own predicted scale (~[0,1] before binarize) vs the")
+    print("real next gripper reading -- a value near 0.5 on average means the prediction carries")
+    print("no usable open/close signal even if it's not literally NaN or constant.")
 
 
 if __name__ == "__main__":
