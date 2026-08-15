@@ -57,6 +57,13 @@ cd "$SIMPLER"
 # any episode whose output video already exists, so without it a rerun reuses the
 # previous run's footage and reports a number that was never measured -- this
 # produced a phantom 0.0% during the F1-VLA work (RESULTS.md, "Method note").
+# Worse than that note implies: results/ is keyed by CKPT's basename only
+# (e.g. "pytorch_model.pt"), which is IDENTICAL across every LDA training run,
+# so two different checkpoints at the same seed/exec_horizon collide too --
+# discovered 2026-08-14 when a fresh checkpoint silently inherited an Aug-5
+# run's stale 0.0. CKPT_TAG below disambiguates by the checkpoint's parent dir
+# name (e.g. "bridge_finetune_v2"), which is unique per training run here.
+CKPT_TAG="$(basename "$(dirname "$(dirname "$CKPT")")")"
 /home/3295540/.conda/envs/lda_eval/bin/python \
   /mnt/beegfsnew/scratch/3295540/LDA-1B/eval/bridge/main_inference.py \
   --lda-checkpoint-path "$CKPT" \
@@ -69,7 +76,7 @@ cd "$SIMPLER"
   --rgb-overlay-path "$OVERLAY" \
   --robot-init-x $INIT_X $INIT_X 1 --robot-init-y $INIT_Y $INIT_Y 1 \
   --obj-variation-mode episode --obj-episode-range 0 24 \
-  --additional-env-save-tags "lda_seed${SEED}_ex${EXEC_HORIZON}" \
+  --additional-env-save-tags "lda_${CKPT_TAG}_seed${SEED}_ex${EXEC_HORIZON}" \
   --robot-init-rot-quat-center 0 0 0 1 --robot-init-rot-rpy-range 0 0 1 0 0 1 0 0 1 \
   --vam-experiment-name unused --vam-video-model-path unused --vam-action-model-path unused \
   --vam-dataset-statistics-path unused --vam-img-horizon 0 --vam-lowdim-horizon 0 \

@@ -31,12 +31,18 @@ F1-VLA/eval/bridge/RESULTS.md. What is the same, what differs, and why:
    be *squashed* to 224x224, an aspect ratio the model never saw. Squaring first
    reproduces training exactly.
 
-4. **State / reference frame: does not arise.** F1 needed episode-relative
-   rotation because Bridge's proprio convention and SimplerEnv's absolute
-   `ee_pose_at_base` disagree (its fix #4, +8 points). LDA's checkpoint has
-   `state_dim: null` — no proprioception is fed to the policy at all — so there is
-   no state distribution to mismatch. Proprio is used here only to seed the
-   delta->absolute integration below.
+4. **State / reference frame: same fix as F1, when the checkpoint uses it.**
+   Checkpoints with `state_dim: null` (e.g. bridge_finetune_v2) never see
+   proprioception at all -- proprio is used only to seed the delta->absolute
+   integration below, and this point doesn't arise. Checkpoints trained with
+   real `state_dim` (e.g. bridge_finetune_v3, see LDA_bridge_v3.yaml) hit
+   exactly F1's problem: Bridge stores EE orientation as a small angle
+   relative to the gripper-down home pose, while SimplerEnv's absolute
+   `ee_pose_at_base` sits ~93deg off at rest, right at the pitch=pi/2 gimbal
+   singularity -- so `_build_state()` reports rotation relative to the pose
+   captured at episode reset, same as F1's fix #4 (F1-VLA/eval/bridge/RESULTS.md).
+   `state_dim: null` was originally chosen specifically to avoid re-solving
+   this; see LDA_bridge_v3.yaml's header for why that turned out to be costly.
 
 The frame conversion is the substantive new piece. LDA predicts deltas in the
 **gripper's own frame** (`calculate_delta_eef` computes `dT_i = T_i^-1 @ T_{i+1}`),
@@ -187,16 +193,47 @@ class LDAInference:
         # +0.863 with, on the same checkpoint and the same 200 frames.
         self.history_len = max(1, len(dcfg.history_action_indices) - 1)
         self.action_history: deque = deque(maxlen=self.history_len)
+        # Gripper is tracked separately from the rest of action_history: the
+        # simulator hands step() a REAL proprioceptive gripper reading every call
+        # (gripper_proprio) even though the model never sees it as input
+        # (state_dim: null). Training's history_action gripper column is always
+        # ground truth; the model's own predicted gripper is close to chance
+        # (measured: binarizing/re-normalizing it before storing did NOT help,
+        # gripper error stayed ~0.44 -- see ORACLE_EXPERIMENT.md). Using the
+        # simulator's real reading instead of the model's guess is not a guess at
+        # all, so it should track training's ground-truth-history condition far
+        # more closely than any self-predicted value can.
+        self.gripper_real_history: deque = deque(maxlen=self.history_len)
         self.task_description = None
         self.action_buffer: np.ndarray | None = None
         self.action_buffer_idx = 0
+
+        # Whether this checkpoint was trained with a real state_dim (see point 4
+        # in the module docstring). Checked once here rather than assumed, so
+        # this wrapper works unmodified for both bridge_finetune_v2
+        # (state_dim: null) and bridge_finetune_v3 (state_dim: 14) checkpoints.
+        self._state_dim = self.policy.config.framework.action_model.state_dim
+        # Episode-reset reference rotation for _build_state()'s relative-rotation
+        # fix; unused (stays None) when self._state_dim is None.
+        self._ref_rot = None
+        self._current_state: np.ndarray | None = None
 
     def reset(self, task_description: str) -> None:
         self.task_description = task_description
         self.image_history.clear()
         self.action_history.clear()
+        self.gripper_real_history.clear()
         self.action_buffer = None
         self.action_buffer_idx = 0
+        self._ref_rot = None
+
+    def _renorm_gripper(self, physical_binary: float) -> float:
+        """physical {0,1} -> the model's own normalized units (q99), the exact
+        inverse of the unapply() used elsewhere in this file on model output."""
+        out = self._transforms.apply(
+            {"action.left_gripper": np.array([[physical_binary]], dtype=np.float32)}
+        )["action.left_gripper"]
+        return float(np.asarray(out).reshape(-1)[0])
 
     @staticmethod
     def _to_training_view(image: np.ndarray) -> np.ndarray:
@@ -208,6 +245,48 @@ class LDAInference:
         pos = np.asarray(ee_pose_proprio.p, dtype=np.float64)
         rpy = Rotation.from_quat(ee_pose_proprio.q, scalar_first=True).as_euler("xyz")
         return np.concatenate([pos, rpy])
+
+    def _build_state(self, ee_pose_proprio, gripper_proprio: float) -> np.ndarray:
+        """Real proprioception in the model's own training convention -- see
+        point 4 in the module docstring. Position passes through unchanged
+        (Bridge's raw xyz already matches SimplerEnv's absolute frame, verified
+        by F1's diag_state.py). Rotation is reported relative to the pose
+        captured at this episode's first step, reproducing Bridge's own
+        "small angle from the gripper-down home pose" convention instead of
+        SimplerEnv's absolute (and near-gimbal-lock at rest) ee_pose_at_base --
+        F1's fix #4, same mechanism. Right arm is zero (WidowX is single-arm,
+        matching action's own right_* convention). Returns (1, 14), normalized
+        through the same q99 transform training used (state's normalization
+        modes are q99 for every key, same as action -- see BaseDataConfig).
+        """
+        pos = np.asarray(ee_pose_proprio.p, dtype=np.float64)
+        rot = Rotation.from_quat(ee_pose_proprio.q, scalar_first=True)
+        if self._ref_rot is None:
+            self._ref_rot = rot
+        rel_rot = self._ref_rot.inv() * rot
+        rpy = rel_rot.as_euler("xyz")
+
+        raw = {
+            "state.left_eef_position": pos.reshape(1, 3).astype(np.float32),
+            "state.left_eef_rotation": rpy.reshape(1, 3).astype(np.float32),
+            "state.left_gripper": np.array([[float(gripper_proprio)]], dtype=np.float32),
+            "state.right_eef_position": np.zeros((1, 3), dtype=np.float32),
+            "state.right_eef_rotation": np.zeros((1, 3), dtype=np.float32),
+            "state.right_gripper": np.zeros((1, 1), dtype=np.float32),
+        }
+        normed = self._transforms.apply(raw)
+        ordered = [
+            np.asarray(normed[k])
+            for k in (
+                "state.left_eef_position",
+                "state.left_eef_rotation",
+                "state.left_gripper",
+                "state.right_eef_position",
+                "state.right_eef_rotation",
+                "state.right_gripper",
+            )
+        ]
+        return np.concatenate(ordered, axis=1).astype(np.float32)  # (1, 14)
 
     def _predict_chunk(self, current_pose: np.ndarray) -> np.ndarray:
         """Return (exec_horizon, 7): base-frame [dx,dy,dz,droll,dpitch,dyaw,gripper]."""
@@ -222,6 +301,8 @@ class LDAInference:
             # starts, so the model sees the same shape of history it trained on.
             "history_action": self._history_array(),
         }
+        if self._state_dim is not None:
+            example["state"] = self._current_state
 
         with torch.no_grad():
             out = self.policy.predict_action([example])
@@ -238,9 +319,8 @@ class LDAInference:
             axis=1,
         ).astype(np.float64)  # (T, 6), gripper frame
 
-        gripper = np.asarray(denorm["action.left_gripper"]).reshape(-1).astype(np.float64)
-        if self.invert_gripper:
-            gripper = 1.0 - gripper
+        gripper_native = np.asarray(denorm["action.left_gripper"]).reshape(-1).astype(np.float64)
+        gripper = 1.0 - gripper_native if self.invert_gripper else gripper_native
 
         # Integrate the gripper-frame deltas from the robot's real pose, then
         # difference back out to get base-frame deltas. delta2abs returns T+1 poses
@@ -248,7 +328,11 @@ class LDAInference:
         abs_poses = delta2abs(local_delta, current_pose)  # (T+1, 6)
 
         n = min(self.exec_horizon, len(abs_poses) - 1)
-        # The steps about to be executed become the next call's history.
+        # The steps about to be executed become the next call's history. Position/
+        # rotation come from this prediction as before -- offline testing showed
+        # those aren't the problem (diag_policy_wrapper_rollout.py). Gripper is
+        # written here too but gets overwritten later in _history_array() with a
+        # REAL, not predicted, reading -- see step()/self.gripper_real_history.
         for j in range(n):
             self.action_history.append(raw[j].astype(np.float16))
         chunk = np.zeros((n, 7), dtype=np.float64)
@@ -260,16 +344,43 @@ class LDAInference:
         return chunk
 
     def _history_array(self) -> np.ndarray:
-        """(history_len, 138) of past normalized actions, zero-padded at the front."""
+        """(history_len, 138) of past normalized actions, zero-padded at the front.
+
+        Position/rotation come from action_history (the model's own past
+        predictions -- shown offline to be fine). Gripper (column 6) is
+        overwritten from gripper_real_history -- the simulator's real
+        proprioceptive readings -- since the model's own gripper predictions
+        are close to chance and self-predicted history doesn't recover the
+        ground-truth-history benefit (see the note in __init__).
+        """
         rows = list(self.action_history)
         pad = self.history_len - len(rows)
         if pad > 0:
             rows = [np.zeros(RAW_WIDTH, dtype=np.float16)] * pad + rows
-        return np.stack(rows[-self.history_len:], axis=0)
+        rows = [r.copy() for r in rows[-self.history_len:]]
+
+        grip_rows = list(self.gripper_real_history)
+        grip_pad = self.history_len - len(grip_rows)
+        if grip_pad > 0:
+            grip_rows = [0.0] * grip_pad + grip_rows
+        grip_rows = grip_rows[-self.history_len:]
+        for row, g in zip(rows, grip_rows):
+            row[6] = np.float16(g)
+
+        return np.stack(rows, axis=0)
 
     def step(self, image: np.ndarray, task_description: str, ee_pose_proprio, gripper_proprio) -> dict:
         if task_description is not None and task_description != self.task_description:
             self.reset(task_description)
+
+        # Real feedback from the just-finished previous action, recorded before
+        # this step's prediction (which may trigger a replan that reads this
+        # history) -- see gripper_real_history in __init__.
+        self.gripper_real_history.append(
+            self._renorm_gripper(float(gripper_proprio > 0.5))
+        )
+        if self._state_dim is not None:
+            self._current_state = self._build_state(ee_pose_proprio, gripper_proprio)
 
         self.image_history.append(self._to_training_view(image))
 

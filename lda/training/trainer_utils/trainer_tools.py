@@ -250,6 +250,23 @@ class TrainerUtils:
                     print(f"❌ cannot find module path: {path}")
         else:  # full load
             try:
+                # strict=False only tolerates missing/unexpected KEYS -- a key
+                # present in both the checkpoint and the model but with a
+                # different shape (e.g. warm-starting from a checkpoint whose
+                # state_encoder was sized for a different state_dim) still
+                # raises even under strict=False. Drop those explicitly instead
+                # of crashing, so the rest of the checkpoint (vision backbone,
+                # action model body, etc.) still loads normally and only the
+                # genuinely-incompatible submodule re-initializes fresh.
+                model_state = model.state_dict()
+                shape_mismatched = [
+                    k for k in checkpoint
+                    if k in model_state and checkpoint[k].shape != model_state[k].shape
+                ]
+                if shape_mismatched:
+                    if dist.get_rank() == 0:
+                        print(f"⚠️ skipping {len(shape_mismatched)} shape-mismatched key(s), left at fresh init: {shape_mismatched}")
+                    checkpoint = {k: v for k, v in checkpoint.items() if k not in shape_mismatched}
                 model.load_state_dict(checkpoint, strict=False)
                 if dist.get_rank() == 0:
                     print("✅ loaded <full_model> model parameters")

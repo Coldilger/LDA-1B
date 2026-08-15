@@ -1,0 +1,131 @@
+# Re-run of LDA_bridge_v2.yaml with real proprioception enabled (state_dim: null
+# -> 14). Everything else is identical to v2 -- run_id/run_root_dir/wandb_project
+# changed so this run's numbers don't mix with v2's.
+#
+# Why this exists: v2 (state_dim: null) reached 0/4 closed-loop tasks. Root-cause
+# investigation (2026-08-14, see eval/bridge/ORACLE_EXPERIMENT.md and the
+# diag_drift_ablation.py / diag_dataset_delta_bias.py diagnostics) found real,
+# consistently-signed per-step prediction bias in BOTH position (+z, ~3mm/step)
+# and rotation (yaw, ~0.27deg/step) that is NOT present in the training data
+# itself (measured directly: dataset's own per-step deltas are ~zero-mean on
+# every axis) -- so the model has no way to detect or correct its own small
+# visual-estimation drift, because it never receives a numeric proprioception
+# signal to check itself against. `state_dim: null` was set in the ORIGINAL
+# LDA_bridge.yaml specifically to avoid re-solving F1-VLA's reference-frame
+# problem (RESULTS.md fix #4: bridge_orig's orientation is stored as a small
+# angle relative to the gripper-down home pose, while SimplerEnv's absolute
+# ee_pose_at_base sits ~93deg off at rest, near a gimbal singularity) -- a
+# convenience shortcut that was never surfaced as a trade-off at the time, and
+# turned out to be the likely architectural cause of the 0% result. This run
+# undoes that shortcut, reusing F1's already-solved fix (report rotation
+# relative to the pose captured at episode reset) instead of re-hitting the bug
+# it was avoiding -- see `LDAInference._build_state()` in eval/bridge/lda_policy.py.
+#
+# state_dim: 14, matching OxeDataConfig.state_keys concatenated in order:
+# left_eef_position(3) + left_eef_rotation(3) + left_gripper(1) +
+# right_eef_position(3) + right_eef_rotation(3) + right_gripper(1) -- confirmed
+# directly against the dataloader, not assumed (right arm is zero-filled,
+# WidowX is single-arm, same convention as action_dim).
+#
+# pretrained_checkpoint is still LDA-pretrain.pt (state_dim: 58 there) -- the
+# state_encoder's input width differs (58 vs 14), a real shape mismatch on that
+# one submodule. See the load_pretrained_backbones fix in
+# lda/training/trainer_utils/trainer_tools.py (2026-08-14): shape-mismatched
+# keys are now skipped with a warning instead of crashing, so state_encoder
+# initializes fresh while every other pretrained weight (including the vision
+# backbone and the rest of the action model) still loads normally.
+
+run_id: bridge_finetune_v3
+run_root_dir: outputs/lda_bridge_v3
+seed: 42
+trackers: [jsonl, wandb]
+wandb_entity: null
+wandb_project: lda-bridge-v3
+is_debug: false
+
+framework:
+  name: QwenMMDiT
+  qwenvl:
+    base_vlm: pretrained/vlm/Qwen3-VL-4B-Instruct
+    attn_implementation: flash_attention_2
+
+  action_model:
+    action_model_type: DiT-L
+    hidden_size: 2560
+    add_pos_embed: true
+    max_seq_len: 1024
+    action_dim: 138
+    state_dim: 14
+    action_horizon: 16
+    future_action_window_size: 15
+    past_action_window_size: 0
+    obs_horizon: 2
+    num_views: 1
+    future_obs_index: 5
+    max_num_embodiments: 32
+    num_target_vision_tokens: 32
+    num_timestep_buckets: 1000
+    num_inference_timesteps: 4
+    noise_beta_alpha: 1.5
+    noise_beta_beta: 1.0
+    noise_s: 0.999
+    obs_loss_weight: 1.0
+    only_policy: false
+    only_wo_video_gen: false
+    policy_and_video_gen: false
+    vision_encoder_type: dinov3
+    vision_encoder_size: s
+    vision_encoder_path: pretrained
+    diffusion_model_cfg:
+      cross_attention_dim: 2560
+      dropout: 0.2
+      final_dropout: true
+      interleave_self_attention: true
+      norm_type: ada_norm
+      num_layers: 16
+      output_dim: 2560
+      positional_embeddings: null
+
+datasets:
+  vla_data:
+    dataset_py: lerobot_datasets
+    data_root_dir: /mnt/beegfsnew/scratch/3295540/data
+    data_mix: bridge_lda
+    lerobot_version: v2.0
+    CoT_prompt: "Your task is {instruction}. To identify the key objects for your task. Locate their bounding boxes in [x1,y1,x2,y2] format."
+    image_size: [224, 224]
+    delete_pause_frame: false
+    use_delta_action: true
+    training_task_weights: [1, 1, 1, 1]
+    per_device_batch_size: 16
+
+trainer:
+  pretrained_checkpoint: checkpoints/LDA-pretrain/LDA-pretrain.pt
+  freeze_modules: 'qwen_vl_interface,action_model.vision_encoder'
+  max_train_steps: 150000
+  num_warmup_steps: 6000
+  save_interval: 10000
+  eval_interval: 1000
+  logging_frequency: 100
+  learning_rate:
+    base: 4.0e-05
+    qwen_vl_interface: 1.0e-05
+    action_model: 1.0e-04
+  lr_scheduler_type: cosine_with_min_lr
+  scheduler_specific_kwargs:
+    min_lr: 5.0e-07
+  repeated_diffusion_steps: 1
+  max_grad_norm: 1.0
+  gradient_clipping: 1.0
+  gradient_accumulation_steps: 6
+  weight_decay: 0.0
+  optimizer:
+    name: AdamW
+    betas: [0.9, 0.95]
+    eps: 1.0e-08
+    weight_decay: 1.0e-05
+  is_resume: false
+  resume_epoch: null
+  resume_step: null
+  enable_gradient_checkpointing: true
+  enable_mixed_precision_training: true
