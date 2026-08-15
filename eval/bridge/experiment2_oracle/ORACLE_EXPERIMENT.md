@@ -1,5 +1,11 @@
 # Experiment 2: Oracle injection — LDA-1B
 
+> **⚠️ Results below are INVALID.** The oracle hook was added to a class
+> the checkpoint doesn't actually use — see `README.md` in this folder for
+> what went wrong and what needs to happen before these numbers can be
+> trusted. The mechanism/background sections below remain accurate; only
+> the results table and its interpretation need redoing.
+
 ## What this is and why it's grounded, not invented
 
 This experiment is not something we made up. It directly extends the
