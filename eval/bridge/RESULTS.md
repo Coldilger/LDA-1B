@@ -635,6 +635,39 @@ not a guaranteed fix, and still costs several days of compute, but better
 justified than before this check. (Caveat: n=24 from a single seed each,
 not a full sweep — a real signal, not a comprehensive one.)
 
+### Is the drift just a replanning-frequency problem? Tested directly — no, and it's worse the other way
+
+Separate question, raised independently of the clipping story: the model
+commits to `exec_horizon=8` steps of a predicted 16-step chunk before
+checking real state again (~1.6s blind at 5Hz control). Maybe drift
+compounds simply because the model doesn't look at reality often enough to
+catch and correct small errors, regardless of normalization. This is a pure
+eval-time knob (`--lda-exec-horizon`, already flagged as "untuned" in
+`lda_policy.py`) — cheap to test on the already-trained v3 checkpoint, no
+retrain needed.
+
+Same Carrot/seed0 comparison as above, v3 with `exec_horizon=1` (replans
+every single step) vs. the existing `exec_horizon=8` run:
+
+| | exec_horizon=8 | exec_horizon=1 |
+|---|---|---|
+| ever moved the correct object | 3/24 | **0/24** |
+| holding object at final step | 1/24 | 0/24 |
+| held it consecutively (ever) | 1/24 | 0/24 |
+| moved the wrong object (ever) | 1/24 | 0/24 |
+
+**More frequent replanning made it worse, not better** — the opposite of
+the naive hypothesis. Plausible mechanism: the action head is diffusion-
+based and its chunk predictions aren't perfectly consistent call-to-call;
+replanning every step discards temporal coherence in favor of constant
+re-sampling, which reads as jittery, inconsistent motion rather than
+reactive correction. `exec_horizon=8` at least commits to a locally
+coherent trajectory, occasionally stumbling into real progress; `
+exec_horizon=1` doesn't get the chance to. This doesn't rule out an
+intermediate value (2-4) doing better, but the extreme "always replan" end
+of this knob is not the fix, and low replanning frequency is not what's
+driving the closed-loop failure — one fewer plausible confound.
+
 F1-VLA is from `F1-VLA/eval/bridge/RESULTS.md`: 3-seed means on the `chunk_size: 4`
 checkpoint.
 
