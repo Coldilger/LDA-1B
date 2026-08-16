@@ -66,17 +66,24 @@ def main():
         seed=lda_args.lda_seed,
     )
 
-    captured = []  # list of (episode_step_counter, 14,) normalized state arrays
-    step_counter = {"n": 0}
+    captured = []  # list of (global_step, episode_step, 14,) normalized state arrays
+    step_counter = {"n": 0, "ep_step": 0}
     original_build_state = model._build_state
+    original_reset = model.reset
+
+    def instrumented_reset(task_description):
+        step_counter["ep_step"] = 0
+        return original_reset(task_description)
 
     def instrumented_build_state(ee_pose_proprio, gripper_proprio):
         out = original_build_state(ee_pose_proprio, gripper_proprio)
-        captured.append((step_counter["n"], np.asarray(out).reshape(-1).copy()))
+        captured.append((step_counter["n"], step_counter["ep_step"], np.asarray(out).reshape(-1).copy()))
         step_counter["n"] += 1
+        step_counter["ep_step"] += 1
         return out
 
     model._build_state = instrumented_build_state
+    model.reset = instrumented_reset
 
     success_arr = maniskill2_evaluator(model, args)
     print(args)
@@ -86,7 +93,9 @@ def main():
         print("\nNo _build_state() calls captured -- checkpoint has state_dim: null?")
         return
 
-    S = np.array([c[1] for c in captured])  # (N, 14)
+    S = np.array([c[2] for c in captured])          # (N, 14)
+    ep_step = np.array([c[1] for c in captured])     # (N,) step index within its own episode
+
     print(f"\n=== live _build_state() output over {len(S)} real closed-loop steps ===")
     print("(already q99-normalized -- training data lives in roughly [-1, 1];")
     print(" values well outside that band indicate reference-frame/OOD state)\n")
@@ -101,13 +110,31 @@ def main():
     rot_cols = S[:, [3, 4, 5]]
     frac_extreme_rot = float((np.abs(rot_cols) > 1.5).mean())
     print(f"\noverall |x|>1.5 fraction, left rotation columns only: {frac_extreme_rot:.2%}")
+
+    # Is x/z clipping front-loaded (present from episode start -> static offset)
+    # or does it build up over the episode (-> compounding drift from the
+    # policy's own actions)?
+    print("\n=== does left_x / left_z clipping (|x|>0.9) grow over the episode? ===")
+    print(f"{'ep_step bucket':16s} {'n':>6s}  {'frac x clip':>12s}  {'frac z clip':>12s}")
+    max_step = int(ep_step.max())
+    n_buckets = 4
+    edges = np.linspace(0, max_step + 1, n_buckets + 1)
+    for b in range(n_buckets):
+        lo, hi = edges[b], edges[b + 1]
+        mask = (ep_step >= lo) & (ep_step < hi)
+        if mask.sum() == 0:
+            continue
+        x_clip = float((np.abs(S[mask, 0]) > 0.9).mean())
+        z_clip = float((np.abs(S[mask, 2]) > 0.9).mean())
+        print(f"steps {int(lo):3d}-{int(hi):<3d}    {int(mask.sum()):6d}  {x_clip:11.1%}  {z_clip:11.1%}")
+
     if frac_extreme_rot > 0.1:
-        print("VERDICT: rotation state frequently lands well outside the training "
+        print("\nVERDICT: rotation state frequently lands well outside the training "
               "range -> the reference-frame approximation is producing "
               "out-of-distribution state on a meaningful fraction of real "
               "closed-loop steps.")
     else:
-        print("VERDICT: rotation state mostly stays in-range -> the reference-frame "
+        print("\nVERDICT: rotation state mostly stays in-range -> the reference-frame "
               "approximation is not obviously blowing up; look elsewhere for the "
               "closed-loop failure.")
 

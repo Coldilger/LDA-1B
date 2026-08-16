@@ -434,14 +434,68 @@ re-checked for LDA's q99 scheme specifically — plausible that F1's
 mean/std-based state normalization tolerates the same absolute-frame offset
 comfortably while LDA's tighter q99 bounds do not.
 
-**Not yet fixed.** Next step: pin down whether this is a genuine coordinate-
-frame offset between SimplerEnv's `ee_pose_at_base` and Bridge's raw
-`observation.state[:3]` (would need a direct numeric comparison, e.g.
-reproducing F1's `diag_state.py`-style range check but against LDA's own
-q99 bounds specifically, not just eyeballing that the two distributions
-roughly overlap), or a units/scale issue introduced somewhere in the LDA-
-specific conversion path that F1's differently-shaped normalization
-happens not to expose.
+### Not a static coordinate-frame offset — a compounding drift, worsened by hard clipping
+
+Two more checks (2026-08-16) settle what kind of problem this is.
+
+**It isn't a calibration offset baked into the scene setup.** `diag_position_range.py`
+directly compares SimplerEnv's raw `ee_pose_at_base.p` against LDA's own q01/q99
+window. Important correction along the way: `robot_init_x`/`robot_init_y` (the
+CLI knobs `eval_bridge_simpler.slurm` sets to 0.147/0.028) place the robot's
+*chassis* in the scene — `ee_pose_at_base` is already expressed in the robot's
+own base frame, so it's unaffected by where the chassis sits. With an idle
+policy (zero actions), the end-effector's resting pose is `x=0.292, y=-0.006,
+z=0.135` — comfortably inside LDA's own training window (`x: [0.171, 0.453]`,
+`z: [-0.056, 0.195]`). So the arm starts in-distribution; nothing about the
+static scene setup is offset from what training saw. (Position is a straight
+`state[:, 0:3]` passthrough at conversion time too —
+`data_preprocessing/convert_bridge_to_lda.py`'s `STATE_SRC` — no transform is
+applied there that could introduce a silent frame shift.)
+
+**It grows over the episode.** Re-instrumented `diag_live_state_range.py` to
+also bucket `_build_state()`'s output by within-episode step index (n=360
+steps, 6 real closed-loop episodes):
+
+| episode step | n | frac \|left_x\|>0.9 | frac \|left_z\|>0.9 |
+|---|---|---|---|
+| 0–15 | 90 | **0.0%** | 17.8% |
+| 15–30 | 90 | 21.1% | 33.3% |
+| 30–45 | 90 | 35.6% | 17.8% |
+| 45–60 | 90 | 33.3% | 7.8% |
+
+`left_x` clipping is **zero in the first quarter of every episode and climbs
+monotonically afterward** — the textbook signature of compounding rollout
+drift, not a fixed offset (a fixed offset would clip from step 0). Put
+together with the resting-pose check above: the arm starts fine, and drifts
+out of the trained x-range as the (still-imperfect) policy's own actions
+accumulate.
+
+**Why this caps success at zero instead of just degrading it, the way it does
+for F1:** LDA's state normalization *hard-clips* (`torch.clamp(normalized,
+-1, 1)`, `transform/state_action.py:134`) — every value beyond `[q01, q99]`
+collapses to the identical `-1.0` or `+1.0`, regardless of how far out of
+range the real position actually is. F1's `_build_state` normalizes with
+plain `(state - mean) / std`, no clamp — so even when F1's proprioception
+also drifts outside its "typical" range (its own docstring accepts this:
+rotation "|angle| < 1.6"), the signal stays *monotonic*, just less precise.
+Once LDA's `left_x` crosses out of `[q01, q99]`, every subsequent position
+in that direction is numerically indistinguishable from every other — the
+model loses the one signal that could tell it "you've drifted, correct
+back," and the drift compounds with no way to self-arrest. This is
+consistent with everything measured so far: the gripper head is excellent
+given correct state (92% offline), rotation state stays in-range and doesn't
+explain it, and position clipping is absent at episode start but grows
+exactly as the policy's own uncorrected errors accumulate.
+
+**Not yet fixed** — this is a property of how the checkpoint was trained
+(q99 stats and the hard-clamp transform are baked into what the model
+learned to expect), not something patchable at eval time. A genuine fix
+would mean retraining with a normalization scheme that doesn't destroy
+information beyond the 1st/99th percentile (e.g. `mean_std`, which
+`state_action.py` already supports as a `mode`) or widening the fitted
+q01/q99 window. Worth flagging as a concrete, testable hypothesis for a
+future retrain rather than something to chase further on the current
+checkpoint.
 
 F1-VLA is from `F1-VLA/eval/bridge/RESULTS.md`: 3-seed means on the `chunk_size: 4`
 checkpoint.
