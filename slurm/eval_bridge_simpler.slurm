@@ -8,6 +8,11 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=01:00:00
+# gnode07 reads idle to SLURM but another user's long-running inference
+# servers permanently occupy ~20GB of its GPU (see the "gnode07 GPU
+# squatter" memory note) -- excluded to avoid the non-deterministic OOM
+# that already hit an LDA training job twice on this node.
+#SBATCH --exclude=gnode07
 #SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/eval-%j.out
 
 # One task x one seed x 24 episodes of closed-loop SimplerEnv rollout.

@@ -303,16 +303,46 @@ reading is ~1.5 SE from zero. A weak positive signal that is not yet growing.
 
 ## Results
 
-Pending. Protocol: 4 tasks x 24 episodes x 3 seeds, means of three seeds, via
-`slurm/submit_eval_sweep.sh`.
+Protocol: 4 tasks x 24 episodes x 3 seeds, means of three seeds, via
+`slurm/submit_eval_sweep.sh`. Run 2026-08-16 on the v3 checkpoint
+(`outputs/lda_bridge_v3/bridge_finetune_v3/final_model/pytorch_model.pt`,
+full 150,000-step training, real gripper history + `state_dim: 14` fix —
+see `LDA_bridge_v3.yaml`'s header and the eval harness section above for
+what v3 changed relative to earlier checkpoints).
 
 | task | LDA-1B | F1-VLA | mimic-video | paper (F1) |
 |---|---|---|---|---|
-| Put Carrot on Plate | — | 38.9% | 41.7% | 70.8% |
-| Put Spoon on Towel | — | 47.2% | 45.8% | 50.0% |
-| Stack Green Cube | — | 37.5% | 16.7% | 50.0% |
-| Put Eggplant in Basket | — | 69.4% | 95.8% | 66.7% |
-| **average** | — | **48.2%** | **50.0%** | **59.4%** |
+| Put Carrot on Plate | **0.0%** | 38.9% | 41.7% | 70.8% |
+| Put Spoon on Towel | **0.0%** | 47.2% | 45.8% | 50.0% |
+| Stack Green Cube | **0.0%** | 37.5% | 16.7% | 50.0% |
+| Put Eggplant in Basket | **0.0%** | 69.4% | 95.8% | 66.7% |
+| **average** | **0.0%** | **48.2%** | **50.0%** | **59.4%** |
+
+**0 of 12 runs (all 4 tasks x 3 seeds) succeeded.** This is not an eval-harness
+bug: all 12 jobs completed cleanly (`EVAL_EXIT=0`, 24 episodes each, none
+skipped), and the config-loading path was checked directly —
+`read_mode_config` resolves `run_dir` from the checkpoint path via
+`parents[1]`, which for `final_model/pytorch_model.pt` correctly lands on
+`bridge_finetune_v3/config.yaml` (`state_dim: 14`, confirmed present); a
+resolution failure there raises `AssertionError` and the jobs would not have
+completed. So the v3 checkpoint's real-proprioception fix *was* exercised in
+this eval, and it still scores zero.
+
+Per-episode stats show the arm is not inert — job 628404 (carrot, seed 0)
+logged `moved_correct_obj: True` with `is_src_obj_grasped` toggling true/false
+across the rollout, i.e. some interaction happens — but `src_on_target` never
+triggered on any of the 288 episodes run (24 episodes x 12 jobs). Combined
+with the pre-v3 finding above ("Open concern: the gripper head is not
+learning" — 55.5% gripper-direction accuracy at 100k steps, barely above the
+50% coin-flip baseline), the likely explanation is the same one already
+flagged there, now confirmed at the checkpoint meant to fix it: the gripper
+head still is not reliably closing on cue, which caps pick-and-place success
+at zero regardless of how well the arm reaches. **Not yet re-diagnosed at the
+v3/150k checkpoint specifically** — the open-loop gripper probe above was
+last measured on 70k/90k/100k-step checkpoints from a different training run,
+before the real-history fix; re-running it on v3 would confirm whether the
+fix changed the gripper signal at all, or whether the closed-loop zero has a
+different cause this time.
 
 F1-VLA is from `F1-VLA/eval/bridge/RESULTS.md`: 3-seed means on the `chunk_size: 4`
 checkpoint.
