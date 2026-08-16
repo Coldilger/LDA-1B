@@ -499,15 +499,34 @@ guessing — it can degrade the whole action chunk, which fits the erratic
 gripper head that's excellent offline given clean state, but has to share
 attention with a corrupted position signal once the rollout drifts).
 
-**Not yet fixed** — this is a property of how the checkpoint was trained
-(q99 stats and the hard-clamp transform are baked into what the model
-learned to expect), not something patchable at eval time. A genuine fix
-would mean retraining with a normalization scheme that doesn't destroy
-information beyond the 1st/99th percentile (e.g. `mean_std`, which
-`state_action.py` already supports as a `mode`) or widening the fitted
-q01/q99 window. Worth flagging as a concrete, testable hypothesis for a
-future retrain rather than something to chase further on the current
-checkpoint.
+### Tried the cheap fix first — a no-retrain soft-clip doesn't rescue it
+
+Before committing to a retrain, tested whether the hard clamp specifically
+(rather than the tighter q99 window itself) is what's costing success.
+`eval/bridge/lda_policy_softclip.py`: a standalone `LDAInferenceSoftClip`
+subclass (doesn't touch `lda_policy.py` or `transform/state_action.py`)
+replicating the exact same q01/q99 linear normalization for the in-range
+region, but replacing `torch.clamp(normalized, -1, 1)` with a C1-continuous
+soft saturation, `f(x) = x` for `|x|<=1`, `f(x) = sign(x)*(1+tanh(|x|-1))`
+beyond it — so two different real positions that used to both clip to an
+identical `-1.0` now map to two different (if still compressed) values,
+without changing anything about values already inside `[-1, 1]`.
+
+Full 24-episode run, v3/150k checkpoint, Carrot task, seed 0, 2026-08-16:
+**0/24 — still exactly zero.** No improvement over the unmodified
+checkpoint's own 0/24-per-seed baseline on this task.
+
+This doesn't prove the clipping mechanism is irrelevant — the model's
+weights were still trained having *never* seen anything past exactly ±1 in
+any shape, so a smooth-but-still-novel tail is plausibly just as
+out-of-distribution to it as a flat one, only differently so. But it does
+rule out "the hard clamp specifically is a cheap, patchable-at-eval-time
+mistake" the way F1's bugs were. **Conclusion: no shortcut here** — a
+genuine fix needs the normalization scheme baked into the weights from
+training, not adjusted after the fact. Next step, if pursued, is a retrain
+with `mean_std` normalization for state (already supported as a `mode` in
+`transform/state_action.py`) or a widened q01/q99 fit, not further eval-time
+patching.
 
 F1-VLA is from `F1-VLA/eval/bridge/RESULTS.md`: 3-seed means on the `chunk_size: 4`
 checkpoint.
