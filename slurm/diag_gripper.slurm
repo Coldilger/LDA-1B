@@ -5,6 +5,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=00:40:00
+#SBATCH --exclude=gnode07
 #SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/grip-%j.out
 export HF_HOME=/mnt/beegfsnew/scratch/3295540/hf_cache
 export TOKENIZERS_PARALLELISM=false

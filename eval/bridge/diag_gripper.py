@@ -82,6 +82,18 @@ def main() -> None:
             "lang": data["lang"],
             "embodiment_id": policy.embodiment_id,
         }
+        # Checkpoints with a real state_dim (e.g. bridge_finetune_v3) require a
+        # "state" entry -- MMDiT_ActionHeader.predict_action always calls
+        # self.state_encoder(state, ...) when self.state_dim is not None,
+        # regardless of what's passed, and crashes on state=None. Checkpoints
+        # with state_dim: null ignore this value entirely (the "if self.state_dim
+        # is not None" gate lives on the model side), so it's safe to always
+        # attach it. data["state"] is already in the model's expected [1,
+        # state_dim] shape -- get_step_data_with_transform ran it through the
+        # same transforms training used, no closed-loop-style reference-frame
+        # correction needed since this is a single independent step, not a
+        # rollout.
+        example["state"] = data["state"]
         # Training always supplies history_action, and predict_action falls back to
         # None when it is absent. With state_dim: null the model has no other route
         # to its own gripper state -- the arm's pose is visible in the frame, the

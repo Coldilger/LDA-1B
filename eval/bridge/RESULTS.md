@@ -331,18 +331,46 @@ this eval, and it still scores zero.
 Per-episode stats show the arm is not inert — job 628404 (carrot, seed 0)
 logged `moved_correct_obj: True` with `is_src_obj_grasped` toggling true/false
 across the rollout, i.e. some interaction happens — but `src_on_target` never
-triggered on any of the 288 episodes run (24 episodes x 12 jobs). Combined
-with the pre-v3 finding above ("Open concern: the gripper head is not
-learning" — 55.5% gripper-direction accuracy at 100k steps, barely above the
-50% coin-flip baseline), the likely explanation is the same one already
-flagged there, now confirmed at the checkpoint meant to fix it: the gripper
-head still is not reliably closing on cue, which caps pick-and-place success
-at zero regardless of how well the arm reaches. **Not yet re-diagnosed at the
-v3/150k checkpoint specifically** — the open-loop gripper probe above was
-last measured on 70k/90k/100k-step checkpoints from a different training run,
-before the real-history fix; re-running it on v3 would confirm whether the
-fix changed the gripper signal at all, or whether the closed-loop zero has a
-different cause this time.
+triggered on any of the 288 episodes run (24 episodes x 12 jobs).
+
+### Re-diagnosing the gripper head at v3/150k: it is NOT the bottleneck anymore
+
+The obvious hypothesis was the same gripper-head weakness already flagged
+above (55.5% accuracy at 100k steps, barely above chance). Re-running
+`diag_gripper.py --with-history` against the v3/150k checkpoint (n=200,
+balanced open/closed, 2026-08-16) refutes it:
+
+| checkpoint | n | correlation | accuracy | separation |
+|---|---|---|---|---|
+| 100k (pre-fix, no real state) | 200 | +0.104 | 55.5% | — |
+| **v3/150k (real state, this run)** | **200** | **+0.849** | **92.0%** | **+0.828** |
+
+That required fixing `diag_gripper.py` itself first: it never passed a
+`state` field, which crashes checkpoints with `state_dim: not null`
+(`MMDiT_ActionHeader.predict_action` calls `self.state_encoder(state, ...)`
+unconditionally whenever the *model* has a configured `state_dim`, regardless
+of what's passed — `state=None` reaches `torch.bmm` and throws). Fixed by
+passing `data["state"]` straight through — already in the model's expected
+`[1, state_dim]` shape via `get_step_data_with_transform`'s own transform
+pipeline (the same one training used), no closed-loop-style reference-frame
+correction needed for a single independent offline step.
+
+**This flips the standing hypothesis.** Given real proprioceptive state, the
+v3 gripper head discriminates open/closed cleanly — nowhere near the
+"undertrained head" story that explained the pre-v3 zero. The closed-loop
+zero must have a different cause. The prime suspect now is a mismatch between
+*this* probe's state (read directly from the logged dataset) and what
+closed-loop eval actually feeds the model: `lda_policy.py`'s `_build_state()`
+reconstructs state from the live simulator at each step (position passthrough,
+rotation *relative to a reference captured at episode start*), a
+hand-rebuilt path this probe never exercises. If that reconstruction diverges
+from the format the model was trained on — even subtly, e.g. in the reference
+frame, units, or which columns are populated — every closed-loop episode
+would be conditioning the gripper (and everything else) on a state the model
+has never actually seen, while this offline probe's ground-truth state looks
+correct in isolation. **Not yet checked**: dump `_build_state()`'s output
+for a live SimplerEnv episode next to `get_step_data_with_transform`'s
+`state` for the same real pose, and diff them.
 
 F1-VLA is from `F1-VLA/eval/bridge/RESULTS.md`: 3-seed means on the `chunk_size: 4`
 checkpoint.
