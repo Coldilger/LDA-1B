@@ -596,6 +596,45 @@ pretraining behind it, which is at least consistent with (though not
 demonstrated to cause) the module being generally less robust rather than
 failing sharply at any one boundary — not measured, just noted.
 
+### Does giving the model real state help at all, even qualitatively? Yes.
+
+Before deciding whether a `mean_std` retrain is worth the cost, checked
+something cheaper and more basic: does v3's real proprioception (however
+imperfectly normalized) produce *any* qualitative closed-loop improvement
+over v2's `state_dim: null` (no proprioception at all, the checkpoint that
+originally motivated v3's whole state-conditioning effort)? Both already
+have full 24-episode closed-loop logs (v2: job 626928, v3: job 628404, both
+Carrot, seed 0) — no new run needed, just parsed each episode's final
+`episode_stats`:
+
+| | v2 (no state) | v3 (state, clipped) |
+|---|---|---|
+| n episodes | 24 | 24 |
+| ever moved the correct object | **0/24** | **3/24** |
+| holding object at final step | 0/24 | 1/24 |
+| held it consecutively (ever) | 0/24 | 1/24 |
+| moved the wrong object (ever) | 0/24 | 1/24 |
+| task success | 0/24 | 0/24 |
+
+**v2 never once so much as moves the target object, in any of 24
+episodes** — a total, uniform failure to engage with the task at all. v3
+does, in a real minority of episodes, and in one case actually grasps and
+holds the object (just never completes the placement). Both still score
+0% task success, but the underlying behavior is not equally broken:
+v3 is doing *something* v2 categorically cannot, even though the position-
+clipping mechanism above is very plausibly what stops it from finishing.
+
+**This changes the retrain calculus.** The clipping hypothesis specifically
+was weakened by the boundary-sensitivity check above, but this result is a
+different, more basic question — "does the state-conditioning direction
+have any merit at all" — and the answer here is yes. A `mean_std` retrain
+is no longer a shot in the dark aimed at an unconfirmed mechanism; it's a
+bet on a direction (give the model real proprioception) that's already
+shown a measurable, if small and incomplete, closed-loop effect. Still
+not a guaranteed fix, and still costs several days of compute, but better
+justified than before this check. (Caveat: n=24 from a single seed each,
+not a full sweep — a real signal, not a comprehensive one.)
+
 F1-VLA is from `F1-VLA/eval/bridge/RESULTS.md`: 3-seed means on the `chunk_size: 4`
 checkpoint.
 
