@@ -487,6 +487,18 @@ given correct state (92% offline), rotation state stays in-range and doesn't
 explain it, and position clipping is absent at episode start but grows
 exactly as the policy's own uncorrected errors accumulate.
 
+Checked the architecture to confirm the blast radius: `state_features` (the
+`state_encoder`'s output) isn't consumed narrowly — `MMDiT_ActionHeader.py`
+concatenates it as a token onto the action sequence
+(`action_features = torch.cat([state_features, action_features], dim=1)`,
+e.g. line 782) before the shared DiT/self-attention stack, so every
+predicted action dimension attends to it, gripper included. A clipped,
+uninformative `left_x`/`left_z` doesn't just leave position predictions
+guessing — it can degrade the whole action chunk, which fits the erratic
+`is_src_obj_grasped` toggling seen in the closed-loop episode logs (a
+gripper head that's excellent offline given clean state, but has to share
+attention with a corrupted position signal once the rollout drifts).
+
 **Not yet fixed** — this is a property of how the checkpoint was trained
 (q99 stats and the hard-clamp transform are baked into what the model
 learned to expect), not something patchable at eval time. A genuine fix
