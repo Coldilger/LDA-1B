@@ -27,13 +27,18 @@
 # directly against the dataloader, not assumed (right arm is zero-filled,
 # WidowX is single-arm, same convention as action_dim).
 #
-# pretrained_checkpoint is still LDA-pretrain.pt (state_dim: 58 there) -- the
-# state_encoder's input width differs (58 vs 14), a real shape mismatch on that
-# one submodule. See the load_pretrained_backbones fix in
-# lda/training/trainer_utils/trainer_tools.py (2026-08-14): shape-mismatched
-# keys are now skipped with a warning instead of crashing, so state_encoder
-# initializes fresh while every other pretrained weight (including the vision
-# backbone and the rest of the action model) still loads normally.
+# pretrained_checkpoint is still LDA-pretrain.pt. CORRECTED 2026-08-16 (was
+# previously described as a "58 vs 14 shape mismatch" -- checked directly,
+# that's wrong): LDA-pretrain.pt has ZERO state_encoder.* keys at all, not a
+# differently-shaped one. state_encoder initializes fresh regardless of
+# whatever state_dim is picked here -- there was nothing to warm-start from
+# either way. See the load_pretrained_backbones fix in
+# lda/training/trainer_utils/trainer_tools.py (2026-08-14), which handles
+# genuine shape mismatches (a different, real scenario elsewhere) but isn't
+# what's happening for state_encoder specifically -- it's just absent, so it
+# silently falls through strict=False's normal "missing key" tolerance.
+# Every other pretrained weight (vision backbone, rest of the action model)
+# still loads normally.
 
 run_id: bridge_finetune_v3
 run_root_dir: outputs/lda_bridge_v3

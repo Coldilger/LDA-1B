@@ -581,6 +581,21 @@ simply documenting the 0% result and the diagnostic trail as LDA-1B's
 contribution to the thesis, rather than committing further compute to
 chasing the exact mechanism.
 
+**Correction to the `state_dim: 14` rationale above:** `LDA_bridge_v3.yaml`'s
+header claims `state_encoder` warm-starts against a shape mismatch
+("pretrained_checkpoint ... state_dim: 58 there"). Checked directly
+(2026-08-16): `LDA-pretrain.pt` has **zero** `state_encoder.*` keys at
+all — not a shape mismatch, a total absence, which is also why the training
+log never printed the "skipping N shape-mismatched keys" warning that code
+path would emit. Practical upshot: `state_dim: 14` vs. a leaner
+single-arm-only `7` would have made no difference to pretrain reuse —
+neither could load anything, since there was nothing to load either way.
+One open, untested aside worth flagging: `state_encoder` is trained purely
+on this run's ~150k Bridge steps with none of the backbone's large-scale
+pretraining behind it, which is at least consistent with (though not
+demonstrated to cause) the module being generally less robust rather than
+failing sharply at any one boundary — not measured, just noted.
+
 F1-VLA is from `F1-VLA/eval/bridge/RESULTS.md`: 3-seed means on the `chunk_size: 4`
 checkpoint.
 
