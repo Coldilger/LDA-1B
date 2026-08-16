@@ -528,6 +528,59 @@ with `mean_std` normalization for state (already supported as a `mode` in
 `transform/state_action.py`) or a widened q01/q99 fit, not further eval-time
 patching.
 
+### Pre-retrain check: does the clipping hypothesis actually predict worse accuracy near the boundary? No.
+
+Before spending days on a retrain to test the clipping hypothesis the
+expensive way, checked whether it makes a testable, cheap prediction: if
+information genuinely collapses at the q01/q99 boundary, single-step
+prediction accuracy should be measurably worse for real, naturally-occurring
+samples whose logged position sits near/at that boundary than for samples
+comfortably mid-range — even without any closed-loop rollout involved.
+
+`diag_boundary_sensitivity.py`: reuses `diag_policy_wrapper.py`'s proven
+pattern (seed `LDAInference`'s real image/lowdim history from a real
+`bridge_orig_lerobot` episode, call the actual production `_predict_chunk`,
+compare predicted position delta against the real `state[t+1]-state[t]`),
+extended to explicitly set `_current_state` (v3-specific) and to split
+samples by `max(|x_norm|, |z_norm|)` computed from each sample's real,
+logged position. 60 episodes, up to 3 timesteps each, 2026-08-16:
+
+| group | n | position delta L1 |
+|---|---|---|
+| mid-range (`max(\|x\|,\|z\|) < 0.5`) | 89 | 0.0101 (sd 0.0063) |
+| near-boundary (`max(\|x\|,\|z\|) > 0.85`) | 21 | 0.0085 (sd 0.0030) |
+
+**Near-boundary samples are not worse — if anything, slightly better**
+(ratio 0.84x). This does not support the clipping hypothesis in the form
+tested: on real, internally-consistent (image, state) pairs where the
+position genuinely is near the training distribution's edge, the model
+predicts fine.
+
+**This doesn't fully close the question, and here's the honest caveat:**
+this test necessarily uses *naturally* near-boundary real examples, where
+the image is consistent with genuinely being there (e.g. a specific part of
+a real reach or placement). The closed-loop failure mode is different in
+kind — state drifts to the boundary as accumulated *error* during a
+diverging rollout, where the image may look nothing like what real
+near-boundary training examples looked like, and the same clipped state
+value now has to serve two very different physical situations. This probe
+can't distinguish "clipping is fine" from "clipping is fine only when
+paired with a physically consistent image, which closed-loop drift doesn't
+give it." A follow-up that would test that residual possibility directly
+(e.g. checking whether the *image* observed during real closed-loop drift
+episodes looks in-distribution or not, independent of the state clipping
+question) hasn't been run.
+
+**Bottom line for now: the clipping hypothesis is weakened, not confirmed
+or eliminated.** Given a real, if imperfect, pre-registered test came back
+against it, committing several days to a `mean_std` retrain on this basis
+alone is not well supported by current evidence. Recorded here rather than
+acted on immediately — LDA-1B's Experiment 1/2/4 remain blocked either way
+(no working closed-loop baseline), and this is worth weighing against
+simply documenting the 0% result and the diagnostic trail as LDA-1B's
+contribution to the thesis, rather than committing further compute to
+chasing the exact mechanism.
+
 F1-VLA is from `F1-VLA/eval/bridge/RESULTS.md`: 3-seed means on the `chunk_size: 4`
 checkpoint.
 
