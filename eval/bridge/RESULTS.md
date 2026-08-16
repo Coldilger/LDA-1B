@@ -368,9 +368,48 @@ from the format the model was trained on — even subtly, e.g. in the reference
 frame, units, or which columns are populated — every closed-loop episode
 would be conditioning the gripper (and everything else) on a state the model
 has never actually seen, while this offline probe's ground-truth state looks
-correct in isolation. **Not yet checked**: dump `_build_state()`'s output
-for a live SimplerEnv episode next to `get_step_data_with_transform`'s
-`state` for the same real pose, and diff them.
+correct in isolation.
+
+### The reference-frame suspicion, confirmed
+
+`_build_state()`'s rotation reference (episode-start pose in whichever
+simulator/robot is running) is only equivalent to Bridge's own convention if
+real Bridge trajectories also happen to start at a consistent pose — i.e. if
+raw rotation at t=0 is tightly clustered across trajectories. Checked
+directly with a new diagnostic, `diag_state_reference.py` (offline, no model
+forward pass — just reads `state.left_eef_rotation` at t=0 straight from the
+converted dataset), n=60 trajectories, 2026-08-16:
+
+| | roll | pitch | yaw |
+|---|---|---|---|
+| t=0 rotation, mean (rad) | 0.005 | −0.088 | 0.074 |
+| t=0 rotation, std (rad) | 0.086 | 0.164 | **0.379** |
+| \|rotation change\|, t=0→mid-trajectory, mean (rad) | 0.059 | 0.119 | 0.239 |
+
+**It is not.** The spread in starting rotation across trajectories (std up to
+0.38 rad / ~22° on yaw) is comparable to or larger than the typical
+within-trajectory rotation *signal* itself (mean 0.24 rad by mid-trajectory
+on yaw). Bridge episodes do not reliably start from one fixed home pose —
+they start from a range of poses roughly as wide as the motion the model is
+supposed to read off state during a rollout. So `_build_state()`'s choice of
+"this episode's own first step" as the rotation reference is not a
+close-enough stand-in for whatever fixed reference Bridge's raw data
+actually encodes: it injects reference-frame noise into the rotation state
+component on every closed-loop step, at a scale similar to the real signal —
+plausible enough on its own to explain a policy whose gripper head works
+perfectly offline (given correct state) but never completes a task
+closed-loop (given systematically wrong state).
+
+**Not yet fixed.** The immediate open question is what Bridge's actual
+rotation reference *is*, if not "trajectory's own first step" — candidates:
+a single truly-fixed pose shared across all of Bridge's data collection
+(would need locating in the raw conversion pipeline or Bridge's own
+documentation), or per-trajectory but computed from something other than
+frame 0 (e.g. a designed reset waypoint rather than the first logged frame).
+Also not yet checked: whether this same issue affects F1-VLA's own
+(structurally identical) fix #4 and simply matters less there, or whether F1
+sidesteps it some other way — worth a direct comparison before assuming the
+same root cause applies identically to both.
 
 F1-VLA is from `F1-VLA/eval/bridge/RESULTS.md`: 3-seed means on the `chunk_size: 4`
 checkpoint.
