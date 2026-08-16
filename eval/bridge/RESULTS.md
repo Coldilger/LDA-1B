@@ -370,15 +370,15 @@ would be conditioning the gripper (and everything else) on a state the model
 has never actually seen, while this offline probe's ground-truth state looks
 correct in isolation.
 
-### The reference-frame suspicion, confirmed
+### The reference-frame suspicion, checked directly — rotation is fine, position is not
 
 `_build_state()`'s rotation reference (episode-start pose in whichever
 simulator/robot is running) is only equivalent to Bridge's own convention if
 real Bridge trajectories also happen to start at a consistent pose — i.e. if
-raw rotation at t=0 is tightly clustered across trajectories. Checked
-directly with a new diagnostic, `diag_state_reference.py` (offline, no model
-forward pass — just reads `state.left_eef_rotation` at t=0 straight from the
-converted dataset), n=60 trajectories, 2026-08-16:
+raw rotation at t=0 is tightly clustered across trajectories. Checked with a
+new offline diagnostic, `diag_state_reference.py` (no model forward pass —
+just reads `state.left_eef_rotation` at t=0 straight from the converted
+dataset), n=60 trajectories, 2026-08-16:
 
 | | roll | pitch | yaw |
 |---|---|---|---|
@@ -386,30 +386,62 @@ converted dataset), n=60 trajectories, 2026-08-16:
 | t=0 rotation, std (rad) | 0.086 | 0.164 | **0.379** |
 | \|rotation change\|, t=0→mid-trajectory, mean (rad) | 0.059 | 0.119 | 0.239 |
 
-**It is not.** The spread in starting rotation across trajectories (std up to
-0.38 rad / ~22° on yaw) is comparable to or larger than the typical
-within-trajectory rotation *signal* itself (mean 0.24 rad by mid-trajectory
-on yaw). Bridge episodes do not reliably start from one fixed home pose —
-they start from a range of poses roughly as wide as the motion the model is
-supposed to read off state during a rollout. So `_build_state()`'s choice of
-"this episode's own first step" as the rotation reference is not a
-close-enough stand-in for whatever fixed reference Bridge's raw data
-actually encodes: it injects reference-frame noise into the rotation state
-component on every closed-loop step, at a scale similar to the real signal —
-plausible enough on its own to explain a policy whose gripper head works
-perfectly offline (given correct state) but never completes a task
-closed-loop (given systematically wrong state).
+Bridge trajectories do NOT start from one fixed pose — the spread at t=0
+(std up to 0.38 rad / ~22° on yaw) is comparable to the typical
+within-trajectory rotation signal itself (0.24 rad by mid-trajectory). This
+looked like a strong lead. But **F1-VLA uses the exact same
+episode-start-reference approximation** (`f1_vla_policy.py`'s `_build_state`,
+copied near-verbatim, including F1's own note that Bridge's rotation has
+"|angle| < 1.6" i.e. real, non-trivial spread) and still gets ~48% average
+closed-loop success, not 0% — so this approximation being imperfect can't be
+the whole story on its own, and needed a direct check rather than an
+inference from the offline dataset alone.
 
-**Not yet fixed.** The immediate open question is what Bridge's actual
-rotation reference *is*, if not "trajectory's own first step" — candidates:
-a single truly-fixed pose shared across all of Bridge's data collection
-(would need locating in the raw conversion pipeline or Bridge's own
-documentation), or per-trajectory but computed from something other than
-frame 0 (e.g. a designed reset waypoint rather than the first logged frame).
-Also not yet checked: whether this same issue affects F1-VLA's own
-(structurally identical) fix #4 and simply matters less there, or whether F1
-sidesteps it some other way — worth a direct comparison before assuming the
-same root cause applies identically to both.
+Built `diag_live_state_range.py`: runs the real v3 model through actual
+closed-loop SimplerEnv episodes (real predicted actions, not idle), with
+`_build_state()` monkey-patched to log every value it actually produces.
+360 real steps across 6 Carrot episodes, 2026-08-16:
+
+| col | min | max | mean | std | frac(\|x\|>0.9) |
+|---|---|---|---|---|---|
+| left_x | **−1.000** | 0.045 | −0.545 | 0.327 | **22.5%** |
+| left_y | −0.340 | 0.331 | −0.112 | 0.164 | 0.0% |
+| left_z | −0.421 | **1.000** | 0.443 | 0.441 | **19.2%** |
+| left_roll | −0.204 | 0.322 | 0.067 | 0.149 | 0.0% |
+| left_pitch | 0.027 | 1.000 | 0.560 | 0.240 | 8.3% |
+| left_yaw | −0.350 | 0.243 | −0.100 | 0.120 | 0.0% |
+| left_grip | −1.000 | 0.978 | 0.260 | 0.848 | 73.1%† |
+
+†gripper is expected to sit near the extremes most of the time (it's close
+to a binary open/closed signal) — not itself a red flag.
+
+**Rotation does not saturate** (roll/yaw: 0% of steps beyond 0.9, well inside
+the trained range) — the reference-frame concern above, while a real
+imprecision, is not pushing rotation state out of distribution in practice,
+matching F1's experience of the same approximation working well enough.
+
+**Position does.** `left_x` and `left_z` — this checkpoint's q99 normalization
+is fit so only ~1% of *training* data should exceed ±1 — spend 22.5% and
+19.2% of real closed-loop steps beyond 0.9, with `left_x` bottoming out
+exactly at −1.000 and `left_z` topping out exactly at 1.000 (both consistent
+with normalization clipping, not merely "near the edge"). That's roughly a
+20x higher out-of-range rate than a correctly calibrated q99 transform should
+produce, on the two position axes with the most physical range-of-motion
+during a pick-and-place task (reaching sideways and lifting/lowering). The
+existing "position passes through unchanged" claim (module docstring, citing
+F1's own `diag_state.py`) was verified for F1's model/normalization, not
+re-checked for LDA's q99 scheme specifically — plausible that F1's
+mean/std-based state normalization tolerates the same absolute-frame offset
+comfortably while LDA's tighter q99 bounds do not.
+
+**Not yet fixed.** Next step: pin down whether this is a genuine coordinate-
+frame offset between SimplerEnv's `ee_pose_at_base` and Bridge's raw
+`observation.state[:3]` (would need a direct numeric comparison, e.g.
+reproducing F1's `diag_state.py`-style range check but against LDA's own
+q99 bounds specifically, not just eyeballing that the two distributions
+roughly overlap), or a units/scale issue introduced somewhere in the LDA-
+specific conversion path that F1's differently-shaped normalization
+happens not to expose.
 
 F1-VLA is from `F1-VLA/eval/bridge/RESULTS.md`: 3-seed means on the `chunk_size: 4`
 checkpoint.
