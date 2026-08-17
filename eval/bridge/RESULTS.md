@@ -686,10 +686,15 @@ maximum.
 
 ## RoboCasa cross-check: the codebase works, the Bridge finetune is what doesn't
 
-**Result: LDA-1B's own published RoboCasa checkpoint scores 67% on the
+**Result: LDA-1B's own published RoboCasa checkpoint scores 48% on the
 authors' own benchmark, run through this copy of the codebase** (2026-08-18,
 `Wayer2/LDA-robocasa`, `gr1_unified/PnPCupToDrawerClose_GR1ArmsAndWaistFourierHands_Env`,
-6 episodes, 341s). Not zero — not even close.
+50 episodes, 2595s). Not zero — not even close.
+
+A 6-episode smoke run of the same configuration scored 67%; the 50-episode
+figure supersedes it. Recorded here because it is a concrete reminder that
+small-n closed-loop numbers on these tasks swing widely, which is the same
+reason the mimic-video baseline re-run is quoted per task rather than pooled.
 
 Motivation: every diagnosis above (gripper head, rotation reference frame,
 position clipping, soft-clip, exec_horizon) tested one candidate mechanism
@@ -716,9 +721,6 @@ setup — or to the SimplerEnv/Bridge evaluation path, which the RoboCasa run
 does not exercise. That is a much smaller search space than before, and it
 puts a retrain back on the table as a reasonable next step rather than a
 shot in the dark.
-
-A 50-episode run on the same task is in flight; the 67% above is a 6-episode
-smoke figure and should be replaced by it, not quoted as a precise rate.
 
 ### Setup notes (both were real obstacles, neither is a finding)
 
