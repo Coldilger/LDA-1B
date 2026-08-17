@@ -683,3 +683,55 @@ different seeds.
 The same trap applies to LDA: `exec_horizon` is an untuned knob. It is fixed at 8
 a priori, and if it is ever swept the whole sweep goes in this table, not its
 maximum.
+
+## RoboCasa cross-check: the codebase works, the Bridge finetune is what doesn't
+
+**Result: LDA-1B's own published RoboCasa checkpoint scores 67% on the
+authors' own benchmark, run through this copy of the codebase** (2026-08-18,
+`Wayer2/LDA-robocasa`, `gr1_unified/PnPCupToDrawerClose_GR1ArmsAndWaistFourierHands_Env`,
+6 episodes, 341s). Not zero — not even close.
+
+Motivation: every diagnosis above (gripper head, rotation reference frame,
+position clipping, soft-clip, exec_horizon) tested one candidate mechanism
+inside the Bridge finetune and came back negative or inconclusive. None of
+them could distinguish "our Bridge finetune is broken" from "something in our
+copy of this codebase, environment, or hardware is broken, and Bridge merely
+happens to be where we noticed." That distinction needed a control that shares
+the codebase but not the finetune.
+
+This is that control, and it is cheap: no dataset download and no training
+run. The authors publish a RoboCasa-finetuned checkpoint and the full eval
+pipeline lives in `examples/Robocasa_tabletop/`, so the model, its weights,
+and its benchmark are all theirs — only the machine, the environment, and this
+checkout are ours.
+
+**What it rules out.** The model architecture, checkpoint loading, the
+action head, the websocket policy-server path, the GPU, and this checkout of
+the repo all work well enough to solve two thirds of a real manipulation task.
+The Bridge 0% cannot be attributed to any of them.
+
+**What it leaves.** Whatever is wrong is specific to the Bridge finetune
+itself — its data pipeline, normalization, state construction, or training
+setup — or to the SimplerEnv/Bridge evaluation path, which the RoboCasa run
+does not exercise. That is a much smaller search space than before, and it
+puts a retrain back on the table as a reasonable next step rather than a
+shot in the dark.
+
+A 50-episode run on the same task is in flight; the 67% above is a 6-episode
+smoke figure and should be replaced by it, not quoted as a precise rate.
+
+### Setup notes (both were real obstacles, neither is a finding)
+
+- The published `config.yaml` hardcodes `vision_encoder_path:
+  /World-Action-Model/pretrained`, an absolute path on the authors' machine.
+  Repointed at this repo's own `pretrained/` (which already symlinks the
+  DINOv3 and Qwen3-VL snapshots). Config only; no weights touched.
+- `lda/model/framework/__init__.py` auto-imports its submodules inside one
+  try/except wrapping the whole loop, and the except branch calls
+  `logger.log(...)`, which `PureOverwatch` does not define. So one failing
+  submodule takes the entire import down *and* hides its own cause. Worked
+  around in `robocasa-eval/launcher/run_client.py` without editing this repo.
+  **This does not affect any Bridge result**: `slurm/check_framework_imports.slurm`
+  imports all 15 submodules cleanly in the `lda_eval` env (ok=15, fail=0), so
+  the framework registry is complete there. The failures are specific to the
+  freshly-built `robocasa` client env's package versions.
