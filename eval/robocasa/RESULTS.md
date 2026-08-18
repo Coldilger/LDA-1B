@@ -66,7 +66,7 @@ shot in the dark.
   the framework registry is complete there. The failures are specific to the
   freshly-built `robocasa` client env's package versions.
 
-## New hypothesis: camera viewpoint mismatch (egocentric vs third-person), not yet tested
+## Camera viewpoint mismatch (egocentric vs third-person) — hypothesis, since confirmed directly below
 
 The RoboCasa cross-check proves the codebase works, but doesn't say why
 Bridge specifically fails. One candidate the diagnoses above never
@@ -111,11 +111,65 @@ embodiment. Two ways to test it without a full retrain:
       manipulation data (e.g. a slice of OXE) — if pretraining never saw a
       third-person view at all, that's a much stronger claim than "Bridge
       finetuning alone couldn't overcome it."
-- [ ] A cheap diagnostic: run the diag scripts already built for the Bridge
-      investigation (e.g. `diag_gripper.py`'s pattern) on frames cropped/
-      warped to approximate an egocentric framing, or conversely check
-      whether RoboCasa's `agentview` (third-person) camera option, if used
-      instead of `ego_view`, degrades the already-confirmed 48% success rate
-      -- that would isolate viewpoint from embodiment directly, using
-      infrastructure that already exists (`GrootRoboCasaEnv`'s camera_names
-      config).
+- [x] Check whether RoboCasa's third-person camera option, used instead of
+      `ego_view` with everything else held constant, degrades the
+      already-confirmed 48% success rate -- **done, see "Camera-viewpoint
+      test: confirmed directly" below: 48% -> 0%.**
+- [ ] Check whether any dataset in the *pretraining* mixture (`LDA-pretrain`,
+      `data_mix: all_dataset`) includes third-person/external-camera
+      manipulation data (e.g. a slice of OXE) — if pretraining never saw a
+      third-person view at all, that's a much stronger claim than "Bridge
+      finetuning alone couldn't overcome it." Still open -- the confirmed
+      result above already shows the *finetuned* checkpoint can't handle
+      third-person views; this would clarify whether that's a pretraining
+      -level or finetuning-level gap.
+
+## Camera-viewpoint test: confirmed directly
+
+**Result: switching only the camera (`egoview` -> `robot0_agentview_center`,
+same robot, same task, same checkpoint, same episode protocol) collapses
+success from 48% to 0% (0/50 episodes).** 2026-08-18,
+`gr1_unified/PnPCupToDrawerClose_GR1ArmsAndWaistFourierHands_Env`, same
+`Wayer2/LDA-robocasa` checkpoint as the main cross-check.
+
+Method: `GR1ArmsAndWaistKeyConverter.get_camera_config()` -- the class our
+task's robot name (`GR1ArmsAndWaistFourierHands`) resolves to via
+`make_key_converter` -- hardcodes `camera_names=["egoview"]`. Patched at
+runtime (`robocasa-eval/launcher/run_client_agentview.py`, no file on disk
+touched) to return `camera_names=["robot0_agentview_center"]` instead, while
+leaving `mapped_names` (`"video.ego_view_pad_res256_freq20"`, the
+observation-dict key the model-facing client reads) untouched. So the
+*only* thing that changes is which physical MuJoCo camera the pixels placed
+under that key come from -- state construction, action mapping, robot,
+task, and checkpoint are all identical to the 48% run.
+
+`robot0_agentview_center` (not the bare `"agentview"` -- that name doesn't
+exist for this robot; the live error listed the actual registered names)
+is also `tabletop.py`'s own default `render_camera`, i.e. the environment's
+own canonical third-person view, not an arbitrary pick.
+
+Confirmed on a real sample size, not just a smoke run: 0/6 on the initial
+smoke test, 0/50 on the full run -- getting exactly 0/6 by chance alone if
+the true rate matched the 48% baseline has under 2% probability, so the
+smoke result alone was already suggestive; the full run removes any
+small-sample doubt.
+
+**What this establishes.** Not a fine-grained "egocentric vs. third-person"
+architectural claim -- swapping cameras changes the entire pixel
+distribution (field of view, framing, everything), a qualitative jump, not
+a small nudge. What it does establish: the model's failure mode on
+Bridge-like third-person views is not merely "different embodiment" -- the
+vision backbone specifically cannot handle a camera framing this far outside
+what it was ever shown, independent of embodiment, state space, or action
+space (all held constant here). That is direct, not just circumstantial,
+support for the camera-viewpoint hypothesis.
+
+**Caveat, not yet done:** haven't visually inspected a saved rollout video
+(`robocasa-eval/videos/agentview_full_630800/`) to directly confirm the
+`robot0_agentview_center` frames are sensible, well-framed third-person
+images rather than some rendering artifact (e.g. a degenerate crop) that
+would produce a similar-looking 0% for an unrelated reason. The smoke test's
+timing (301s/6 episodes, matching the egoview run's pace) and clean
+`CLIENT_EXIT=0` argue against an infra failure, but a visual spot-check is
+the direct confirmation and is still worth doing before treating this as
+fully closed.
