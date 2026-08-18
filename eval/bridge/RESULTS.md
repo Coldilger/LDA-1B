@@ -737,3 +737,57 @@ shot in the dark.
   imports all 15 submodules cleanly in the `lda_eval` env (ok=15, fail=0), so
   the framework registry is complete there. The failures are specific to the
   freshly-built `robocasa` client env's package versions.
+
+## New hypothesis: camera viewpoint mismatch (egocentric vs third-person), not yet tested
+
+The RoboCasa cross-check proves the codebase works, but doesn't say why
+Bridge specifically fails. One candidate the diagnoses above never
+considered: **RoboCasa-GR1 and Bridge don't just differ in embodiment, they
+differ in camera viewpoint** — and LDA-1B's own paper and training pipeline
+appear to be built around one of those viewpoints exclusively.
+
+**Evidence, not speculation:**
+
+- Code: `robocasa/utils/gym_utils/gymnasium_groot.py`'s `GrootRoboCasaEnv` —
+  the class `examples/Robocasa_tabletop/eval_files/simulation_env.py` actually
+  uses, i.e. what our RoboCasa cross-check ran through — maps its camera
+  observation to the key `video.ego_view_pad_res256_freq20`. Egocentric by
+  construction, not an evaluation choice we made.
+- Paper (arXiv:2602.12215, fetched 2026-08-18): "The benchmark provides
+  challenging and realistic settings that require high-DoF dexterous
+  manipulation from **egocentric RGB observations captured by a head-mounted
+  camera**" (RoboCasa-GR1 section), and for real-robot experiments: "Across
+  all configurations, the policy receives only **egocentric RGB observations
+  from a head-mounted camera**."
+- **Bridge is not mentioned anywhere in the paper.** Not a lesser-emphasized
+  benchmark — absent. Every camera-viewpoint claim the paper makes is about
+  egocentric, head-mounted observations; Bridge's fixed external side/
+  over-the-shoulder camera (BridgeData V2's standard WidowX setup) is a
+  viewpoint the published architecture was never shown to have been
+  validated on, on top of the embodiment change already documented above.
+
+**What this would mean if confirmed.** Not just "different robot" (already
+known) but "different visual input distribution the vision backbone/DiT was
+never trained to handle" — a much more specific and mechanistically
+plausible failure mode than a generic domain-gap story, and one that a
+Bridge retrain would NOT fix if the frozen/pretrained visual components
+(DINOv3, or whatever upstream visual representation LDA's pretraining relied
+on) simply never learned to represent third-person Bridge-style scenes well.
+
+**Not yet tested.** This is a documented, evidence-backed hypothesis, not a
+confirmed cause — no experiment here isolates camera viewpoint from
+embodiment. Two ways to test it without a full retrain:
+
+- [ ] Check whether any dataset in the *pretraining* mixture (`LDA-pretrain`,
+      `data_mix: all_dataset`) includes third-person/external-camera
+      manipulation data (e.g. a slice of OXE) — if pretraining never saw a
+      third-person view at all, that's a much stronger claim than "Bridge
+      finetuning alone couldn't overcome it."
+- [ ] A cheap diagnostic: run the diag scripts already built for the Bridge
+      investigation (e.g. `diag_gripper.py`'s pattern) on frames cropped/
+      warped to approximate an egocentric framing, or conversely check
+      whether RoboCasa's `agentview` (third-person) camera option, if used
+      instead of `ego_view`, degrades the already-confirmed 48% success rate
+      -- that would isolate viewpoint from embodiment directly, using
+      infrastructure that already exists (`GrootRoboCasaEnv`'s camera_names
+      config).
