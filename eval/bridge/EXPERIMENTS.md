@@ -35,14 +35,13 @@ the rest of this repo's experiments.
   `experiment1_ablation/README.md`.
 - [`experiment2_oracle/`](experiment2_oracle/) — **Oracle injection.**
   Replace the predicted future with the ground-truth future, encoded
-  through each model's own pipeline. **Status: results so far are
-  invalid** — the oracle hook was added to a class the checkpoint doesn't
-  actually use (`QwenGR00T`/`GR00T_ActionHeader_single_t_concat_curr_obs.py`)
-  instead of the real one (`QwenMMDiT`/`MMDiT_ActionHeader.py`). Needs
-  re-implementing in the right file, then re-running once the v3 checkpoint
-  is ready. See `experiment2_oracle/ORACLE_EXPERIMENT.md` for the full
-  (currently-invalid) write-up, kept for the mechanism explanation, not the
-  numbers.
+  through each model's own pipeline. **Done (2026-08-19), live probe via
+  RoboCasa** — oracle is worse than a trivial zero-action baseline (0.90 vs
+  0.75 L1), indistinguishable from feeding the model its own imagined
+  future. Four alternative explanations checked and ruled out (task
+  undertraining, frame ordering, dead action dims, chunk-length mismatch) —
+  reads as a genuine property of this checkpoint's `inverse_dynamics`
+  pathway. See `experiment2_oracle/ORACLE_EXPERIMENT.md`.
 - [`experiment3_cost/`](experiment3_cost/) — **Cost per decision.**
   Characterizes how much inference-time compute each model actually spends
   on its world-model computation. LDA-1B is the interesting baseline case
