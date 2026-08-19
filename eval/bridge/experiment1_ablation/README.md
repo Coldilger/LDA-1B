@@ -1,7 +1,10 @@
 # Experiment 1 — Ablation of the world-model signal (LDA-1B)
 
-**Status: planned, not yet run. Blocked on the v3 retrain (real
-proprioception) landing — see `../EXPERIMENTS.md`.**
+**Status: done, real closed-loop (2026-08-19). Turning the world-model path
+on does not help — 44% (0.44, 50 episodes) vs. the confirmed 48%
+policy-only baseline, both via RoboCasa (Bridge is still 0%, see
+`../RESULTS.md` and `../../robocasa/RESULTS.md`'s camera-viewpoint
+decision).**
 
 ## What this tests
 
@@ -46,12 +49,67 @@ information the default path doesn't use. If it doesn't, that pathway is
 inert at inference regardless of what future it's given (self-generated or,
 per E2, oracle).
 
+## Metric: real closed-loop success rate, not offline/live L1
+
+Corrected mid-session (2026-08-19) after building the wrong thing first: an
+offline or live L1 probe (predicted action vs. the action actually taken)
+is at best a fast first pass, never Experiment 1's decisive number — same
+reasoning F1-VLA's and mimic-video's own copies of this experiment already
+follow (their "real closed-loop" result is explicitly the one that
+matters, not the offline probe). L1 has a memorization confound: a model
+can reproduce "the right" action because it memorized the trajectory, not
+because it's genuinely using the injected/imagined signal. The only way to
+actually test whether turning the world-model path on helps is to let it
+really drive the robot for full episodes and measure task success.
+
+## Results
+
+No static RoboCasa dataset is available on this cluster (see
+`../../robocasa/server_policy_oracle_probe.py`'s docstring), and Bridge is
+still 0% (nothing to compare against there either) — so, per the priority
+shift in `../EXPERIMENTS.md`, this ran against the confirmed-working
+RoboCasa checkpoint instead, same task as Experiment 3's own LDA-1B row.
+
+**Real closed-loop (decisive):** `server_policy_worldmodel_on.py` — every
+decision calls `video_gen()` then feeds that imagined frame into
+`inverse_dynamics` via `predict_action(..., inverse_dynamics_next_obs_tokens=...)`,
+and *that* action is what actually drives the robot for the whole episode
+(no side-channel, no comparison against a buffered baseline — the
+world-model path is the real policy for this run).
+
+| stage | n episodes | success rate |
+|---|---|---|
+| smoke (job 631219) | 6 | 50.0% (3/6) — too small to trust on its own |
+| **full** (job 631244) | **50** | **44.0%** |
+| baseline (policy-only, confirmed) | 50 | 48.0% |
+
+**Turning the world-model path on does not help — if anything, slightly
+hurts (-4pp).** Given this thesis's own established noise floor ("two
+models/conditions differing by less than ~10pp cannot be separated at this
+sample size," from F1-VLA's `RESULTS.md`), a single 50-episode run at -4pp
+is **not distinguishable from no effect** — this reads as "the dormant
+pathway is inert at inference," not "it actively hurts," until repeated
+with more seeds.
+
+**Preliminary/live L1 probe (not decisive, kept for the record):**
+`server_policy_oracle_probe.py` ran alongside this (same job family,
+different script) and computed live L1 against the policy's own action at
+each step, for both this world-model-on condition and Experiment 2's
+oracle condition. n=181 (3 episodes): oracle L1 ≈0.900, world-model L1
+≈0.899, both *worse* than a trivial zero-action baseline (≈0.749) — an
+unresolved anomaly (real oracle input performing worse than "predict
+nothing" is not expected), not yet debugged, and explicitly not to be
+read as a real finding until it is. See `../experiment2_oracle/ORACLE_EXPERIMENT.md`.
+
 ## Not yet done
 
-- [ ] Move/re-verify the oracle-style `inverse_dynamics` hook in the
-      correct file (`MMDiT_ActionHeader.py` / `QwenMMDiT.py`) — same
-      prerequisite fix E2 needs.
-- [ ] Wire up a two-stage call: `video_gen` to predict a future frame, then
+- [x] Move/re-verify the oracle-style `inverse_dynamics` hook in the
+      correct file (`MMDiT_ActionHeader.py` / `QwenMMDiT.py`).
+- [x] Wire up a two-stage call: `video_gen` to predict a future frame, then
       `inverse_dynamics` fed that self-generated frame.
-- [ ] Run offline against real logged Bridge moments, compare against the
-      default `policy`-path baseline.
+- [x] Run real closed-loop, compare against the default `policy`-path
+      baseline (RoboCasa, not Bridge — see "Results" above).
+- [ ] Debug the L1 probe anomaly (oracle/world-model L1 worse than the
+      trivial zero-action baseline) before citing those numbers anywhere.
+- [ ] Repeat the closed-loop run with more seeds before treating -4pp as
+      more than noise.

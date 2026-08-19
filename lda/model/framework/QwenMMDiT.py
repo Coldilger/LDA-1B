@@ -186,6 +186,8 @@ class Qwen_MMDiT(baseframework):
     def predict_action(
         self,
         examples: List[dict],
+        oracle_future_imgs: np.ndarray = None,
+        inverse_dynamics_next_obs_tokens: torch.Tensor = None,
         **kwargs: str,
     ) -> np.ndarray:
         """
@@ -202,6 +204,14 @@ class Qwen_MMDiT(baseframework):
             cfg_scale: >1 enables classifier-free guidance (scales conditional vs unconditional).
             use_ddim: Whether to use DDIM deterministic sampling.
             num_ddim_steps: Number of DDIM steps if enabled.
+            oracle_future_imgs: real future frame(s), same layout as each
+                example's "image" field (numpy, (B, V*T, H, W, C)). Runs the
+                inverse_dynamics task instead of policy -- see
+                MMDiT_ActionHeader.predict_action's docstring. Experiment 2.
+            inverse_dynamics_next_obs_tokens: pre-encoded next-obs tokens
+                (e.g. this same model's own video_gen() output) fed straight
+                through instead of a real frame. Experiment 1. Mutually
+                exclusive with oracle_future_imgs.
             **kwargs: Reserved.
 
         Returns:
@@ -213,7 +223,7 @@ class Qwen_MMDiT(baseframework):
         curr_imgs = torch.from_numpy(np.array([example["image"] for example in examples]).transpose(0, 1, 4, 2, 3))
         batch_images = [to_pil_preserve(example["image"]) for example in examples]  #  [B，[PLT]]
         instructions = [example["lang"] for example in examples]  # [B, str]
-    
+
         state = [example["state"] for example in examples] if "state" in examples[0] else None  # [B, 1, state_dim]
         embodiment_ids = [example["embodiment_id"] for example in examples]
         if 'history_action' in examples[0] and examples[0]['history_action'] is not None:
@@ -238,7 +248,7 @@ class Qwen_MMDiT(baseframework):
         #         "attention_mask": examples['vlm_attention_mask'].to(self.qwen_vl_interface.model.device),
         #         "pixel_values": examples['vlm_pixel_values'].to(self.qwen_vl_interface.model.device),
         #     }
-        
+
         qwen_inputs = self.qwen_vl_interface.build_qwenvl_inputs(images=batch_images, instructions=instructions)
         attention_mask = qwen_inputs['attention_mask']
         with torch.autocast("cuda", dtype=torch.bfloat16):
@@ -258,9 +268,24 @@ class Qwen_MMDiT(baseframework):
         curr_imgs = curr_imgs.to(last_hidden.device, dtype=last_hidden.dtype)
         # attention_mask = attention_mask.to(last_hidden.device, dtype=torch.bool)
         attention_mask = attention_mask.to(last_hidden.device, dtype=last_hidden.dtype)
+
+        oracle_future_imgs_t = None
+        if oracle_future_imgs is not None:
+            oracle_future_imgs_t = torch.from_numpy(
+                np.asarray(oracle_future_imgs).transpose(0, 1, 4, 2, 3)
+            ).to(last_hidden.device, dtype=last_hidden.dtype)
+        if inverse_dynamics_next_obs_tokens is not None:
+            inverse_dynamics_next_obs_tokens = inverse_dynamics_next_obs_tokens.to(
+                last_hidden.device, dtype=last_hidden.dtype
+            )
+
         # Step 4: Action Expert Forward and Loss
         with torch.autocast("cuda", dtype=torch.float32):
-            pred_actions = self.action_model.predict_action(last_hidden, state, history_actions, curr_imgs, embodiment_ids, attention_mask)  # (B, chunk_len, action_dim)
+            pred_actions = self.action_model.predict_action(
+                last_hidden, state, history_actions, curr_imgs, embodiment_ids, attention_mask,
+                oracle_future_imgs=oracle_future_imgs_t,
+                inverse_dynamics_next_obs_tokens=inverse_dynamics_next_obs_tokens,
+            )  # (B, chunk_len, action_dim)
 
         normalized_actions = pred_actions.detach().cpu().float().numpy()
         return {"normalized_actions": normalized_actions}

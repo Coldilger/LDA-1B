@@ -29,6 +29,10 @@ the rest of this repo's experiments.
   world-model signal.** One hypothesis, two opposite interventions:
   suppress the foresight signal where the model normally uses it (F1,
   mimic-video), or turn it on where the model normally doesn't (LDA-1B).
+  **Done (2026-08-19), real closed-loop, via RoboCasa** — turning the
+  dormant world-model path on doesn't help (44% vs 48% baseline, within
+  this thesis's own noise floor for a single 50-episode run). See
+  `experiment1_ablation/README.md`.
 - [`experiment2_oracle/`](experiment2_oracle/) — **Oracle injection.**
   Replace the predicted future with the ground-truth future, encoded
   through each model's own pipeline. **Status: results so far are

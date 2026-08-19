@@ -1,0 +1,169 @@
+"""Experiments 1 and 2 (oracle injection / world-model-on) for LDA-1B, run as
+a live side-probe during a normal RoboCasa closed-loop rollout.
+
+No static RoboCasa training dataset is available on this cluster (the
+checkpoint's own config points at `/data/RobotData/robocasa_1k_20hz`, which
+doesn't exist here -- unlike Bridge, where `bridge_orig_lerobot` is present
+locally and F1-VLA/mimic-video's own Exp2 offline probes read real logged
+episodes from it). This substitutes live simulator rollouts for a static
+dataset: at each real policy step, the *previous* step's (curr_img, the
+policy's own action, which the client then executed) plus *this* step's real
+image (the real "next" observation that resulted) form exactly the same kind
+of (curr, next, real_action) triple F1/mimic's offline probes read from disk
+-- generated online instead of read from disk, otherwise the same metric.
+
+Two conditions probed per triple, mirroring MMDiT_ActionHeader.predict_action's
+new oracle_future_imgs / inverse_dynamics_next_obs_tokens kwargs:
+  - oracle: real next frame fed into the inverse_dynamics task (Experiment 2).
+  - worldmodel: video_gen()'s own imagined next frame fed into the same task
+    (Experiment 1 -- "turn the world model on where it's normally off").
+Both compared by L1 against the real action the policy took (=~ground truth,
+same role a logged dataset's `action` field plays for F1/mimic), alongside a
+zero-action trivial baseline.
+
+Does not change what's actually served to the client: the probe is a pure
+side computation using the model's own already-existing predict_action/
+video_gen methods (this file adds no new model code -- see
+lda/model/framework/QwenMMDiT.py and MMDiT_ActionHeader.py for the actual
+oracle/video-gen hooks). A re-entrancy guard stops the side-calls (which
+also go through predict_action) from re-triggering the probe recursively.
+"""
+
+import argparse
+import logging
+import socket
+import statistics
+
+import numpy as np
+import torch
+
+from deployment.model_server.tools.websocket_policy_server import WebsocketPolicyServer
+from lda.model.framework.base_framework import baseframework
+
+
+def add_oracle_probe(vla):
+    original_predict_action = vla.predict_action
+    original_video_gen = vla.video_gen
+
+    state = {"prev_example": None, "prev_action": None, "in_probe": False}
+    samples = {"oracle": [], "worldmodel": [], "zero": []}
+
+    def l1(pred, real):
+        return float(np.mean(np.abs(pred - real)))
+
+    def probed_predict_action(examples, **kwargs):
+        if state["in_probe"]:
+            return original_predict_action(examples, **kwargs)
+        if not isinstance(examples, list):
+            examples = [examples]
+
+        if state["prev_example"] is not None and state["prev_action"] is not None:
+            state["in_probe"] = True
+            try:
+                prev_example = state["prev_example"]
+                real_action = state["prev_action"]  # (T, action_dim), what was actually done
+
+                # predict_action's oracle_future_imgs must be a single frame
+                # (T=1) per view -- the multi-frame curr+history stack that
+                # "image" normally carries would double-count into the
+                # channel dim after MMDiT_ActionHeader's channel-folding
+                # encode (see that file's own comment on this). Take the
+                # most recent frame of the stack (assumed last -- deques
+                # append newest at the end); an off-by-one on which index is
+                # "most recent" would only bias the oracle's absolute
+                # accuracy, not invalidate the ablated/shuffled-style
+                # relative comparison this experiment is built on.
+                this_frame = np.asarray(examples[0]["image"])[-1]
+                oracle_future_imgs = np.array([[this_frame]])
+                oracle_out = original_predict_action(
+                    [prev_example], oracle_future_imgs=oracle_future_imgs
+                )
+                oracle_l1 = l1(oracle_out["normalized_actions"][0], real_action)
+
+                video_gen_out = original_video_gen([prev_example])
+                imagined_tokens = torch.from_numpy(video_gen_out["normalized_obs"])
+                wm_out = original_predict_action(
+                    [prev_example], inverse_dynamics_next_obs_tokens=imagined_tokens
+                )
+                wm_l1 = l1(wm_out["normalized_actions"][0], real_action)
+
+                zero_l1 = l1(np.zeros_like(real_action), real_action)
+
+                samples["oracle"].append(oracle_l1)
+                samples["worldmodel"].append(wm_l1)
+                samples["zero"].append(zero_l1)
+                logging.info(
+                    "PROBE_SAMPLE n=%d oracle_l1=%.5f worldmodel_l1=%.5f zero_l1=%.5f",
+                    len(samples["oracle"]), oracle_l1, wm_l1, zero_l1,
+                )
+            except Exception:
+                logging.exception("Probe side-computation failed (real rollout unaffected)")
+            finally:
+                state["in_probe"] = False
+
+        result = original_predict_action(examples, **kwargs)
+        state["prev_example"] = examples[0]
+        state["prev_action"] = result["normalized_actions"][0]
+        return result
+
+    def summarize():
+        for name, vals in samples.items():
+            if not vals:
+                continue
+            logging.info(
+                "PROBE_SUMMARY condition=%s n=%d mean=%.5f median=%.5f sd=%.5f",
+                name, len(vals), statistics.mean(vals), statistics.median(vals),
+                statistics.stdev(vals) if len(vals) > 1 else 0.0,
+            )
+
+    original_probed = probed_predict_action
+
+    def probed_predict_action_with_periodic_summary(examples, **kwargs):
+        result = original_probed(examples, **kwargs)
+        # Logged periodically, not just at shutdown -- the server process is
+        # SIGTERM'd at the end of the eval slurm script, which does not run
+        # Python `finally` blocks, so this is the reliable place to persist
+        # partial results if the job is killed mid-episode.
+        if len(samples["oracle"]) and len(samples["oracle"]) % 5 == 0:
+            summarize()
+        return result
+
+    vla.predict_action = probed_predict_action_with_periodic_summary
+    vla._probe_summarize = summarize
+    return vla
+
+
+def main(args) -> None:
+    vla = baseframework.from_pretrained(args.ckpt_path)
+    vla = vla.to("cuda").eval()
+    vla = add_oracle_probe(vla)
+
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
+    logging.info("Creating server (host: %s, ip: %s)", hostname, local_ip)
+
+    server = WebsocketPolicyServer(
+        policy=vla,
+        host="0.0.0.0",
+        port=args.port,
+        idle_timeout=args.idle_timeout,
+        metadata={"env": "simpler_env"},
+    )
+    logging.info("server running ...")
+    try:
+        server.serve_forever()
+    finally:
+        vla._probe_summarize()
+
+
+def build_argparser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ckpt_path", type=str, required=True)
+    parser.add_argument("--port", type=int, default=10093)
+    parser.add_argument("--idle_timeout", type=int, default=1800)
+    return parser
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, force=True)
+    main(build_argparser().parse_args())

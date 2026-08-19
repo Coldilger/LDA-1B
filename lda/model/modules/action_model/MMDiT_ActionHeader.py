@@ -849,12 +849,33 @@ class FlowmatchingActionHead(nn.Module):
         curr_imgs: torch.Tensor = None,
         embodiment_id: torch.Tensor = None,
         attention_mask: torch.Tensor = None,
+        oracle_future_imgs: torch.Tensor = None,
+        inverse_dynamics_next_obs_tokens: torch.Tensor = None,
     ) -> torch.Tensor:
         """
-        Denoising diffusion sampling for action prediction (policy task only).
+        Denoising diffusion sampling for action prediction (policy task by
+        default). Two ways to instead run the natively-trained
+        inverse_dynamics task -- task_embedding switches to id_embedding and
+        the next-obs slot uses a real/imagined future instead of
+        next_obs_learnable_tokens, mirroring forward()'s
+        `inv_obs_feat = next_obs[inverse_dynamics_indices]`:
+
+        - `oracle_future_imgs`: real next frame, raw pixels, same
+          (b, v*t, c, h, w) shape as curr_imgs -- encoded here the same way
+          curr_imgs is. Experiment 2 (oracle injection).
+        - `inverse_dynamics_next_obs_tokens`: already-encoded next-obs
+          tokens, e.g. this same class's own `video_gen()` output -- used
+          as-is, no re-encoding. Experiment 1 (turn the world model on):
+          chain `video_gen()`'s imagined future into this instead of a real
+          one.
+
+        At most one of the two may be given. Both default to None, which
+        preserves the original policy-only path exactly.
         """
         device = vl_embs.device
         B = vl_embs.shape[0]
+        if oracle_future_imgs is not None and inverse_dynamics_next_obs_tokens is not None:
+            raise ValueError("oracle_future_imgs and inverse_dynamics_next_obs_tokens are mutually exclusive.")
 
         # === 1. Encode current observation (same as in forward) ===
         curr_obs = rearrange(curr_imgs, "b (v t) c h w -> b v t c h w", v=self.num_views)
@@ -872,6 +893,35 @@ class FlowmatchingActionHead(nn.Module):
             H, W = curr_obs.shape[-2:]
 
         num_obs_tokens = curr_obs.shape[1]
+
+        # === 1b. Oracle/inverse_dynamics next-obs, if requested ===
+        # This method's own obs_merger fuses curr_obs with the next-obs slot
+        # by concatenating along the CHANNEL axis, requiring both to share
+        # the same TOKEN count (see how the policy path's own
+        # next_obs_learnable_tokens is expanded to (B, num_obs_tokens, C) --
+        # num_obs_tokens = curr_obs.shape[1], not v*t*n). So a fixed next-obs
+        # here must be encoded the same way curr_obs is (channel-folds T,
+        # doesn't token-fold it) -- forward()'s separate `next_obs` handling
+        # (token-folded) is for a different fusion path (per-sample
+        # task-batched concat, not this obs_merger) and does NOT apply here.
+        # Callers must pass a single frame (T=1) per view -- multiple frames
+        # would inflate the channel dim beyond what obs_merger expects
+        # (observed 2026-08-19: passing a 2-frame curr+history stack here
+        # produced double the expected channel width).
+        fixed_next_obs = None
+        if oracle_future_imgs is not None:
+            fixed_next_obs = rearrange(oracle_future_imgs, "b (v t) c h w -> b v t c h w", v=self.num_views)
+            fixed_next_obs = self.transform_obs(fixed_next_obs, B, V, fixed_next_obs.shape[2])
+            fixed_next_obs = self.encode_future_img(fixed_next_obs)
+            if self.vision_encoder_type == "vjepa2":
+                fixed_next_obs = rearrange(fixed_next_obs, "(b v) t h w c -> b (v h w) (c t)", b=B, v=V)
+            elif self.vision_encoder_type == "dinov3":
+                fixed_next_obs = rearrange(fixed_next_obs, "(b v t) n c -> b (v n) (c t)", b=B, v=V)
+            elif self.vision_encoder_type == "vae":
+                fixed_next_obs = rearrange(fixed_next_obs, "(b v t) c h w -> b v c t h w", b=B, v=V)
+        elif inverse_dynamics_next_obs_tokens is not None:
+            fixed_next_obs = inverse_dynamics_next_obs_tokens
+
         # === 2. Initialize noisy action (sample from N(0, I)) ===
         actions = torch.randn(
             size=(B, self.config.action_horizon, self.config.action_dim),
@@ -892,8 +942,11 @@ class FlowmatchingActionHead(nn.Module):
                 history_action_features = self.action_encoder(history_actions, history_t_discretized, embodiment_id)
             else:
                 history_action_features = self.action_encoder(history_actions, history_t_discretized)
-        # === 4. Task embedding: only "policy" during inference ===
-        task_embedding = self.policy_embedding.unsqueeze(0).expand(B, -1)  # (B, D)
+        # === 4. Task embedding: "policy" unless an inverse_dynamics next-obs was given ===
+        if fixed_next_obs is not None:
+            task_embedding = self.id_embedding.unsqueeze(0).expand(B, -1)  # (B, D)
+        else:
+            task_embedding = self.policy_embedding.unsqueeze(0).expand(B, -1)  # (B, D)
 
         # === 5. Denoising loop ===
         num_steps = self.num_inference_timesteps
@@ -910,8 +963,11 @@ class FlowmatchingActionHead(nn.Module):
             else:
                 action_features = self.action_encoder(actions, timesteps)  # (B, T_a, D)
 
-            # === 5.2 Noisy next obs: policy uses learnable tokens (same as forward) ===
-            if self.vision_encoder_type == "vae":
+            # === 5.2 Next obs: policy uses learnable tokens (same as forward);
+            # inverse_dynamics uses the real/imagined future, fixed across steps ===
+            if fixed_next_obs is not None:
+                noisy_next_obs = fixed_next_obs
+            elif self.vision_encoder_type == "vae":
                 noisy_next_obs = self.next_obs_learnable_tokens.unsqueeze(0).unsqueeze(0).unsqueeze(0).unsqueeze(0).unsqueeze(0).permute(0, 1, 5, 2, 3, 4).expand(B, V, -1, T, H, W)
             else:
                 noisy_next_obs = self.next_obs_learnable_tokens.unsqueeze(0).unsqueeze(0).expand(B, num_obs_tokens, -1)
