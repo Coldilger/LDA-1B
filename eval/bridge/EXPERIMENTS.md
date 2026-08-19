@@ -53,10 +53,11 @@ the rest of this repo's experiments.
 - [`experiment4_probing/`](experiment4_probing/) — **Representation
   probing.** Freezes each model's backbone and trains a small probe head to
   predict future end-effector pose from a single frozen hidden state.
-  **Status: planned, not yet run** — extraction point in LDA's architecture
-  not yet decided (F1-VLA/mimic-video's own docs suggest `vl_embs` as the
-  current candidate). Will run against RoboCasa, per the priority-shift
-  decision above.
+  **Done (2026-08-19), live extraction via RoboCasa, extraction point
+  `vl_embs`.** Unlike F1-VLA and mimic-video, both current and future pose
+  ARE recoverable — but only with a nonlinear (MLP) probe; the linear
+  (ridge) probe fails just as badly as it does for the other two models.
+  See `experiment4_probing/README.md`.
 - [`experiment5_erasure/`](experiment5_erasure/) — **Concept erasure
   (LEACE).** Follow-up to Experiment 4's decisive control in F1-VLA and
   mimic-video: erase the scene/episode-identity direction and check whether

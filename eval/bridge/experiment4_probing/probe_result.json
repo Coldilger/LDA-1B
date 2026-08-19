@@ -1,0 +1,15 @@
+{
+  "variant": "lda_robocasa",
+  "horizon": 5,
+  "n_samples": 800,
+  "feature_dim": 5120,
+  "n_train_episodes": 12,
+  "n_val_episodes": 4,
+  "probe_val_l1": 0.05643182141533721,
+  "ridge_val_l1": 0.05643182141533721,
+  "ridge_alpha": 2154.434690031882,
+  "mlp_val_l1": 0.03334842249751091,
+  "mean_pred_val_l1": 0.09507289528846741,
+  "nomotion_val_l1": 0.08084853738546371,
+  "beats_mean_predictor": true
+}
