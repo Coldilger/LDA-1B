@@ -40,7 +40,10 @@ checkpoint to run against; re-run once v3 finishes.
   Characterizes how much inference-time compute each model actually spends
   on its world-model computation. LDA-1B is the interesting baseline case
   here: no extra inference-time cost at all (the visual-forecasting head is
-  a training-time co-objective, unused at inference by default).
+  a training-time co-objective, unused at inference by default). **Latency
+  measured 2026-08-19** via the confirmed-working RoboCasa checkpoint
+  (Bridge still has nothing working to time) — see
+  `experiment3_cost/README.md`.
 - [`experiment4_probing/`](experiment4_probing/) — **Representation
   probing.** Freezes each model's backbone and trains a small probe head to
   predict future end-effector pose from a single frozen hidden state.

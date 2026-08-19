@@ -60,7 +60,8 @@ shot in the dark.
   try/except wrapping the whole loop, and the except branch calls
   `logger.log(...)`, which `PureOverwatch` does not define. So one failing
   submodule takes the entire import down *and* hides its own cause. Worked
-  around in `robocasa-eval/launcher/run_client.py` without editing this repo.
+  around in `eval/robocasa/launcher/run_client.py` without editing the rest
+  of this repo.
   **This does not affect any Bridge result**: `slurm/check_framework_imports.slurm`
   imports all 15 submodules cleanly in the `lda_eval` env (ok=15, fail=0), so
   the framework registry is complete there. The failures are specific to the
@@ -135,7 +136,7 @@ success from 48% to 0% (0/50 episodes).** 2026-08-18,
 Method: `GR1ArmsAndWaistKeyConverter.get_camera_config()` -- the class our
 task's robot name (`GR1ArmsAndWaistFourierHands`) resolves to via
 `make_key_converter` -- hardcodes `camera_names=["egoview"]`. Patched at
-runtime (`robocasa-eval/launcher/run_client_agentview.py`, no file on disk
+runtime (`eval/robocasa/launcher/run_client_agentview.py`, no file on disk
 touched) to return `camera_names=["robot0_agentview_center"]` instead, while
 leaving `mapped_names` (`"video.ego_view_pad_res256_freq20"`, the
 observation-dict key the model-facing client reads) untouched. So the
