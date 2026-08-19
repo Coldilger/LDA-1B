@@ -1,0 +1,25 @@
+{
+  "current_baseline": {
+    "ridge_gain": -229.17454226940208,
+    "mlp_gain": 59.083713929831845
+  },
+  "future_baseline": {
+    "ridge_gain": 40.643186460495144,
+    "mlp_gain": 65.72582212501923
+  },
+  "current_after_episode_erasure": {
+    "ridge_gain": -227.31566132163383,
+    "mlp_gain": 56.895389342023314
+  },
+  "future_after_episode_erasure": {
+    "ridge_gain": 36.97367975059545,
+    "mlp_gain": 61.11361276091127
+  },
+  "current_after_pose_erasure": {
+    "mlp_gain": -11.387933224435388
+  },
+  "future_after_pose_erasure": {
+    "mlp_gain": 13.429734708789677
+  },
+  "verdict": "LINEAR_COMPONENT_WAS_SUFFICIENT"
+}

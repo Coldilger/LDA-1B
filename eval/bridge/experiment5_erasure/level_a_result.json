@@ -1,0 +1,13 @@
+{
+  "variant": "lda_robocasa",
+  "n_train_episodes": 12,
+  "n_val_episodes": 4,
+  "distortion": 0.3711228367894867,
+  "episode_acc_before": 0.9866666666666667,
+  "episode_acc_after": 0.5533333333333333,
+  "current_gain_before": -229.17454226940208,
+  "current_gain_after": -227.31566132163383,
+  "future_gain_before": 40.643186460495144,
+  "future_gain_after": 36.97367975059545,
+  "verdict": "ERASURE_DID_NOT_WORK"
+}

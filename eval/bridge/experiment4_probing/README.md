@@ -1,9 +1,12 @@
 # Experiment 4 — Representation probing (LDA-1B)
 
 **Status: done (2026-08-19), live extraction via RoboCasa. Current AND
-future pose are both recoverable — but only with a nonlinear (MLP) probe;
-the linear (ridge) probe both models F1-VLA and mimic-video rely on as
-their primary measurement fails badly here. See "Results" below.**
+future pose are both recoverable by an MLP where ridge (F1-VLA's and
+mimic-video's own primary probe) fails badly. Experiment 5's follow-up
+narrows *why*: current pose's MLP recoverability turns out to ride on a
+linear direction ridge's own regularization missed, not a genuinely
+nonlinear encoding — see "Correction from Experiment 5" below before
+citing the "nonlinear" framing on its own.**
 
 ## What this tests
 
@@ -101,6 +104,22 @@ on held-out (episode-split) validation loss, same selection rule as
 ±20% band that would suggest pure noise-fitting — but a fully independent
 repeat (different seed, ideally more episodes) would strengthen this
 further before treating it as final.
+
+## Correction from Experiment 5 (2026-08-19)
+
+Experiment 5's decisive test (erase current-pose's own linear component via
+LEACE, re-check the MLP) found that current pose's MLP recoverability
+**collapses** (+59.1% → −11.4%) once that one linear direction is removed —
+meaning the "nonlinear" framing above was too strong for current pose
+specifically. Ridge's own failure (−229%) turns out to reflect that probe's
+particular regularization path, not a genuine absence of linear structure:
+LEACE, a different linear estimator, found and used a direction ridge
+missed. Future pose keeps a smaller, more genuinely uncertain nonlinear
+residual (+65.7% → +13.4%, a large drop but not a full collapse). The
+cross-model contrast with F1-VLA/mimic-video still stands (their
+representations recover pose under no probe family tried; LDA's recovers
+under at least one), but the *reason* is narrower than "nonlinear encoding"
+— see `../experiment5_erasure/README.md` for the full test.
 
 ## Not yet done
 
