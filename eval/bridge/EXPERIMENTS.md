@@ -8,17 +8,20 @@ representational effect?
 
 Each experiment below attacks this question from a different angle, across
 all three models under comparison (F1-VLA, mimic-video, LDA-1B). This repo
-is LDA-1B's fork; the same four experiments also live in the F1-VLA and
+is LDA-1B's fork; the same five experiments also live in the F1-VLA and
 mimic-video forks, each with a model-specific implementation.
 
-**LDA-1B-specific note:** all four experiments are currently blocked on
-fixing LDA's closed-loop pipeline first (0% success on real SimplerEnv-Bridge
-runs, root-caused 2026-08-14 to a missing proprioception channel — see
-`RESULTS.md` and the `diag_*.py` scripts in this directory for the
-investigation). A retrain with real state input is in progress
-(`lda/config/training/LDA_bridge_v3.yaml`, wandb:
-lda-bridge-v3/bridge_finetune_v3). Experiments 1/2/4 below need a working
-checkpoint to run against; re-run once v3 finishes.
+**LDA-1B-specific note (updated 2026-08-19):** Bridge closed-loop is still
+0% (root-caused 2026-08-14 to a missing proprioception channel, retrain with
+real state input landed but didn't fix it — see `RESULTS.md`), and the
+leading explanation is now that LDA-1B's representation doesn't transfer
+across camera viewpoint at all (egocentric-trained, Bridge is third-person;
+confirmed directly, see `../robocasa/RESULTS.md`'s "Decision" section) — not
+a bug waiting on a fix. **Decision: Experiments 1/2/4(/5) below now run
+against the confirmed-working RoboCasa checkpoint instead of waiting on
+Bridge**, same as Experiment 3 already does, accepting the dataset mismatch
+as a stated tradeoff. Bridge's 0% stays documented, just no longer blocks
+the rest of this repo's experiments.
 
 ## Experiments
 
@@ -47,3 +50,12 @@ checkpoint to run against; re-run once v3 finishes.
 - [`experiment4_probing/`](experiment4_probing/) — **Representation
   probing.** Freezes each model's backbone and trains a small probe head to
   predict future end-effector pose from a single frozen hidden state.
+  **Status: planned, not yet run** — extraction point in LDA's architecture
+  not yet decided (F1-VLA/mimic-video's own docs suggest `vl_embs` as the
+  current candidate). Will run against RoboCasa, per the priority-shift
+  decision above.
+- [`experiment5_erasure/`](experiment5_erasure/) — **Concept erasure
+  (LEACE).** Follow-up to Experiment 4's decisive control in F1-VLA and
+  mimic-video: erase the scene/episode-identity direction and check whether
+  pose becomes recoverable. **Status: not started** — scoped pending
+  Experiment 4's extraction point being resolved for LDA-1B first.

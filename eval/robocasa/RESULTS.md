@@ -107,11 +107,6 @@ on) simply never learned to represent third-person Bridge-style scenes well.
 confirmed cause — no experiment here isolates camera viewpoint from
 embodiment. Two ways to test it without a full retrain:
 
-- [ ] Check whether any dataset in the *pretraining* mixture (`LDA-pretrain`,
-      `data_mix: all_dataset`) includes third-person/external-camera
-      manipulation data (e.g. a slice of OXE) — if pretraining never saw a
-      third-person view at all, that's a much stronger claim than "Bridge
-      finetuning alone couldn't overcome it."
 - [x] Check whether RoboCasa's third-person camera option, used instead of
       `ego_view` with everything else held constant, degrades the
       already-confirmed 48% success rate -- **done, see "Camera-viewpoint
@@ -123,7 +118,7 @@ embodiment. Two ways to test it without a full retrain:
       finetuning alone couldn't overcome it." Still open -- the confirmed
       result above already shows the *finetuned* checkpoint can't handle
       third-person views; this would clarify whether that's a pretraining
-      -level or finetuning-level gap.
+      -level or finetuning-level gap. Not prioritized (see decision below).
 
 ## Camera-viewpoint test: confirmed directly
 
@@ -174,3 +169,33 @@ timing (301s/6 episodes, matching the egoview run's pace) and clean
 `CLIENT_EXIT=0` argue against an infra failure, but a visual spot-check is
 the direct confirmation and is still worth doing before treating this as
 fully closed.
+
+## Decision: framing and next steps (2026-08-19)
+
+**Framing adopted for the thesis: "LDA-1B's world-model representation does
+not transfer across camera viewpoint,"** not "the Bridge finetune is
+bugged." The 48% -> 0% result above is treated as the LDA-1B contribution to
+the thesis's central research question, on its own terms — not as an
+unresolved blocker waiting on a fix.
+
+**Explicitly not pursuing now:** running F1-VLA's and mimic-video's own
+checkpoints through RoboCasa on both camera options, to check whether the
+egocentric-vs-third-person sensitivity is LDA-specific or a property of all
+three architectures. Would strengthen the framing (LDA-specific vs.
+general), but is real additional engineering + compute for a cross-model
+comparison that isn't this thesis's priority right now. Noted here as a
+deliberate scope decision, not an oversight — revisit if time allows after
+the rest of Experiments 1/2/4/5 are closed out.
+
+**Priority shift: close out Experiments 1/2/4(/5) for LDA-1B against the
+working RoboCasa checkpoint, not Bridge.** `eval/bridge/EXPERIMENTS.md`'s
+blocker note ("Experiments 1/2/4 need a working checkpoint... re-run once v3
+finishes") assumed the checkpoint would be a fixed Bridge one. Given the
+framing decision above, that's no longer the plan — LDA-1B's remaining
+experiments will run against RoboCasa instead, same as Experiment 3 already
+does, accepting the dataset mismatch (RoboCasa, not Bridge) as an explicit,
+stated tradeoff in exchange for actually having LDA-1B's rows filled in
+across the thesis's shared experiment framework. Bridge stays documented as
+a real, unresolved 0% in `eval/bridge/RESULTS.md`, not silently dropped —
+just no longer the blocking dependency for the rest of this repo's
+experiments.
