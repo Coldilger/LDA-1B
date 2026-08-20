@@ -91,15 +91,17 @@ is **not distinguishable from no effect** — this reads as "the dormant
 pathway is inert at inference," not "it actively hurts," until repeated
 with more seeds.
 
-**Preliminary/live L1 probe (not decisive, kept for the record):**
-`server_policy_oracle_probe.py` ran alongside this (same job family,
-different script) and computed live L1 against the policy's own action at
-each step, for both this world-model-on condition and Experiment 2's
-oracle condition. n=181 (3 episodes): oracle L1 ≈0.900, world-model L1
-≈0.899, both *worse* than a trivial zero-action baseline (≈0.749) — an
-unresolved anomaly (real oracle input performing worse than "predict
-nothing" is not expected), not yet debugged, and explicitly not to be
-read as a real finding until it is. See `../experiment2_oracle/ORACLE_EXPERIMENT.md`.
+**A live L1 probe also ran alongside this job** (`server_policy_oracle_probe.py`,
+same job family, different script) — but L1 is Experiment 2's own metric,
+not this experiment's, and its full writeup (including a real anomaly —
+oracle/world-model L1 both *worse* than a trivial zero-action baseline —
+investigated via four ruled-out alternative explanations, not left
+undebugged) lives entirely in
+[`../experiment2_oracle/ORACLE_EXPERIMENT.md`](../experiment2_oracle/ORACLE_EXPERIMENT.md).
+Kept out of this doc on purpose: this experiment's own decisive number is
+the closed-loop success rate above, and mixing in a second, differently-scoped
+metric here was making the "what's still open for Experiment 1" list
+harder to read than it needed to be.
 
 ## Not yet done
 
@@ -109,7 +111,8 @@ read as a real finding until it is. See `../experiment2_oracle/ORACLE_EXPERIMENT
       `inverse_dynamics` fed that self-generated frame.
 - [x] Run real closed-loop, compare against the default `policy`-path
       baseline (RoboCasa, not Bridge — see "Results" above).
-- [ ] Debug the L1 probe anomaly (oracle/world-model L1 worse than the
-      trivial zero-action baseline) before citing those numbers anywhere.
 - [ ] Repeat the closed-loop run with more seeds before treating -4pp as
       more than noise.
+
+(The L1 probe's own open items — an independent repeat, per its caveat 3 —
+live in `../experiment2_oracle/ORACLE_EXPERIMENT.md`, not here.)
