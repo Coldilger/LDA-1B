@@ -113,6 +113,22 @@ harder to read than it needed to be.
       baseline (RoboCasa, not Bridge — see "Results" above).
 - [ ] Repeat the closed-loop run with more seeds before treating -4pp as
       more than noise.
+- [ ] **Proposed: a third "shuffled" condition** (real but wrong frame,
+      alongside Exp1's own-imagined-future and Exp2's correct-real-future),
+      matching F1-VLA/mimic-video's own variant 2 — see each of their
+      `experiment1_ablation/README.md`. Would reuse Exp2's
+      `oracle_future_imgs`/`inverse_dynamics_next_obs_tokens` hook unchanged,
+      just swap the frame source to a wrong one, sourced live from RoboCasa
+      (LDA has no static offline dataset to pool from the way F1/mimic pool
+      from `bridge_orig_lerobot` — see Exp2's own "live, not offline" note).
+      Motivation: Exp2 already found oracle ≈ own-imagined-future (both
+      ~0.90 L1, worse than a trivial baseline) — a shuffled condition tests
+      whether `inverse_dynamics` is content-blind altogether (shuffled also
+      ≈0.90) or specifically miscalibrated on the *correct* frame for some
+      other reason (shuffled would look different) — closing the last
+      untested branch of the four-hypotheses pattern already used for Exp2's
+      anomaly. Not started; discussed 2026-08-21, not prioritized over the
+      mimic-video stop=1 recompute currently in progress.
 
 (The L1 probe's own open items — an independent repeat, per its caveat 3 —
 live in `../experiment2_oracle/ORACLE_EXPERIMENT.md`, not here.)
