@@ -46,7 +46,9 @@ def add_oracle_probe(vla):
     original_video_gen = vla.video_gen
 
     state = {"prev_example": None, "prev_action": None, "in_probe": False}
-    samples = {"oracle": [], "worldmodel": [], "zero": []}
+    records = []  # each: dict(oracle_l1, worldmodel_l1, zero_l1, episode_idx)
+    episode_idx = {"n": 0}
+    episode_success = {}  # episode_idx -> bool, filled in by _probe_on_episode_end
 
     def l1(pred, real):
         return float(np.mean(np.abs(pred - real)))
@@ -89,12 +91,13 @@ def add_oracle_probe(vla):
 
                 zero_l1 = l1(np.zeros_like(real_action), real_action)
 
-                samples["oracle"].append(oracle_l1)
-                samples["worldmodel"].append(wm_l1)
-                samples["zero"].append(zero_l1)
+                records.append(dict(
+                    oracle_l1=oracle_l1, worldmodel_l1=wm_l1, zero_l1=zero_l1,
+                    episode_idx=episode_idx["n"],
+                ))
                 logging.info(
-                    "PROBE_SAMPLE n=%d oracle_l1=%.5f worldmodel_l1=%.5f zero_l1=%.5f",
-                    len(samples["oracle"]), oracle_l1, wm_l1, zero_l1,
+                    "PROBE_SAMPLE n=%d ep=%d oracle_l1=%.5f worldmodel_l1=%.5f zero_l1=%.5f",
+                    len(records), episode_idx["n"], oracle_l1, wm_l1, zero_l1,
                 )
             except Exception:
                 logging.exception("Probe side-computation failed (real rollout unaffected)")
@@ -106,15 +109,42 @@ def add_oracle_probe(vla):
         state["prev_action"] = result["normalized_actions"][0]
         return result
 
+    def on_episode_end(success):
+        # Reported by the RoboCasa client (simulation_env.py) right after an
+        # episode's outcome is known -- see WebsocketClientPolicy's own
+        # report_episode_end docstring. Records which episode just finished
+        # succeeded, and clears the (prev_example, prev_action) pair so the
+        # first predict_action call of the *next* episode is never compared
+        # against an action taken at the tail of this one -- same guard
+        # F1-VLA/mimic-video's own live-oracle probes apply on reset.
+        episode_success[episode_idx["n"]] = bool(success)
+        episode_idx["n"] += 1
+        state["prev_example"] = None
+        state["prev_action"] = None
+
     def summarize():
-        for name, vals in samples.items():
-            if not vals:
+        for name in ("oracle", "worldmodel", "zero"):
+            key = f"{name}_l1"
+            all_vals = [r[key] for r in records]
+            succ_vals = [r[key] for r in records if episode_success.get(r["episode_idx"])]
+            if not all_vals:
                 continue
             logging.info(
-                "PROBE_SUMMARY condition=%s n=%d mean=%.5f median=%.5f sd=%.5f",
-                name, len(vals), statistics.mean(vals), statistics.median(vals),
-                statistics.stdev(vals) if len(vals) > 1 else 0.0,
+                "PROBE_SUMMARY_ALL condition=%s n=%d mean=%.5f median=%.5f sd=%.5f",
+                name, len(all_vals), statistics.mean(all_vals), statistics.median(all_vals),
+                statistics.stdev(all_vals) if len(all_vals) > 1 else 0.0,
             )
+            if succ_vals:
+                logging.info(
+                    "PROBE_SUMMARY_SUCCESSFUL_EPISODES_ONLY condition=%s n=%d mean=%.5f median=%.5f sd=%.5f",
+                    name, len(succ_vals), statistics.mean(succ_vals), statistics.median(succ_vals),
+                    statistics.stdev(succ_vals) if len(succ_vals) > 1 else 0.0,
+                )
+            else:
+                logging.info(
+                    "PROBE_SUMMARY_SUCCESSFUL_EPISODES_ONLY condition=%s: no successful-episode samples yet",
+                    name,
+                )
 
     original_probed = probed_predict_action
 
@@ -124,11 +154,12 @@ def add_oracle_probe(vla):
         # SIGTERM'd at the end of the eval slurm script, which does not run
         # Python `finally` blocks, so this is the reliable place to persist
         # partial results if the job is killed mid-episode.
-        if len(samples["oracle"]) and len(samples["oracle"]) % 5 == 0:
+        if len(records) and len(records) % 5 == 0:
             summarize()
         return result
 
     vla.predict_action = probed_predict_action_with_periodic_summary
+    vla._probe_on_episode_end = on_episode_end
     vla._probe_summarize = summarize
     return vla
 

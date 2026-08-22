@@ -73,5 +73,23 @@ class WebsocketClientPolicy:
             raise RuntimeError(f"Error in inference server:\n{response}")
         return msgpack_numpy.unpackb(response)
 
+    def report_episode_end(self, success: bool) -> None:
+        """Tell the server an episode just finished and whether it succeeded.
+
+        Purely additive to the wire protocol -- a plain (non-probe) server
+        still understands this message (WebsocketPolicyServer routes it to
+        a no-op ack if the loaded policy has no `_probe_on_episode_end`),
+        so this is safe to call from every RoboCasa eval run, not just
+        probe runs. Synchronous send+recv, matching predict_action's own
+        request/response pairing -- skipping the recv here would leave a
+        stray response in the socket buffer that the *next* predict_action
+        call would then wrongly consume.
+        """
+        data = self._packer.pack({"type": "episode_end", "success": bool(success)})
+        self._ws.send(data)
+        response = self._ws.recv()
+        if isinstance(response, str):
+            raise RuntimeError(f"Error in inference server:\n{response}")
+
 
 

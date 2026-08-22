@@ -102,6 +102,24 @@ class WebsocketPolicyServer:
         if mtype == "ping":
             return {"status": "ok", "ok": True, "type": "ping", "request_id": req_id}
 
+        # episode_end: purely additive -- lets a client report an episode's
+        # outcome without changing anything about the infer path. No-ops
+        # (still acks) for any policy that doesn't opt in via
+        # `_probe_on_episode_end`, so plain closed-loop servers are
+        # unaffected by clients that now send this after every episode.
+        elif mtype == "episode_end":
+            hook = getattr(self._policy, "_probe_on_episode_end", None)
+            if hook is not None:
+                try:
+                    hook(msg.get("success"))
+                except Exception as e:
+                    logging.exception("episode_end hook failed (request_id=%s)", req_id)
+                    return {
+                        "status": "error", "ok": False, "type": "episode_end_ack",
+                        "request_id": req_id, "error": {"message": str(e)},
+                    }
+            return {"status": "ok", "ok": True, "type": "episode_end_ack", "request_id": req_id}
+
         # infer --> framework.predict_action
         elif mtype == "infer" or mtype == "predict_action":
             # Basic payload sanity

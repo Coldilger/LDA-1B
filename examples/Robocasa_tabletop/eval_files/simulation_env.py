@@ -156,6 +156,22 @@ class SimulationInferenceEnv:
                 if terminations[env_idx] or truncations[env_idx]:
                     episode_lengths.append(current_lengths[env_idx])
                     episode_successes.append(current_successes[env_idx])
+                    # Purely additive report to the policy server (see
+                    # WebsocketClientPolicy.report_episode_end) -- lets a
+                    # probe server (e.g. server_policy_oracle_probe.py)
+                    # attribute its side-channel samples to the episode
+                    # that produced them and filter to successful ones,
+                    # the same idea already used for F1-VLA/mimic-video's
+                    # own live-oracle probes. No-ops on a plain closed-loop
+                    # server, so this doesn't change what actually drives
+                    # the robot; wrapped defensively so a probe-unaware or
+                    # unreachable server can never break the real eval.
+                    client = getattr(self.model, "client", None)
+                    if client is not None and hasattr(client, "report_episode_end"):
+                        try:
+                            client.report_episode_end(current_successes[env_idx])
+                        except Exception:
+                            logging.exception("report_episode_end failed (eval unaffected)")
                     current_successes[env_idx] = False
                     completed_episodes += 1
                     # Reset trackers for this environment
