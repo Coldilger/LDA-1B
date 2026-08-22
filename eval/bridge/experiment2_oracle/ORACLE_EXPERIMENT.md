@@ -1,13 +1,17 @@
 # Experiment 2: Oracle injection — LDA-1B
 
-**Status: done. Live probe via RoboCasa. Oracle is worse than a trivial
-zero-action baseline — not just "doesn't help," actively worse, and
-indistinguishable from feeding the model its own imagined future
-(Experiment 1's condition). Confirmed on a 2026-08-21 rerun at ~10x the
-original sample size (n=595, up from n=62), with a genuine successful-
-episodes-only filter (n=419) that barely moves the numbers — see "Update
-2026-08-21" below for why that matters and "Current results" for the
-original, smaller run this rerun confirms.**
+**Status: the "does the pathway match real behavior" half is done. Live
+probe via RoboCasa. Both oracle and world-model conditions are worse than a
+trivial zero-action baseline at matching what the real policy actually
+does — not just "doesn't help," actively worse. Confirmed on a 2026-08-21
+rerun at ~10x the original sample size (n=595, up from n=62), with a
+genuine successful-episodes-only filter (n=419) that barely moves the
+numbers — see "Update 2026-08-21" below for why that matters and "Current
+results" for the original, smaller run this rerun confirms. The
+*correctness* half — does it matter whether the fed-in future is real or
+imagined — is open, not answered by these numbers; see "Open: does
+correctness matter here?" below before citing this experiment as parallel
+to F1-VLA's finding.**
 
 ## What this is and why it's grounded, not invented
 
@@ -94,12 +98,20 @@ comparison across models isn't meaningful, only direction).
 | world-model (imagined future) | **0.897** |
 | zero (trivial, no movement) | **0.753** |
 
-**Oracle and world-model are statistically indistinguishable from each
-other, and both are clearly worse than doing nothing.** This is a stronger
-and stranger result than mimic-video's own "oracle barely beats a trivial
-baseline" (mimic's oracle L1 0.0092 vs baseline 0.0097, ~1.05x) — LDA's
-oracle isn't merely unhelpful, it's actively worse, by a wide and stable
-margin.
+**Oracle L1 and world-model L1 are each measured against the same third
+reference — the real (unmodified, default) policy's own action — not
+against each other, and both land far worse than a trivial zero-action
+guess.** That is not the same claim as "oracle and world-model are close to
+each other": two points can each be far from a landmark and still be far
+from each other too (nothing here rules that out). A direct
+oracle-vs-world-model comparison hasn't been computed — see "Open: does
+correctness matter here?" below. What these two numbers alone DO establish:
+`inverse_dynamics`'s predictions, fed either a real or an imagined future,
+resemble what the real policy actually does *less* than a trivial "don't
+move" guess would — a genuinely stranger result than mimic-video's own
+"oracle barely beats a trivial baseline" (mimic's oracle L1 0.0092 vs
+baseline 0.0097, ~1.05x): LDA's oracle isn't merely unhelpful relative to a
+trivial guess, it's actively worse, by a wide and stable margin.
 
 **Four alternative explanations checked and ruled out, each by a direct
 test, not just plausible reasoning** (see [[feedback_verify_before_confirming]]):
@@ -176,15 +188,50 @@ Rerun 2026-08-21 (job 632938, 10 episodes, `CLIENT_EXIT=0`, no errors):
 almost exactly at ~10x the sample size (0.901/0.897/0.753 then vs.
 0.898/0.899/0.753 now) — not a small-sample fluke. Second, and more
 important: filtering to successful episodes barely moves any of the three
-numbers (third-decimal differences only). Unlike a probe that compares
-against a mediocre policy's own actions, this one compares oracle/world-model
-predictions against the *real, achieved outcome* one step later — so the
-"is the reference behavior any good" concern is weaker here to begin with,
-and this result confirms directly that it isn't driving the finding: LDA's
-`inverse_dynamics` pathway predicts poorly-calibrated actions regardless of
-whether the episode it's embedded in goes on to succeed or fail. Combined
-with the four ruled-out alternative explanations above, this is now a
-well-triangulated result, not a preliminary one.
+numbers (third-decimal differences only). This probe *does* compare
+against the real policy's own action (like F1-VLA's copy, unlike
+mimic-video's, which compares against physical outcome instead — an
+earlier draft of this paragraph had that backwards), which is exactly why
+the successful-only filter matters here: on a failed episode the reference
+action itself wasn't necessarily good, so a probe that trusted it
+unconditionally would be measuring something murkier. That it barely
+changes anything means LDA's `inverse_dynamics` pathway predicts
+poorly-calibrated actions (relative to the real policy) regardless of
+whether the episode it's embedded in goes on to succeed or fail — not an
+artifact of leaning on bad reference behavior. Combined with the four
+ruled-out alternative explanations above, this is now a well-triangulated
+result, not a preliminary one — **for the claim it actually supports**
+(both conditions are poorly matched to real policy behavior). See directly
+below for what it does not yet support.
+
+## Open: does correctness matter here? (not yet answered)
+
+Exp1 already gives LDA-1B a decisive, standalone answer to "does using the
+world-model path *at all* change closed-loop behavior": turning the
+dormant `video_gen → inverse_dynamics` path on gives 44% vs. a 48% baseline
+— within this thesis's own noise floor, i.e. no real effect
+(`experiment1_ablation/README.md`). That's the presence question, answered.
+
+The *correctness* question — does it matter whether `inverse_dynamics` is
+fed the real future or its own imagined one, the direct analogue of what
+F1-VLA's Exp1 (shuffled ≈ baseline, ablated worse) resolves for F1 — is
+**not** answered by the table above, for the reason stated in the previous
+section: oracle_l1 and world_model_l1 are each a distance to the *same
+third point* (the real policy's action), not to each other. Getting the
+real answer needs one more number, `L1(oracle_action, world_model_action)`
+computed directly — both action vectors already exist inside
+`server_policy_oracle_probe.py`'s per-sample computation, they're just
+never diffed against each other, only against `real_action`. Cheap to add,
+not yet run (2026-08-22).
+
+Until that number exists: do not cite LDA-1B as having reached F1-VLA's
+"structural, not content-based dependency" conclusion. What can be said
+today is narrower and still worth stating — activating the dormant path
+produces actions that land far from real-policy behavior (this section),
+*and* leads to closed-loop success statistically indistinguishable from
+not activating it (Exp1) — different-looking decisions, similar outcomes.
+Whether that's because correctness of the fed-in future doesn't matter
+(F1-style) or for some other reason is exactly the open question.
 
 ## Side finding: probable cause of 0% closed-loop success (Bridge, historical)
 
