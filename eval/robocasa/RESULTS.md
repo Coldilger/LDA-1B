@@ -120,7 +120,7 @@ embodiment. Two ways to test it without a full retrain:
       third-person views; this would clarify whether that's a pretraining
       -level or finetuning-level gap. Not prioritized (see decision below).
 
-## Camera-viewpoint test: confirmed directly
+## Camera-viewpoint test: collapses success, but see the occlusion caveat below
 
 **Result: switching only the camera (`egoview` -> `robot0_agentview_center`,
 same robot, same task, same checkpoint, same episode protocol) collapses
@@ -157,18 +157,60 @@ a small nudge. What it does establish: the model's failure mode on
 Bridge-like third-person views is not merely "different embodiment" -- the
 vision backbone specifically cannot handle a camera framing this far outside
 what it was ever shown, independent of embodiment, state space, or action
-space (all held constant here). That is direct, not just circumstantial,
-support for the camera-viewpoint hypothesis.
+space (all held constant here). See the caveat immediately below for what
+this does *not*, on its own, establish.
 
-**Caveat, not yet done:** haven't visually inspected a saved rollout video
-(`robocasa-eval/videos/agentview_full_630800/`) to directly confirm the
-`robot0_agentview_center` frames are sensible, well-framed third-person
-images rather than some rendering artifact (e.g. a degenerate crop) that
-would produce a similar-looking 0% for an unrelated reason. The smoke test's
-timing (301s/6 episodes, matching the egoview run's pace) and clean
-`CLIENT_EXIT=0` argue against an infra failure, but a visual spot-check is
-the direct confirmation and is still worth doing before treating this as
-fully closed.
+**Caveat, done 2026-08-22 -- visual inspection reveals a real confound.**
+The "not yet done" visual spot-check below was finally run: a sample frame
+from `robocasa-eval/videos/agentview_full_630800/` shows the GR1 humanoid's
+own head and both shoulders filling roughly two-thirds of the frame, with
+only narrow slivers of the countertop visible at the left/right edges --
+not the "sensible, well-framed third-person image" the smoke-test timing
+argued for. This is not a rendering artifact (the timing/`CLIENT_EXIT=0`
+evidence for a working pipeline still stands), but it does mean the test
+has an unaddressed confound: **severe self-occlusion**, not (only) viewpoint
+mismatch. A model with a perfectly viewpoint-invariant vision backbone could
+still fail on this specific camera, simply because most of the workspace
+isn't visible in it -- so the 48%->0% collapse can no longer be read as
+*clean* evidence isolating "trained-viewpoint mismatch" from "not enough
+usable pixels regardless of viewpoint." For direct comparison: a same-day
+check of a real Bridge/SimplerEnv rollout frame (the actual benchmark this
+finding is meant to explain) shows a close, fully unobstructed view of the
+workspace with no robot-body occlusion at all beyond the gripper fingertips
+at the top edge -- confirming Bridge's own camera is not analogous to
+`robot0_agentview_center` in this respect, and this specific swap test is a
+weaker proxy for "Bridge-style third-person" than assumed when it was
+designed.
+
+Root cause of the occlusion, traced in source: `robot0_agentview_center`
+(and its siblings `robot0_agentview_left`/`_right`/`_frontview`) are defined
+in `robocasa/utils/camera_utils.py`'s `CAM_CONFIGS` with
+`parent_body="mobilebase0_support"` -- i.e. mounted to the robot's own
+mobile-base body at a close offset (`pos=[-0.6, 0.0, 1.15]` for `_center`;
+`_left`/`_right` are +-0.35 laterally, `_frontview` is nearly the same
+offset again), not to anything fixed in the scene. Every currently-active
+non-wrist camera option for this robot shares that same mount point, so
+switching to `_left`/`_right`/`_frontview` instead would likely still be
+substantially self-occluded (not verified -- no frame from those has been
+pulled). The classic robosuite scene-fixed cameras (`frontview`, `birdview`,
+`agentview`, `sideview`, the ones that would actually sit somewhere in the
+room rather than on the robot) exist in
+`models/assets/arenas/empty_tabletop_arena.xml` but are **commented out** --
+none is currently registered or usable without code changes. `sideview`
+(`pos=[-0.057, 1.276, 1.488]`, roughly countertop height, off to the side)
+is the one that looks most analogous to Bridge's actual external camera
+placement if someone wanted to build a cleaner version of this test --
+requires uncommenting + registering it in `tabletop.py`'s `set_cameras()`
+and a real re-run, not done here.
+
+**Bottom line.** The original Bridge finding this section is meant to
+support -- LDA-1B scores 0% on real Bridge (0/12) despite scoring 48% on its
+own native RoboCasa benchmark -- is untouched by any of this; that's a
+standalone fact about a real benchmark, not something this synthetic swap
+test could invalidate. What's weakened is specifically this swap test's
+strength *as corroboration* for the viewpoint-transfer explanation over a
+simpler "not enough visible workspace" explanation -- worth being honest
+about that gap rather than citing 48%->0% as decisive on its own.
 
 ## Decision: framing and next steps (2026-08-19)
 
@@ -176,7 +218,12 @@ fully closed.
 not transfer across camera viewpoint,"** not "the Bridge finetune is
 bugged." The 48% -> 0% result above is treated as the LDA-1B contribution to
 the thesis's central research question, on its own terms — not as an
-unresolved blocker waiting on a fix.
+unresolved blocker waiting on a fix. This framing still rests mainly on the
+real Bridge 0% fact and LDA-1B's paper training exclusively on egocentric
+views, not on the RoboCasa camera-swap test alone — **see the occlusion
+caveat above (2026-08-22)**, which weakens the swap test specifically as
+corroboration, without touching the real-Bridge fact it was meant to
+support.
 
 **Explicitly not pursuing now:** running F1-VLA's and mimic-video's own
 checkpoints through RoboCasa on both camera options, to check whether the

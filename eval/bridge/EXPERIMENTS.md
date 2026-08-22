@@ -16,7 +16,9 @@ mimic-video forks, each with a model-specific implementation.
 real state input landed but didn't fix it — see `RESULTS.md`), and the
 leading explanation is now that LDA-1B's representation doesn't transfer
 across camera viewpoint at all (egocentric-trained, Bridge is third-person;
-confirmed directly, see `../robocasa/RESULTS.md`'s "Decision" section) — not
+supported by a real Bridge 0% result plus a RoboCasa camera-swap test, the
+latter with a self-occlusion caveat as of 2026-08-22 — see
+`../robocasa/RESULTS.md`'s "Decision" section) — not
 a bug waiting on a fix. **Decision: Experiments 1/2/4(/5) below now run
 against the confirmed-working RoboCasa checkpoint instead of waiting on
 Bridge**, same as Experiment 3 already does, accepting the dataset mismatch
