@@ -1,9 +1,13 @@
 # Experiment 2: Oracle injection — LDA-1B
 
-**Status: done (2026-08-19), live probe via RoboCasa. Oracle is worse than
-a trivial zero-action baseline — not just "doesn't help," actively worse,
-and indistinguishable from feeding the model its own imagined future
-(Experiment 1's condition). See "Current results" below.**
+**Status: done. Live probe via RoboCasa. Oracle is worse than a trivial
+zero-action baseline — not just "doesn't help," actively worse, and
+indistinguishable from feeding the model its own imagined future
+(Experiment 1's condition). Confirmed on a 2026-08-21 rerun at ~10x the
+original sample size (n=595, up from n=62), with a genuine successful-
+episodes-only filter (n=419) that barely moves the numbers — see "Update
+2026-08-21" below for why that matters and "Current results" for the
+original, smaller run this rerun confirms.**
 
 ## What this is and why it's grounded, not invented
 
@@ -133,6 +137,55 @@ closed-loop world-model-on condition unable to improve on the default
 policy, independent of whether the underlying world-model signal (video_gen)
 itself is any good.
 
+## Update 2026-08-21 — rerun at scale, with a genuine successful-episodes filter
+
+The original run above (n=62, 2 episodes) compared oracle/world-model
+predictions against what the *default, unmodified policy* actually did at
+each step — the same "is the reference behavior actually good?" concern
+the user raised for F1-VLA/mimic-video's own live-oracle probes applies
+here too, and at n=62/2-episodes there weren't enough successful episodes
+to filter on even if the machinery had existed. It didn't: this server
+talks to the RoboCasa client over a websocket, and the server had no way
+to learn either episode boundaries or episode success — the client alone
+computes both, and nothing crossed the wire to report them. The `"reset"`
+message type named in `websocket_policy_server.py`'s own docstring was
+never actually implemented.
+
+Fixed by adding a new, purely additive message type, `episode_end`:
+`WebsocketClientPolicy.report_episode_end(success)` (client) sends it right
+after `simulation_env.py`'s own success bookkeeping finalizes an episode;
+`WebsocketPolicyServer._route_message` routes it to a `_probe_on_episode_end`
+hook if the loaded policy defines one (a plain, non-probe server just acks
+and no-ops, so this is safe on every other RoboCasa eval this codebase
+runs, including the ones producing Experiment 1's decisive success-rate
+numbers). `server_policy_oracle_probe.py` uses the hook to tag every
+sample with the episode it came from and to clear its
+`(prev_example, prev_action)` pair on each episode boundary — the same
+guard F1-VLA/mimic-video's own live-oracle probes apply on reset, to stop
+a sample ever comparing across two different episodes.
+
+Rerun 2026-08-21 (job 632938, 10 episodes, `CLIENT_EXIT=0`, no errors):
+
+| | all samples (n=595) | successful episodes only (n=419) |
+|---|---|---|
+| oracle L1 | 0.89821 (median 0.89777, sd 0.01630) | 0.89803 (median 0.89754, sd 0.01683) |
+| world-model L1 | 0.89943 (median 0.89953, sd 0.01720) | 0.89889 (median 0.89953, sd 0.01708) |
+| zero (trivial) L1 | 0.75289 (median 0.75345, sd 0.01286) | 0.75264 (median 0.75299, sd 0.01291) |
+
+**Two things this settles.** First, the original n=62 finding replicates
+almost exactly at ~10x the sample size (0.901/0.897/0.753 then vs.
+0.898/0.899/0.753 now) — not a small-sample fluke. Second, and more
+important: filtering to successful episodes barely moves any of the three
+numbers (third-decimal differences only). Unlike a probe that compares
+against a mediocre policy's own actions, this one compares oracle/world-model
+predictions against the *real, achieved outcome* one step later — so the
+"is the reference behavior any good" concern is weaker here to begin with,
+and this result confirms directly that it isn't driving the finding: LDA's
+`inverse_dynamics` pathway predicts poorly-calibrated actions regardless of
+whether the episode it's embedded in goes on to succeed or fail. Combined
+with the four ruled-out alternative explanations above, this is now a
+well-triangulated result, not a preliminary one.
+
 ## Side finding: probable cause of 0% closed-loop success (Bridge, historical)
 
 Alongside the original (Bridge, wrong-class) oracle test we investigated why
@@ -168,10 +221,14 @@ which is structurally unavailable at real deployment).
    models.
 2. **Units** — normalized space, not directly comparable in magnitude to
    F1/mimic.
-3. **n=62, 2 episodes, one run** — no seed repeats yet. The pattern was
-   already stable across the four ablation checks above (all drawn from
-   overlapping samples), but a fully independent repeat would strengthen
-   this further.
+3. **One run, no independent seed repeat** — updated 2026-08-21: no longer
+   n=62/2 episodes (see the update section above, n=595/10 episodes,
+   successful-episodes-filtered), but still a single job/run. The pattern
+   was already stable across the four ablation checks (drawn from
+   overlapping samples) and now also across a ~10x scale-up and an
+   all-vs-successful-only split — a genuinely independent rerun (different
+   task or launch) would still strengthen this further, but the marginal
+   value is lower now than when this caveat was first written.
 4. **Closed-loop success rate for Oracle specifically is not attempted,
    and isn't just an "outstanding" item — it's not a coherent construction**
    for this experiment. Showing a policy the true future *before* it acts

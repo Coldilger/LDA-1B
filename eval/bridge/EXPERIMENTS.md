@@ -35,10 +35,13 @@ the rest of this repo's experiments.
   `experiment1_ablation/README.md`.
 - [`experiment2_oracle/`](experiment2_oracle/) — **Oracle injection.**
   Replace the predicted future with the ground-truth future, encoded
-  through each model's own pipeline. **Done (2026-08-19), live probe via
-  RoboCasa** — oracle is worse than a trivial zero-action baseline (0.90 vs
-  0.75 L1), indistinguishable from feeding the model its own imagined
-  future. Four alternative explanations checked and ruled out (task
+  through each model's own pipeline. **Done, live probe via RoboCasa** —
+  oracle is worse than a trivial zero-action baseline (0.90 vs 0.75 L1),
+  indistinguishable from feeding the model its own imagined future.
+  Confirmed 2026-08-21 at ~10x scale (n=595, up from n=62) with a genuine
+  successful-episodes-only filter (n=419) — barely moves the numbers,
+  ruling out "comparing against a mediocre policy" as the explanation.
+  Four alternative explanations also checked and ruled out (task
   undertraining, frame ordering, dead action dims, chunk-length mismatch) —
   reads as a genuine property of this checkpoint's `inverse_dynamics`
   pathway. See `experiment2_oracle/ORACLE_EXPERIMENT.md`.
