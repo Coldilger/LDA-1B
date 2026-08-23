@@ -75,6 +75,21 @@ different dataset — not the results below.
 
 ## How the metric is computed
 
+**Where the real next frame actually comes from — this is not foresight.**
+The RoboCasa simulator is a live physics engine, not a lookup into a
+pre-recorded dataset. At every real `predict_action` call the default
+policy observes the current frame and picks an action, which the client
+executes, genuinely advancing the simulator and producing the next frame
+as a direct physical consequence — nothing here is predicted or fetched in
+advance. The probe keeps only a one-tick lag: it stores the previous call's
+`(example, action)` pair, and when the *next* call arrives — carrying the
+now-already-happened real next frame — it retrospectively asks what
+`inverse_dynamics` would have predicted back at the previous tick, had it
+been given this now-known real frame instead of nothing. That hypothetical
+action is compared against `real_action` — what the default policy actually
+did at that earlier tick — and is never executed itself; the robot's entire
+path through the simulator is driven by the default policy alone throughout.
+
 Take a real moment from a live rollout: the "now" frame, the frame that
 resulted one step later, and the action the (unmodified, default) policy
 actually took at that step (this rollout's own analogue of a logged
