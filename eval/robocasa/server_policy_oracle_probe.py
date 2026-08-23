@@ -19,7 +19,14 @@ new oracle_future_imgs / inverse_dynamics_next_obs_tokens kwargs:
     (Experiment 1 -- "turn the world model on where it's normally off").
 Both compared by L1 against the real action the policy took (=~ground truth,
 same role a logged dataset's `action` field plays for F1/mimic), alongside a
-zero-action trivial baseline.
+zero-action trivial baseline. Also compares oracle and world-model actions
+directly against EACH OTHER (added 2026-08-22) -- oracle_l1/worldmodel_l1
+are each a distance to the same third point (real_action), which does not
+establish how close oracle and world-model are to one another; that's a
+separate, previously-uncomputed number, needed to answer whether forecast
+*correctness* matters here the way it does for F1-VLA's own copy of this
+experiment (see ORACLE_EXPERIMENT.md's "Open: does correctness matter
+here?" section for the full reasoning this closes).
 
 Does not change what's actually served to the client: the probe is a pure
 side computation using the model's own already-existing predict_action/
@@ -91,13 +98,25 @@ def add_oracle_probe(vla):
 
                 zero_l1 = l1(np.zeros_like(real_action), real_action)
 
+                # The actually-decisive number for "does correctness matter
+                # here": oracle_l1/wm_l1 above are each a distance to
+                # real_action, not to each other -- both landing far from
+                # real_action doesn't mean they're close to each other. Both
+                # action vectors already exist above; just diff them
+                # directly.
+                oracle_vs_wm_l1 = l1(
+                    oracle_out["normalized_actions"][0], wm_out["normalized_actions"][0]
+                )
+
                 records.append(dict(
                     oracle_l1=oracle_l1, worldmodel_l1=wm_l1, zero_l1=zero_l1,
+                    oracle_vs_wm_l1=oracle_vs_wm_l1,
                     episode_idx=episode_idx["n"],
                 ))
                 logging.info(
-                    "PROBE_SAMPLE n=%d ep=%d oracle_l1=%.5f worldmodel_l1=%.5f zero_l1=%.5f",
-                    len(records), episode_idx["n"], oracle_l1, wm_l1, zero_l1,
+                    "PROBE_SAMPLE n=%d ep=%d oracle_l1=%.5f worldmodel_l1=%.5f zero_l1=%.5f "
+                    "oracle_vs_wm_l1=%.5f",
+                    len(records), episode_idx["n"], oracle_l1, wm_l1, zero_l1, oracle_vs_wm_l1,
                 )
             except Exception:
                 logging.exception("Probe side-computation failed (real rollout unaffected)")
@@ -123,7 +142,7 @@ def add_oracle_probe(vla):
         state["prev_action"] = None
 
     def summarize():
-        for name in ("oracle", "worldmodel", "zero"):
+        for name in ("oracle", "worldmodel", "zero", "oracle_vs_wm"):
             key = f"{name}_l1"
             all_vals = [r[key] for r in records]
             succ_vals = [r[key] for r in records if episode_success.get(r["episode_idx"])]

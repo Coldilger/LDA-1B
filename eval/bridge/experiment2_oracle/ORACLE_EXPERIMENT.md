@@ -1,17 +1,17 @@
 # Experiment 2: Oracle injection — LDA-1B
 
-**Status: the "does the pathway match real behavior" half is done. Live
-probe via RoboCasa. Both oracle and world-model conditions are worse than a
-trivial zero-action baseline at matching what the real policy actually
-does — not just "doesn't help," actively worse. Confirmed on a 2026-08-21
-rerun at ~10x the original sample size (n=595, up from n=62), with a
-genuine successful-episodes-only filter (n=419) that barely moves the
-numbers — see "Update 2026-08-21" below for why that matters and "Current
-results" for the original, smaller run this rerun confirms. The
-*correctness* half — does it matter whether the fed-in future is real or
-imagined — is open, not answered by these numbers; see "Open: does
-correctness matter here?" below before citing this experiment as parallel
-to F1-VLA's finding.**
+**Status: done, both halves. Live probe via RoboCasa. Both oracle and
+world-model conditions are worse than a trivial zero-action baseline at
+matching what the real policy actually does — not just "doesn't help,"
+actively worse. Confirmed on a 2026-08-21 rerun at ~10x the original sample
+size (n=595, up from n=62), with a genuine successful-episodes-only filter
+(n=419) that barely moves the numbers — see "Update 2026-08-21" below for
+why that matters and "Current results" for the original, smaller run this
+rerun confirms. The *correctness* half — does it matter whether the fed-in
+future is real or imagined — is now resolved too (2026-08-23): **yes, it
+does** — oracle and world-model actions differ substantially from each
+other, the opposite finding from F1-VLA; see "Resolved 2026-08-23:
+correctness matters here, unlike for F1-VLA" below.**
 
 ## What this is and why it's grounded, not invented
 
@@ -204,7 +204,7 @@ result, not a preliminary one — **for the claim it actually supports**
 (both conditions are poorly matched to real policy behavior). See directly
 below for what it does not yet support.
 
-## Open: does correctness matter here? (not yet answered)
+## Resolved 2026-08-23: correctness matters here, unlike for F1-VLA
 
 Exp1 already gives LDA-1B a decisive, standalone answer to "does using the
 world-model path *at all* change closed-loop behavior": turning the
@@ -212,26 +212,48 @@ dormant `video_gen → inverse_dynamics` path on gives 44% vs. a 48% baseline
 — within this thesis's own noise floor, i.e. no real effect
 (`experiment1_ablation/README.md`). That's the presence question, answered.
 
-The *correctness* question — does it matter whether `inverse_dynamics` is
-fed the real future or its own imagined one, the direct analogue of what
-F1-VLA's Exp1 (shuffled ≈ baseline, ablated worse) resolves for F1 — is
-**not** answered by the table above, for the reason stated in the previous
-section: oracle_l1 and world_model_l1 are each a distance to the *same
-third point* (the real policy's action), not to each other. Getting the
-real answer needs one more number, `L1(oracle_action, world_model_action)`
-computed directly — both action vectors already exist inside
-`server_policy_oracle_probe.py`'s per-sample computation, they're just
-never diffed against each other, only against `real_action`. Cheap to add,
-not yet run (2026-08-22).
+The *correctness* question needed one more number this section originally
+flagged as missing: `L1(oracle_action, world_model_action)` computed
+directly, rather than each condition's separate distance to the real
+policy's action. Added to `server_policy_oracle_probe.py` and rerun (job
+634481, n=595, `CLIENT_EXIT=0`):
 
-Until that number exists: do not cite LDA-1B as having reached F1-VLA's
-"structural, not content-based dependency" conclusion. What can be said
-today is narrower and still worth stating — activating the dormant path
-produces actions that land far from real-policy behavior (this section),
-*and* leads to closed-loop success statistically indistinguishable from
-not activating it (Exp1) — different-looking decisions, similar outcomes.
-Whether that's because correctness of the fed-in future doesn't matter
-(F1-style) or for some other reason is exactly the open question.
+| | all samples (n=595) | successful episodes only (n=239) |
+|---|---|---|
+| oracle vs. world-model, direct | **0.90013** (median 0.90014, sd 0.01612) | **0.90038** (median 0.90020, sd 0.01584) |
+| (for reference) oracle vs. real policy | 0.90122 | 0.90165 |
+| (for reference) world-model vs. real policy | 0.90023 | 0.90078 |
+| (for reference) zero vs. real policy | 0.75214 | 0.75173 |
+
+**Oracle and world-model actions are not close to each other.** The direct
+distance between them (~0.900) is essentially the same size as each
+condition's distance to the real policy's action — and larger than the
+zero-baseline's distance to real (~0.752), the "typical action scale"
+reference used throughout this thesis. Two points can't be "each far from
+a third point but actually close to each other" and also be *this* far
+apart directly — this number rules that out concretely. **This is the
+opposite of F1-VLA's finding**: where F1's oracle stays close to its own
+self-imagined action (small gap, ruled out further by Exp1's shuffled
+result), LDA-1B's `inverse_dynamics` produces a substantially different
+action depending on whether it's fed the real or the imagined future.
+Correctness is not ignored here — it's a real, causally load-bearing input
+to this pathway's output, when the pathway is queried in isolation.
+
+**What this does and doesn't mean for LDA-1B's overall profile.** This
+resolves the Exp2-specific sub-question (does correctness change the
+*decision*), and it points the opposite direction from F1-VLA on exactly
+that axis. It does not overturn Exp1's own result (44% vs. 48%, no real
+closed-loop effect from activating the path with its own, necessarily
+self-imagined, future) — that's a different question (does using this path
+*at all*, with whatever future it naturally has access to, change task
+success), and Exp1 answers it directly rather than needing correctness
+sensitivity as a proxy. The combined LDA-1B picture: a pathway whose
+*output* is genuinely sensitive to forecast accuracy (this section), that
+nonetheless doesn't move the needle on real closed-loop success when
+activated with its own (imagined) future (Exp1) — content-sensitive but
+not consequential for this checkpoint's task performance, a third profile
+distinct from both F1-VLA's content-blind dependency and mimic-video's
+content-sensitive-and-already-accurate one.
 
 ## Side finding: probable cause of 0% closed-loop success (Bridge, historical)
 

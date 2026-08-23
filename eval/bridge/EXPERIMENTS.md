@@ -37,27 +37,31 @@ the rest of this repo's experiments.
   `experiment1_ablation/README.md`.
 - [`experiment2_oracle/`](experiment2_oracle/) — **Oracle injection.**
   Replace the predicted future with the ground-truth future, encoded
-  through each model's own pipeline. **Partly done, live probe via
-  RoboCasa** — both oracle and world-model conditions are worse than a
-  trivial zero-action baseline (0.90 vs 0.75 L1) at matching what the real
-  policy actually does. Confirmed 2026-08-21 at ~10x scale (n=595, up from
-  n=62) with a genuine successful-episodes-only filter (n=419) — barely
-  moves the numbers, ruling out "comparing against a mediocre policy" as
-  the explanation. Four alternative explanations also checked and ruled
-  out (task undertraining, frame ordering, dead action dims, chunk-length
+  through each model's own pipeline. **Done, live probe via RoboCasa** —
+  both oracle and world-model conditions are worse than a trivial
+  zero-action baseline (0.90 vs 0.75 L1) at matching what the real policy
+  actually does. Confirmed 2026-08-21 at ~10x scale (n=595, up from n=62)
+  with a genuine successful-episodes-only filter (n=419) — barely moves the
+  numbers, ruling out "comparing against a mediocre policy" as the
+  explanation. Four alternative explanations also checked and ruled out
+  (task undertraining, frame ordering, dead action dims, chunk-length
   mismatch) — reads as a genuine property of this checkpoint's
-  `inverse_dynamics` pathway. **Not yet answered:** whether oracle and
-  world-model are close to *each other* (the actual correctness question,
-  parallel to F1-VLA's finding) — both numbers above are distances to a
-  third reference, not to each other; see `ORACLE_EXPERIMENT.md`'s "Open:
-  does correctness matter here?" section.
+  `inverse_dynamics` pathway. **The correctness question, resolved
+  2026-08-23:** a direct `L1(oracle_action, world_model_action)` (job
+  634481, n=595) comes out ~0.90 — as large as either condition's distance
+  to the real policy's action — so oracle and world-model actions are
+  *not* close to each other. **Opposite finding from F1-VLA**: correctness
+  of the fed-in future genuinely changes this pathway's output. See
+  `ORACLE_EXPERIMENT.md`'s "Resolved 2026-08-23" section.
 - [`experiment3_cost/`](experiment3_cost/) — **Cost per decision.**
   Characterizes how much inference-time compute each model actually spends
-  on its world-model computation. LDA-1B is the interesting baseline case
-  here: no extra inference-time cost at all (the visual-forecasting head is
-  a training-time co-objective, unused at inference by default). **Latency
-  measured 2026-08-19** via the confirmed-working RoboCasa checkpoint
-  (Bridge still has nothing working to time) — see
+  on its world-model computation. LDA-1B's default path has no extra
+  inference-time cost (the visual-forecasting head is a training-time
+  co-objective, unused at inference by default) — but activating it (Exp1's
+  world-model-on condition) costs ~68% more per decision (428.2ms vs.
+  254.7ms median, measured 2026-08-23, previously never instrumented).
+  **Latency measured 2026-08-19 / 2026-08-23** via the confirmed-working
+  RoboCasa checkpoint (Bridge still has nothing working to time) — see
   `experiment3_cost/README.md`.
 - [`experiment4_probing/`](experiment4_probing/) — **Representation
   probing.** Freezes each model's backbone and trains a small probe head to
