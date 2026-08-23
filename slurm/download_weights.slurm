@@ -10,6 +10,15 @@
 # SIGKILLed partway through (2.1G of ~8G) when the node was overloaded.
 export HF_HOME=/mnt/beegfsnew/scratch/3295540/hf_cache
 export HF_HUB_DISABLE_XET=1
+# HF_HOME above redirects huggingface_hub's token lookup too (it checks
+# $HF_HOME/token, not ~/.cache/huggingface/token) -- there was never a token
+# at the HF_HOME location, so DINOv3 (gated) was always being requested
+# unauthenticated even though a valid token exists at the default path.
+# Confirmed 2026-08-23 after the 30-day purge forced a re-download and
+# DINOv3 failed with GatedRepoError while a real ~/.cache token sat unused.
+if [ -f "$HOME/.cache/huggingface/token" ]; then
+  export HF_TOKEN="$(cat "$HOME/.cache/huggingface/token")"
+fi
 
 /home/3295540/.conda/envs/f1_vla/bin/python - <<'PY'
 from huggingface_hub import snapshot_download

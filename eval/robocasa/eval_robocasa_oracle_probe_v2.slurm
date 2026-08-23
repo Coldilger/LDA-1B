@@ -28,6 +28,16 @@ ulimit -t unlimited
 
 # --- start server (LDA env), oracle-probe variant ---
 cd "$LDA_ROOT"
+# Explicit, not inherited: server_policy_oracle_probe.py imports `deployment`,
+# which is only importable with LDA_ROOT on PYTHONPATH (no __init__.py, so
+# the editable-install finder's own MAPPING doesn't resolve it either --
+# checked directly). The client invocation below already sets this
+# explicitly for its own imports; the server never did, apparently relying
+# on an ambient PYTHONPATH from the submitting shell that isn't guaranteed
+# -- confirmed missing 2026-08-23 (jobs 634267/634279/634291/634292 all
+# failed with ModuleNotFoundError: No module named 'deployment', including
+# a rerun of this exact previously-working script).
+export PYTHONPATH="$LDA_ROOT:${PYTHONPATH:-}"
 /home/3295540/.conda/envs/lda_eval/bin/python \
   eval/robocasa/server_policy_oracle_probe.py \
   --ckpt_path "$CKPT" \
