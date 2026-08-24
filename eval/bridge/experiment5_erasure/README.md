@@ -56,6 +56,17 @@ architecture as Experiment 4's) on what's left.
 | after erasing episode identity | +56.9% (≈unchanged) | +61.1% (≈unchanged) |
 | **after erasing current-pose's linear component** | **−11.4%** | **+13.4%** |
 
+**Why "baseline (no erasure)" here doesn't exactly match Exp4's own
+headline number (+60.2%/+64.9%):** it isn't the same number reused —
+`nonlinear_erasure_diagnostic.py` re-does its own episode train/val split
+and retrains the MLP from scratch (`torch.manual_seed(args.seed)`,
+`split_by_episode(..., args.seed)`) to get an apples-to-apples "no erasure"
+reference measured under the identical pipeline as the erased conditions,
+rather than reusing Exp4's saved model/split. Landing this close (59.1 vs.
+60.2, 65.7 vs. 64.9) is a reassuring, if accidental, answer to a gap Exp4's
+own "Not yet done" list named and never got a dedicated run for: an
+independent-seed repeat of the MLP result, before trusting it.
+
 **Current pose's MLP recoverability collapses** (+59.1% → −11.4%, a 70.5pp
 drop, crossing from clearly-better-than-constant to worse-than-constant)
 once its own best linear direction is removed. Since LEACE is a linear
