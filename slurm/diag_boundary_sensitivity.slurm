@@ -6,10 +6,10 @@
 #SBATCH --mem=64G
 #SBATCH --time=00:40:00
 #SBATCH --exclude=gnode07
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/boundary-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/boundary-%j.out
 export HF_HOME=/mnt/beegfsnew/scratch/3295540/hf_cache
 export TOKENIZERS_PARALLELISM=false
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B
+cd /home/3295540/LDA-1B
 # lda_eval lacks the raw `lerobot` package (LDAInference's own dataset
 # wrapper doesn't need it, but this script reads bridge_orig_lerobot
 # directly, same as diag_gripper.py's sibling scripts do) -- `lda` (the

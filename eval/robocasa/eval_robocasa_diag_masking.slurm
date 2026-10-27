@@ -9,9 +9,9 @@
 #SBATCH --output=/mnt/beegfsnew/scratch/3295540/robocasa-eval/diag-masking-%j.out
 
 set -u
-LDA_ROOT=/mnt/beegfsnew/scratch/3295540/LDA-1B
+LDA_ROOT=/home/3295540/LDA-1B
 ROBOCASA_ROOT=/mnt/beegfsnew/scratch/3295540/robocasa-eval/robocasa-gr1-tabletop-tasks
-CKPT=/mnt/beegfsnew/scratch/3295540/LDA-1B/checkpoints/LDA-robocasa_run/checkpoints/LDA-robocasa.pt
+CKPT=/home/3295540/LDA-1B/checkpoints/LDA-robocasa_run/checkpoints/LDA-robocasa.pt
 PORT=10098
 SERVER_LOG=/mnt/beegfsnew/scratch/3295540/robocasa-eval/server-diag-masking-${SLURM_JOB_ID}.log
 

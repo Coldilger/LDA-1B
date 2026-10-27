@@ -25,8 +25,8 @@ set -u
 source /software/miniconda3/etc/profile.d/conda.sh
 conda activate robocasa
 
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B
-export PYTHONPATH="/mnt/beegfsnew/scratch/3295540/LDA-1B:/mnt/beegfsnew/scratch/3295540/robocasa-eval/robocasa-gr1-tabletop-tasks:${PYTHONPATH:-}"
+cd /home/3295540/LDA-1B
+export PYTHONPATH="/home/3295540/LDA-1B:/mnt/beegfsnew/scratch/3295540/robocasa-eval/robocasa-gr1-tabletop-tasks:${PYTHONPATH:-}"
 
 python - <<'PY'
 import traceback

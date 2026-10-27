@@ -6,7 +6,7 @@
 #SBATCH --mem=128G
 #SBATCH --time=06:00:00
 #SBATCH --dependency=singleton
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/bridge-ft-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/bridge-ft-%j.out
 
 # Wave-based finetuning, the pattern F1-VLA used on this cluster.
 #
@@ -34,7 +34,7 @@ export WANDB_PROJECT=lda-bridge
 export WANDB_RUN_ID=lda_bridge_finetune
 export WANDB_RESUME=allow
 
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B
+cd /home/3295540/LDA-1B
 
 # The env's accelerate, not ~/.local/bin/accelerate -- that one is a Python 3.9
 # install where deepspeed is absent, which is what failed the first wave.

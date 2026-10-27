@@ -6,10 +6,10 @@
 #SBATCH --mem=64G
 #SBATCH --time=00:40:00
 #SBATCH --exclude=gnode07
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/grip-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/grip-%j.out
 export HF_HOME=/mnt/beegfsnew/scratch/3295540/hf_cache
 export TOKENIZERS_PARALLELISM=false
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B
+cd /home/3295540/LDA-1B
 /home/3295540/.conda/envs/lda_eval/bin/python eval/bridge/diag_gripper.py \
   --checkpoint "${CKPT:?}" --n-samples ${NSAMP:-40} ${DDIM:+--ddim-steps $DDIM} ${WITHHIST:+--with-history}
 echo "GRIP_EXIT=$?"

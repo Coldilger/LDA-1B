@@ -31,8 +31,8 @@ import sys
 
 import numpy as np
 
-sys.path.insert(0, "/mnt/beegfsnew/scratch/3295540/LDA-1B")
-sys.path.insert(0, "/mnt/beegfsnew/scratch/3295540/LDA-1B/eval/bridge")
+sys.path.insert(0, "/home/3295540/LDA-1B")
+sys.path.insert(0, "/home/3295540/LDA-1B/eval/bridge")
 
 from lerobot.datasets.lerobot_dataset import LeRobotDataset, LeRobotDatasetMetadata  # noqa: E402
 

@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --time=03:00:00
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/evalenv-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/evalenv-%j.out
 
 # The closed-loop eval needs one interpreter with BOTH stacks: LDA (transformers
 # 4.57 for Qwen3-VL, flash-attn) and SimplerEnv (sapien, mani_skill2_real2sim).
@@ -44,8 +44,8 @@ cp -n /home/3295540/.conda/envs/f1_vla_eval/lib/libvulkan.so.1 \
       /home/3295540/.conda/envs/lda_eval/lib/ || true
 # Same editable installs f1_vla_eval uses, pointing at the SimplerEnv copy
 # F1-VLA already vendors and has completed runs against.
-$PY -m pip install --no-input --no-deps -e /mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv/ManiSkill2_real2sim
-$PY -m pip install --no-input --no-deps -e /mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv
+$PY -m pip install --no-input --no-deps -e /home/3295540/F1-VLA/eval/bridge/SimplerEnv/ManiSkill2_real2sim
+$PY -m pip install --no-input --no-deps -e /home/3295540/F1-VLA/eval/bridge/SimplerEnv
 
 echo "=== import check ==="
 $PY - <<'PY'

@@ -4,10 +4,10 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
 #SBATCH --time=00:20:00
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/eval/bridge/experiment4_probing/probes-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/eval/bridge/experiment4_probing/probes-%j.out
 
 set -u
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B/eval/bridge/experiment4_probing
+cd /home/3295540/LDA-1B/eval/bridge/experiment4_probing
 PY=/home/3295540/.conda/envs/lda_eval/bin/python
 
 echo "=== train_probe.py (future pose) ==="

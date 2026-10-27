@@ -9,7 +9,7 @@ assuming). Pure key/shape inspection, no model construction, no GPU needed.
 import torch
 
 PRETRAIN = "/mnt/beegfsnew/scratch/3295540/hf_cache/hub/models--Wayer2--LDA-pretrain/blobs/607dc362b66a1e1083b64dc02a2e69a3d2d0307cf775e324fb1a377decdea3ce"
-V3_SMOKE = "/mnt/beegfsnew/scratch/3295540/LDA-1B/outputs/lda_bridge_v3/bridge_finetune_v3/final_model/pytorch_model.pt"
+V3_SMOKE = "/home/3295540/LDA-1B/outputs/lda_bridge_v3/bridge_finetune_v3/final_model/pytorch_model.pt"
 
 print("Loading pretrain checkpoint (this is a 14G file, be patient)...")
 pretrain_sd = torch.load(PRETRAIN, map_location="cpu")

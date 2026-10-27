@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=96G
 #SBATCH --time=06:00:00
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/flash-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/flash-%j.out
 
 # flash-attn compiles ~50 CUDA kernels; on the 4-core login node this pins the
 # box (load avg hit 90) and drops everyone's SSH. It needs no GPU, only nvcc,

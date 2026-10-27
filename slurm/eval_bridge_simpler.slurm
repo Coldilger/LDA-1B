@@ -13,7 +13,7 @@
 # squatter" memory note) -- excluded to avoid the non-deterministic OOM
 # that already hit an LDA training job twice on this node.
 #SBATCH --exclude=gnode07
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/eval-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/eval-%j.out
 
 # One task x one seed x 24 episodes of closed-loop SimplerEnv rollout.
 # Submit via slurm/submit_eval_sweep.sh, which fans this out over the 4 tasks and
@@ -30,7 +30,7 @@ EXEC_HORIZON="${EXEC_HORIZON:-8}"
 
 # libvulkan lives in the env's own lib dir, so sapien finds it without
 # LD_LIBRARY_PATH (see slurm/build_eval_env.slurm).
-export MS2_REAL2SIM_ASSET_DIR=/mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv/ManiSkill2_real2sim/data
+export MS2_REAL2SIM_ASSET_DIR=/home/3295540/F1-VLA/eval/bridge/SimplerEnv/ManiSkill2_real2sim/data
 export DISPLAY=""
 export HF_HOME=/mnt/beegfsnew/scratch/3295540/hf_cache
 export TOKENIZERS_PARALLELISM=false
@@ -55,7 +55,7 @@ case "$TASK" in
     ;;
 esac
 
-SIMPLER=/mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv
+SIMPLER=/home/3295540/F1-VLA/eval/bridge/SimplerEnv
 cd "$SIMPLER"
 
 # --additional-env-save-tags must be unique per run. The evaluator silently skips
@@ -70,7 +70,7 @@ cd "$SIMPLER"
 # name (e.g. "bridge_finetune_v2"), which is unique per training run here.
 CKPT_TAG="$(basename "$(dirname "$(dirname "$CKPT")")")"
 /home/3295540/.conda/envs/lda_eval/bin/python \
-  /mnt/beegfsnew/scratch/3295540/LDA-1B/eval/bridge/main_inference.py \
+  /home/3295540/LDA-1B/eval/bridge/main_inference.py \
   --lda-checkpoint-path "$CKPT" \
   --lda-seed "$SEED" \
   --lda-exec-horizon "$EXEC_HORIZON" \

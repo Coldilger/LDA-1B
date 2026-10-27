@@ -6,7 +6,7 @@
 #SBATCH --mem=128G
 #SBATCH --time=06:00:00
 #SBATCH --dependency=singleton
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/bridge-ft-v2-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/bridge-ft-v2-%j.out
 
 # Clean from-scratch retrain with the second gripper-masking fix present for
 # the whole run, run in parallel with the griptest-extension job. Wave-based
@@ -26,7 +26,7 @@ export WANDB_PROJECT=lda-bridge-v2
 export WANDB_RUN_ID=lda_bridge_finetune_v2
 export WANDB_RESUME=allow
 
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B
+cd /home/3295540/LDA-1B
 
 /home/3295540/.conda/envs/lda/bin/accelerate launch \
   --config_file lda/config/deepseeds/deepspeed_zero2.yaml \

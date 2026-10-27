@@ -14,7 +14,7 @@
 set -euo pipefail
 
 KEEP_N=3
-CKPT_DIR="/mnt/beegfsnew/scratch/3295540/LDA-1B/outputs/lda_bridge_v3/bridge_finetune_v3/checkpoints"
+CKPT_DIR="/home/3295540/LDA-1B/outputs/lda_bridge_v3/bridge_finetune_v3/checkpoints"
 
 [ -d "$CKPT_DIR" ] || exit 0
 

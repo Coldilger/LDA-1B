@@ -253,3 +253,7 @@ examples/MultiRobot/*
 # unrelated to slurm -- narrowing that rule itself risked missing its real intent).
 !/slurm/logs/
 !/slurm/logs/*.out
+
+# symlinks to scratch, see setup_scratch_links.sh
+/outputs
+/checkpoints

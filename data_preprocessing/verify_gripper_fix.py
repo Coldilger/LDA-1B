@@ -21,7 +21,7 @@ import sys
 import numpy as np
 from omegaconf import OmegaConf
 
-sys.path.insert(0, "/mnt/beegfsnew/scratch/3295540/LDA-1B")
+sys.path.insert(0, "/home/3295540/LDA-1B")
 from lda.dataloader.lerobot_datasets import get_vla_dataset  # noqa: E402
 
 GRIPPER_INDEX = 6  # RAW_SLICES["action.left_gripper"] in eval/bridge/lda_policy.py
@@ -29,7 +29,7 @@ GRIPPER_INDEX = 6  # RAW_SLICES["action.left_gripper"] in eval/bridge/lda_policy
 
 def main() -> None:
     cfg = OmegaConf.load(
-        "/mnt/beegfsnew/scratch/3295540/LDA-1B/outputs/lda_bridge/bridge_finetune/config.yaml"
+        "/home/3295540/LDA-1B/outputs/lda_bridge/bridge_finetune/config.yaml"
     )
     data_cfg = cfg.datasets.vla_data
     model_cfg = cfg.framework.action_model

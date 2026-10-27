@@ -6,7 +6,7 @@
 #SBATCH --mem=128G
 #SBATCH --time=05:00:00
 #SBATCH --exclude=gnode07
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/griptest-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/griptest-%j.out
 
 # Cheap A/B probe: does the second (uncommitted, episode-level) gripper-masking
 # fix move the gripper head, before paying for a full 150k-step retrain?
@@ -25,7 +25,7 @@ export WANDB_PROJECT=lda-bridge-griptest
 export WANDB_RUN_ID=lda_bridge_griptest
 export WANDB_RESUME=allow
 
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B
+cd /home/3295540/LDA-1B
 
 /home/3295540/.conda/envs/lda/bin/accelerate launch \
   --config_file lda/config/deepseeds/deepspeed_zero2.yaml \

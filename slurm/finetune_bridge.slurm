@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=128G
 #SBATCH --time=3-00:00:00
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/bridge-ft-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/bridge-ft-%j.out
 
 export HF_HOME=/mnt/beegfsnew/scratch/3295540/hf_cache
 export HF_HUB_DISABLE_XET=1
@@ -19,7 +19,7 @@ export WANDB_PROJECT=lda-bridge
 export WANDB_RUN_ID=lda_bridge_finetune
 export WANDB_RESUME=allow
 
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B
+cd /home/3295540/LDA-1B
 
 # Single GPU, but launched through accelerate because train_LDA.py expects an
 # accelerate/deepspeed context. zero2 keeps optimizer state sharding off the

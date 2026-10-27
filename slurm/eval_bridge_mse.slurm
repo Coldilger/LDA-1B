@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=00:30:00
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/brmse-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/brmse-%j.out
 
 # Open-loop MSE of LDA-pretrain on held-out converted Bridge episodes, tag "oxe"
 # (idx 5 — an in-range pretrain embodiment). Purpose: settle whether Bridge was
@@ -34,7 +34,7 @@ export TOKENIZERS_PARALLELISM=false
 # device-side assert dump.
 export CUDA_LAUNCH_BLOCKING=1
 
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B
+cd /home/3295540/LDA-1B
 PY=/home/3295540/.conda/envs/lda/bin/python
 RUN=outputs/lda_pretrain_run
 CKPT=checkpoints/LDA-pretrain

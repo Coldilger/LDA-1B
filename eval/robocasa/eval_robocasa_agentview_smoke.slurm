@@ -16,9 +16,9 @@
 # exactly how and why this is a clean, single-variable swap.
 
 set -u
-LDA_ROOT=/mnt/beegfsnew/scratch/3295540/LDA-1B
+LDA_ROOT=/home/3295540/LDA-1B
 ROBOCASA_ROOT=/mnt/beegfsnew/scratch/3295540/robocasa-eval/robocasa-gr1-tabletop-tasks
-CKPT=/mnt/beegfsnew/scratch/3295540/LDA-1B/checkpoints/LDA-robocasa_run/checkpoints/LDA-robocasa.pt
+CKPT=/home/3295540/LDA-1B/checkpoints/LDA-robocasa_run/checkpoints/LDA-robocasa.pt
 PORT=10094
 
 export HF_HOME=/mnt/beegfsnew/scratch/3295540/hf_cache

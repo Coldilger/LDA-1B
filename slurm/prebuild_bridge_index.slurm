@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=48G
 #SBATCH --time=01:00:00
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/index-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/index-%j.out
 
 # The eval harness builds a step index over ALL 53k episodes before sampling any
 # trajectory (~28 min at ~31 ep/s). That needs no GPU — it only reads parquet
@@ -13,7 +13,7 @@
 # reused by finetuning, so this is not throwaway work.
 export HF_HOME=/mnt/beegfsnew/scratch/3295540/hf_cache
 export TOKENIZERS_PARALLELISM=false
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B
+cd /home/3295540/LDA-1B
 /home/3295540/.conda/envs/lda/bin/python - <<'PY'
 from omegaconf import OmegaConf
 from lda.dataloader.gr00t_lerobot.datasets import LeRobotSingleDataset

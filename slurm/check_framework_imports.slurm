@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=00:40:00
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/check-imports-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/check-imports-%j.out
 
 # Does the framework-registration bug found in the fresh robocasa client env
 # also affect lda_eval -- the env every Bridge closed-loop eval runs in?
@@ -22,7 +22,7 @@
 set -u
 export HF_HOME=/mnt/beegfsnew/scratch/3295540/hf_cache
 export TOKENIZERS_PARALLELISM=false
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B
+cd /home/3295540/LDA-1B
 
 /home/3295540/.conda/envs/lda_eval/bin/python - <<'PY'
 import importlib

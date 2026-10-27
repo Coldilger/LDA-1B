@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=00:20:00
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/eval/robocasa/diag-taskemb-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/eval/robocasa/diag-taskemb-%j.out
 
 # One-off diagnostic: is id_embedding (inverse_dynamics' task-conditioning
 # token) actually trained, or still near its random init? Init is
@@ -21,7 +21,7 @@ set -u
 /home/3295540/.conda/envs/lda_eval/bin/python -c "
 import torch
 sd = torch.load(
-    '/mnt/beegfsnew/scratch/3295540/LDA-1B/checkpoints/LDA-robocasa_run/checkpoints/LDA-robocasa.pt',
+    '/home/3295540/LDA-1B/checkpoints/LDA-robocasa_run/checkpoints/LDA-robocasa.pt',
     map_location='cpu', weights_only=False,
 )
 if hasattr(sd, 'state_dict'):

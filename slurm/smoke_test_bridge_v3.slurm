@@ -6,7 +6,7 @@
 #SBATCH --mem=128G
 #SBATCH --time=00:30:00
 #SBATCH --exclude=gnode07
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/smoke-v3-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/smoke-v3-%j.out
 
 # Cheap pre-flight check for LDA_bridge_v3.yaml (state_dim: null -> 14) BEFORE
 # committing to the real ~150k-step run: runs the REAL train_LDA.py entrypoint
@@ -24,7 +24,7 @@ export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
 export TOKENIZERS_PARALLELISM=false
 export WANDB_MODE=disabled
 
-cd /mnt/beegfsnew/scratch/3295540/LDA-1B
+cd /home/3295540/LDA-1B
 
 /home/3295540/.conda/envs/lda/bin/accelerate launch \
   --config_file lda/config/deepseeds/deepspeed_zero2.yaml \

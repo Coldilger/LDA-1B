@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=04:00:00
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/download-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/download-%j.out
 
 # Downloads run as a job, not on the login node: the first attempt there was
 # SIGKILLed partway through (2.1G of ~8G) when the node was overloaded.

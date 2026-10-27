@@ -6,7 +6,7 @@
 #SBATCH --mem=64G
 #SBATCH --time=01:00:00
 #SBATCH --exclude=gnode07
-#SBATCH --output=/mnt/beegfsnew/scratch/3295540/LDA-1B/slurm/logs/softclip-%j.out
+#SBATCH --output=/home/3295540/LDA-1B/slurm/logs/softclip-%j.out
 
 # Soft-clip normalization experiment (see eval/bridge/lda_policy_softclip.py) --
 # full 24-episode Carrot run, one seed, on the v3/150k checkpoint, to see
@@ -19,16 +19,16 @@ set -u
 : "${SEED:?set SEED}"
 CKPT="outputs/lda_bridge_v3/bridge_finetune_v3/final_model/pytorch_model.pt"
 
-export MS2_REAL2SIM_ASSET_DIR=/mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv/ManiSkill2_real2sim/data
+export MS2_REAL2SIM_ASSET_DIR=/home/3295540/F1-VLA/eval/bridge/SimplerEnv/ManiSkill2_real2sim/data
 export DISPLAY=""
 export HF_HOME=/mnt/beegfsnew/scratch/3295540/hf_cache
 export TOKENIZERS_PARALLELISM=false
 
-SIMPLER=/mnt/beegfsnew/scratch/3295540/F1-VLA/eval/bridge/SimplerEnv
+SIMPLER=/home/3295540/F1-VLA/eval/bridge/SimplerEnv
 cd "$SIMPLER"
 
 /home/3295540/.conda/envs/lda_eval/bin/python \
-  /mnt/beegfsnew/scratch/3295540/LDA-1B/eval/bridge/main_inference_softclip.py \
+  /home/3295540/LDA-1B/eval/bridge/main_inference_softclip.py \
   --lda-checkpoint-path "$CKPT" \
   --lda-seed "$SEED" \
   --lda-exec-horizon 8 \
