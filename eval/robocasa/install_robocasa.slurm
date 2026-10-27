@@ -38,6 +38,9 @@ if [ ! -f "$ROOT/robosuite/.git/HEAD" ]; then
     rm -rf "$ROOT/robosuite"
     git clone https://github.com/ARISE-Initiative/robosuite.git "$ROOT/robosuite"
 fi
+# robocasa-gr1-tabletop-tasks asserts robosuite 1.5.0/1.5.1; upstream master
+# is 1.5.2 since 2026-07 (found on the 2026-10 reinstall), so pin the tag.
+git -C "$ROOT/robosuite" checkout -q v1.5.1
 # check .git/HEAD, not the dir: the scratch purge leaves empty dir skeletons
 if [ ! -f "$ROOT/robocasa-gr1-tabletop-tasks/.git/HEAD" ]; then
     rm -rf "$ROOT/robocasa-gr1-tabletop-tasks"
