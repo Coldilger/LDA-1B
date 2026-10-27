@@ -10,7 +10,7 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRATCH_DIR="/mnt/beegfsnew/scratch/3295540/LDA-1B"
-LINKED_DIRS=(outputs checkpoints)
+LINKED_DIRS=(outputs checkpoints pretrained)
 
 for d in "${LINKED_DIRS[@]}"; do
   src="$REPO_DIR/$d"

@@ -33,10 +33,14 @@ ROOT=/mnt/beegfsnew/scratch/3295540/robocasa-eval
 mkdir -p "$ROOT"
 cd "$ROOT"
 
-if [ ! -d "$ROOT/robosuite" ]; then
+# check .git/HEAD, not the dir: the scratch purge leaves empty dir skeletons
+if [ ! -f "$ROOT/robosuite/.git/HEAD" ]; then
+    rm -rf "$ROOT/robosuite"
     git clone https://github.com/ARISE-Initiative/robosuite.git "$ROOT/robosuite"
 fi
-if [ ! -d "$ROOT/robocasa-gr1-tabletop-tasks" ]; then
+# check .git/HEAD, not the dir: the scratch purge leaves empty dir skeletons
+if [ ! -f "$ROOT/robocasa-gr1-tabletop-tasks/.git/HEAD" ]; then
+    rm -rf "$ROOT/robocasa-gr1-tabletop-tasks"
     git clone https://github.com/robocasa/robocasa-gr1-tabletop-tasks.git "$ROOT/robocasa-gr1-tabletop-tasks"
 fi
 
