@@ -51,6 +51,12 @@ from lda.training.trainer_utils.overwatch import PureOverwatch
 if not hasattr(PureOverwatch, "log"):
     PureOverwatch.log = lambda self, msg, *args, **kwargs: self.info(msg)
 
+# Paired protocol: deterministic scene per episode when EPISODE_SEED_BASE is
+# set (see seeded_episodes.py); a no-op otherwise.
+import seeded_episodes  # noqa: E402
+
+seeded_episodes.install()
+
 # Run the real script as __main__ so its `tyro.cli(...)` block executes and
 # parses sys.argv exactly as it would when invoked directly.
 sys.argv[0] = "examples/Robocasa_tabletop/eval_files/simulation_env.py"
