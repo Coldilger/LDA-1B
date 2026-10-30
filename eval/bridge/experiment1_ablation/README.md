@@ -1,7 +1,8 @@
 # Experiment 1 — Ablation of the world-model signal (LDA-1B)
 
-**Status: done, real closed-loop (2026-08-19). Turning the world-model path
-on does not help — 44% (0.44, 50 episodes) vs. the confirmed 48%
+**Status: done, real closed-loop (2026-08-19); paired rerun on identical
+scenes 2026-10-30: world model on 62/150 vs baseline 67/150, −3.3 pp
+[−12.7, +6.0], p = 0.58 (see "Paired rerun" below). Original: 44% (0.44, 50 episodes) vs. the confirmed 48%
 policy-only baseline, both via RoboCasa (Bridge is still 0%, see
 `../RESULTS.md` and `../../robocasa/RESULTS.md`'s camera-viewpoint
 decision).**
@@ -102,6 +103,49 @@ Kept out of this doc on purpose: this experiment's own decisive number is
 the closed-loop success rate above, and mixing in a second, differently-scoped
 metric here was making the "what's still open for Experiment 1" list
 harder to read than it needed to be.
+
+## Paired rerun at the thesis protocol (2026-10-30)
+
+**Why a rerun was needed.** The authors' RoboCasa client
+(`examples/Robocasa_tabletop/eval_files/simulation_env.py`) declares a `seed`
+argument but never uses it; the scene (layout, objects, placements,
+textures) comes from the robosuite env's own generator, created with
+`seed=None` once per process. Every run therefore drew a different random
+set of 50 scenes, so the original 44% vs 48% compared different episodes
+and could not be paired. `../../robocasa/launcher/seeded_episodes.py` now
+re-seeds that generator per episode (scene seed = base + k) and logs each
+episode's outcome; `../../robocasa/test_seeded_episodes.slurm` checks it
+(with the patch, the same episode is identical across two env builds, max
+|Δqpos| = 0; without it even the object count differs).
+
+**Run.** `../../robocasa/closed_loop/closed_loop.slurm`, task
+PnPCupToDrawerClose, 3 scene sets (bases 1000 / 2000 / 3000) × 50 episodes,
+both conditions on identical scenes; statistics with
+`../../robocasa/closed_loop/paired_stats_robocasa.py` (Wilson CIs, paired
+bootstrap stratified by scene set, exact McNemar). The per-episode logs are
+in `../../robocasa/closed_loop/episodes/`; the logged outcomes match the
+client's own success rate on every run.
+
+| scene set | baseline | world model on |
+|---|---|---|
+| 1000 | 24/50 | 19/50 |
+| 2000 | 19/50 | 21/50 |
+| 3000 | 24/50 | 22/50 |
+| **total** | **67/150 = 44.7%** [36.9, 52.7] | **62/150 = 41.3%** [33.8, 49.3] |
+
+Paired difference −3.3 pp, 95% CI [−12.7, +6.0]; discordant pairs 29
+(baseline only) vs 24 (world model only), exact McNemar p = 0.58.
+
+**What this settles.** Turning on LDA-1B's dormant world-model path has no
+measurable effect on closed-loop success; the earlier "44 vs 48, within
+noise" holds, now with a bound: a harm of up to ~13 pp or a gain of up to
+~6 pp is not excluded. Note that 53 of 150 identical-scene pairs differ in
+outcome, so the policy itself is quite stochastic on this task; a larger
+gap would be needed to show up at this sample size.
+
+**Not yet done:** the internal sanity check of the world-model-on path
+(advisor point 2: shapes, masks, attention, activations, action validity),
+as done for mimic-video and F1-VLA.
 
 ## Not yet done
 
