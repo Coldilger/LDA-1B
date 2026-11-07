@@ -14,7 +14,8 @@ import sys
 
 import numpy as np
 
-CONDITIONS = ("policy", "wm_on", "oracle", "zero", "noise", "shuffle")
+CONDITIONS = ("policy", "wm_on", "oracle", "zero", "noise", "shuffle",
+              "curr_self", "curr_zero", "curr_noise", "curr_stale", "curr_other", "img_stale", "img_other")
 
 
 def main(path):
@@ -32,7 +33,7 @@ def main(path):
     c = recs[0]["curr_stats"]
     print(f"curr_obs tokens: mean {c['mean']:.3f} std {c['std']:.3f} norm {c['token_norm']:.2f}\n")
 
-    cols = ["next_norm", "next_std", "next_share", "mass_reg", "mass_obs", "mass_act", "entropy",
+    cols = ["rel_l2", "curr_rel_l2", "next_norm", "next_std", "next_share", "mass_reg", "mass_obs", "mass_act", "entropy",
             "kernel_err", "l1_first", "l1_rest", "act_absmax", "nan"]
     print("| condition | n | " + " | ".join(cols) + " |")
     print("|---|---|" + "---|" * len(cols))
@@ -46,6 +47,8 @@ def main(path):
             a = c["action"]
             attn = c["attn"]
             rows.append({
+                "rel_l2": float(np.linalg.norm(a - pol) / np.linalg.norm(pol)),
+                "curr_rel_l2": c.get("curr_rel_l2", np.nan),
                 "next_norm": c["next_stats"]["token_norm"],
                 "next_std": c["next_stats"]["std"],
                 "next_share": c["merger"]["next_share"],

@@ -27,6 +27,15 @@ attention from action queries (mass on register / obs / action-stream keys,
 normalized entropy), kernel-vs-manual attention error, and the action chunk.
 For the first decisions a per-token perturbation test of the next-obs slot is
 run (a masked token could not change the action).
+
+Positive control (2026-11-07): the same comparison for the CURRENT
+observation, on the default policy path. Replaced only at obs_merger's input
+(the layer the forecast also enters): curr_zero, curr_noise, curr_stale
+(tokens of 5 decisions earlier, same episode), curr_other (tokens of 60
+decisions earlier, another episode). Replaced everywhere (VLM and action
+head): img_stale, img_other (the whole image input of that earlier decision).
+If these also leave the action unchanged, the head is insensitive to visual
+tokens in general, not to the forecast in particular.
 """
 
 import argparse
@@ -43,6 +52,8 @@ from deployment.model_server.tools.websocket_policy_server import WebsocketPolic
 from lda.model.framework.base_framework import baseframework
 
 SHUFFLE_LAG = 60
+STALE_LAG = 5  # decisions (= 60 control steps) back, same episode
+DECISIONS_PER_EPISODE = 60  # 720 steps / 12; holds while no episode ends early
 N_PERTURB_DECISIONS = 3
 
 
@@ -140,10 +151,23 @@ def add_internals(vla, out_path):
             "next_share": float(from_next.norm() / (from_curr.norm() + from_next.norm() + 1e-12)),
         }
 
+    # positive control: replace the curr-obs half of obs_merger's input
+    repl = {"curr": None}
+
+    def merger_pre_hook(mod, args):
+        if repl["curr"] is None:
+            return None
+        x = args[0]
+        c_curr = x.shape[-1] - C_next
+        curr = repl["curr"].to(device=x.device, dtype=x.dtype).expand(x.shape[0], -1, -1)
+        return (torch.cat([curr, x[..., c_curr:]], dim=-1),) + tuple(args[1:])
+
+    head.obs_merger.register_forward_pre_hook(merger_pre_hook)
     head.obs_merger.register_forward_hook(merger_hook)
 
     st = {"prev": None, "n": 0}
     pool = []  # wm_on tokens per decision, for the shuffle condition
+    curr_pool, img_pool = [], []  # curr-obs tokens and raw images per decision
     records = []
     noise_gen = torch.Generator(device="cpu").manual_seed(0)
     cfg = vla.config.framework.action_model
@@ -185,6 +209,45 @@ def add_internals(vla, out_path):
                                        "next_stats": _tok_stats(merger["next_obs"]),
                                        "action_nan": int(np.isnan(a).sum())}
         rec["curr_stats"] = _tok_stats(curr_tokens)
+
+        # positive control on the current observation (default policy path)
+        n = st["n"]
+        curr_full = curr_tokens
+        curr_pool.append(curr_full)
+        img_pool.append(np.asarray(example["image"]))
+        same_ep = (n - STALE_LAG) >= 0 and (n - STALE_LAG) // DECISIONS_PER_EPISODE == n // DECISIONS_PER_EPISODE
+        curr_conds = {
+            "curr_self": curr_full.clone(),  # hook check: must equal the policy action
+            "curr_zero": torch.zeros_like(curr_full),
+            "curr_noise": curr_full.mean(-1, keepdim=True)
+            + curr_full.std(-1, keepdim=True) * torch.randn(curr_full.shape, generator=noise_gen).to(curr_full.device),
+        }
+        img_conds = {}
+        if same_ep:
+            curr_conds["curr_stale"] = curr_pool[-1 - STALE_LAG]
+            img_conds["img_stale"] = img_pool[-1 - STALE_LAG]
+        if len(curr_pool) > SHUFFLE_LAG:
+            curr_conds["curr_other"] = curr_pool[-1 - SHUFFLE_LAG]
+            img_conds["img_other"] = img_pool[-1 - SHUFFLE_LAG]
+        for name, t in curr_conds.items():
+            repl["curr"] = t
+            try:
+                a, calls, mrec = run(example, seed)
+            finally:
+                repl["curr"] = None
+            rec["conditions"][name] = {"action": a, "attn": calls, "merger": mrec,
+                                       "next_stats": _tok_stats(merger["next_obs"]),
+                                       "action_nan": int(np.isnan(a).sum())}
+        for name, img in img_conds.items():
+            ex2 = dict(example)
+            ex2["image"] = img
+            a, calls, mrec = run(ex2, seed)
+            rec["conditions"][name] = {"action": a, "attn": calls, "merger": mrec,
+                                       "next_stats": _tok_stats(merger["next_obs"]),
+                                       "action_nan": int(np.isnan(a).sum())}
+        for name in curr_conds:
+            rec["conditions"][name]["curr_rel_l2"] = float(
+                (curr_conds[name].float() - curr_full.float()).norm() / (curr_full.float().norm() + 1e-12))
         # curr_obs folds obs_horizon frames into channels as "(c t)" (frame is
         # the fast index); compare forecasts with the most recent frame only.
         c_next = next_tokens["policy"].shape[-1]

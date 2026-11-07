@@ -77,6 +77,61 @@ what is in the next-observation slot, including the real future frame and
 the switch from `policy_embedding` to `id_embedding`. This is consistent with
 the non-significant closed-loop difference.
 
-Not tested yet: whether the head is sensitive to the *current* observation
-tokens (a positive control). Without it, "ignores the forecast" and "ignores
-the visual tokens in general" cannot be told apart.
+## Positive control: the current observation (job 745580, 2026-11-07)
+
+Question: is the action head insensitive to the forecast in particular, or
+to visual tokens in general? Same harness, same 3 scene seeds, 180
+decisions, now also replacing the **current** observation on the default
+policy path (`summary-745580.txt`):
+
+- `curr_*`: only the current-frame tokens at `obs_merger`'s input, the layer
+  the forecast also enters. Their relative change of the input is given.
+- `img_*`: the whole image input of the decision, which feeds both the
+  Qwen VLM and the action head.
+- `curr_self`: the current-frame tokens replaced by themselves (checks the
+  replacement hook).
+
+| condition | input change | action change, median | 90th pct | max |
+|---|---|---|---|---|
+| curr_self (hook check) | 0 | **0 (exactly, 180/180)** | 0 | 0 |
+| forecast slot, wm_on / oracle / zero / noise / shuffle (this run) | — | 0.04–0.05% | ≤0.06% | 1.7–14% |
+| curr_zero | 100% | 0.24% | 0.33% | 10% |
+| curr_noise | 141% | 0.24% | 0.36% | 10% |
+| curr_stale (5 decisions earlier, same episode) | 28% | 0.01% | 0.03% | 7% |
+| curr_other (another episode) | 56% | 0.02% | 0.03% | 1.7% |
+| img_stale (whole image, 5 decisions earlier) | — | 0.05% | **36%** | **46%** |
+| img_other (whole image, another episode) | — | 0.10% | **20%** | **44%** |
+
+The whole-image effect depends on where in the episode the decision is
+(median action change):
+
+| decision in episode | 0–4 | 5–14 | 15–29 | 30–59 |
+|---|---|---|---|---|
+| img_stale | — | 28% | 0.9% | 0.02% |
+| img_other | 0.7% | 10% | 0.09% | 0.08% |
+| curr_zero | 0.29% | 0.26% | 0.25% | 0.24% |
+| wm_on | 0.07% | 0.05% | 0.05% | 0.05% |
+
+**What this means.**
+1. The measurement can see an effect: changing the image changes the action
+   by up to 46%, and the hook check is exact. The positive control passes.
+2. The action head barely uses its own visual-token input. Replacing the
+   current frame's tokens with zeros or noise changes the action by ~0.25%,
+   with another episode's frame by 0.02%. The forecast enters the same input
+   and is ignored the same way. So "LDA ignores its forecast" is a special
+   case of "the action head ignores the visual tokens it receives through
+   `obs_merger`".
+3. By elimination, the image reaches the action through the Qwen VLM
+   features (the whole-image swap changes both paths, the token swap alone
+   does almost nothing). A VLM-only swap was not run.
+4. Even the whole image matters mainly early in the episode (decisions
+   5–14); from decision 30 on, swapping it changes the action by ~0.02%.
+
+**Side observation.** With the same scene seeds this run succeeded in 2/3
+episodes, job 745495 in 0/3. The decision-0 action is identical in both runs;
+from decision 1 the observations already differ, so the rollout itself is not
+bit-reproducible (likely GPU or simulator nondeterminism, not investigated).
+The paired closed-loop protocol pairs scenes, not trajectories, so it is not
+affected. Episodes always run the full 720 steps (180 = 3 × 60 decisions in
+both runs, despite the successes), so the "same episode" / "another episode"
+lags above are correct.
