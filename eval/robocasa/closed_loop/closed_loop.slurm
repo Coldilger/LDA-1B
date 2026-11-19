@@ -15,7 +15,11 @@
 # SEED_BASE fixes the scenes: episode k starts from scene seed SEED_BASE + k
 # in both conditions (launcher/seeded_episodes.py; the authors' client never
 # seeded its env, so earlier runs drew different random scenes per run).
-# Per-episode outcomes go to closed_loop/episodes/<condition>_<base>.txt as
+#   CONDITION=wmvg      eval/robocasa/server_policy_wm_steps.py, Experiment 9:
+#                       VG_STEPS forecast denoising steps (0 = baseline path),
+#                       every decision timed; LABEL defaults to wmvg${VG_STEPS}
+# Optional: N_EPISODES (default 50), LABEL.
+# Per-episode outcomes go to closed_loop/episodes/<label>_<base>.txt as
 # "<k> <scene seed> <success>"; compare with closed_loop/paired_stats_robocasa.py.
 set -u
 : "${CONDITION:?set CONDITION}"
@@ -23,9 +27,15 @@ set -u
 case "$CONDITION" in
   baseline) SERVER=deployment/model_server/server_policy.py ;;
   wm_on)    SERVER=eval/robocasa/server_policy_worldmodel_on.py ;;
+  wmvg)     : "${VG_STEPS:?set VG_STEPS}"
+            SERVER=eval/robocasa/server_policy_wm_steps.py
+            SERVER_EXTRA="--vg_steps $VG_STEPS" ;;
   *) echo "unknown CONDITION: $CONDITION" >&2; exit 2 ;;
 esac
 ulimit -t unlimited
+SERVER_EXTRA="${SERVER_EXTRA:-}"
+LABEL="${LABEL:-$CONDITION${VG_STEPS:-}}"
+N_EPISODES="${N_EPISODES:-50}"
 LDA_ROOT=/home/3295540/LDA-1B
 OUT=$LDA_ROOT/eval/robocasa/closed_loop
 ROBOCASA_ROOT=/mnt/beegfsnew/scratch/3295540/robocasa-eval/robocasa-gr1-tabletop-tasks
@@ -34,13 +44,13 @@ PORT=$((20000 + SLURM_JOB_ID % 20000))   # unique per job: two jobs may share a 
 SERVER_LOG=$OUT/server-${SLURM_JOB_ID}.log
 mkdir -p "$OUT/episodes"
 export EPISODE_SEED_BASE=$SEED_BASE
-export EPISODE_LOG=$OUT/episodes/${CONDITION}_${SEED_BASE}.txt
+export EPISODE_LOG=$OUT/episodes/${LABEL}_${SEED_BASE}.txt
 rm -f "$EPISODE_LOG"
 export HF_HOME=/mnt/beegfsnew/scratch/3295540/hf_cache
 export DISPLAY=""
 
 cd "$LDA_ROOT"
-/home/3295540/.conda/envs/lda_eval/bin/python "$SERVER" --ckpt_path "$CKPT" --port "$PORT" > "$SERVER_LOG" 2>&1 &
+/home/3295540/.conda/envs/lda_eval/bin/python "$SERVER" --ckpt_path "$CKPT" --port "$PORT" $SERVER_EXTRA > "$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
 for i in $(seq 1 180); do
     if grep -q "server running" "$SERVER_LOG" 2>/dev/null; then echo "Server ready after ${i}0s"; break; fi
@@ -53,12 +63,12 @@ export PYTHONPATH="$LDA_ROOT:$ROBOCASA_ROOT:${PYTHONPATH:-}"
   eval/robocasa/launcher/run_client.py \
   --args.env_name gr1_unified/PnPCupToDrawerClose_GR1ArmsAndWaistFourierHands_Env \
   --args.port "$PORT" \
-  --args.n_episodes 50 \
+  --args.n_episodes "$N_EPISODES" \
   --args.n_envs 1 \
   --args.max_episode_steps 720 \
   --args.n_action_steps 12 \
-  --args.video_out_path /mnt/beegfsnew/scratch/3295540/robocasa-eval/videos/exp1_${CONDITION}_${SEED_BASE}_${SLURM_JOB_ID} \
+  --args.video_out_path /mnt/beegfsnew/scratch/3295540/robocasa-eval/videos/exp_${LABEL}_${SEED_BASE}_${SLURM_JOB_ID} \
   --args.pretrained_path "$CKPT"
 CLIENT_EXIT=$?
 kill "$SERVER_PID" 2>/dev/null
-echo "CLIENT_EXIT=$CLIENT_EXIT CONDITION=$CONDITION SEED_BASE=$SEED_BASE episodes_logged=$(wc -l < "$EPISODE_LOG")"
+echo "CLIENT_EXIT=$CLIENT_EXIT CONDITION=$CONDITION LABEL=$LABEL SEED_BASE=$SEED_BASE episodes_logged=$(wc -l < "$EPISODE_LOG")"
