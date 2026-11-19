@@ -15,6 +15,8 @@
 # SEED_BASE fixes the scenes: episode k starts from scene seed SEED_BASE + k
 # in both conditions (launcher/seeded_episodes.py; the authors' client never
 # seeded its env, so earlier runs drew different random scenes per run).
+#   CONDITION=conflict  eval/robocasa/server_policy_conflict.py, Experiment 8
+#                       (CMODE=probe|cl, see the case block below)
 #   CONDITION=wmvg      eval/robocasa/server_policy_wm_steps.py, Experiment 9:
 #                       VG_STEPS forecast denoising steps (0 = baseline path),
 #                       every decision timed; LABEL defaults to wmvg${VG_STEPS}
@@ -30,6 +32,19 @@ case "$CONDITION" in
   wmvg)     : "${VG_STEPS:?set VG_STEPS}"
             SERVER=eval/robocasa/server_policy_wm_steps.py
             SERVER_EXTRA="--vg_steps $VG_STEPS" ;;
+  conflict) : "${CMODE:?set CMODE (probe|cl)}"
+            # Experiment 8: server_policy_conflict.py. probe: ALT colon list,
+            # records to closed_loop/conflict_records/; cl: TEXT, FC (A|B), ALT
+            SERVER=eval/robocasa/server_policy_conflict.py
+            mkdir -p /home/3295540/LDA-1B/eval/robocasa/closed_loop/conflict_records
+            if [ "$CMODE" = probe ]; then
+              LABEL="${LABEL:-conflictprobe}"
+              SERVER_EXTRA="--mode probe --alt ${ALT:-can:drawer} --records /home/3295540/LDA-1B/eval/robocasa/closed_loop/conflict_records/probe_${SEED_BASE}_${SLURM_JOB_ID}.jsonl"
+            else
+              : "${TEXT:?set TEXT}"; : "${FC:?set FC}"
+              LABEL="${LABEL:-cfl${TEXT}${FC}${ALT:-can}}"
+              SERVER_EXTRA="--mode cl --text_src $TEXT --forecast_src $FC --alt ${ALT:-can}"
+            fi ;;
   *) echo "unknown CONDITION: $CONDITION" >&2; exit 2 ;;
 esac
 ulimit -t unlimited
