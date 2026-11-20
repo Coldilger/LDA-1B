@@ -106,6 +106,11 @@ DATASET_NAMED_MIXTURES = {
         ("gr1_unified.PosttrainPnPNovelFromTrayToTieredshelfSplitA_GR1ArmsAndWaistFourierHands_1000", 1.0, "fourier_gr1_arms_waist_twohistory"),
     ],
 
+    # Experiment 11 (advisor's point 5): the evaluated RoboCasa task only
+    "robocasa_cup_two_history": [
+        ("gr1_unified.PnPCupToDrawerClose_GR1ArmsAndWaistFourierHands_1000", 1.0, "fourier_gr1_arms_waist_twohistory"),
+    ],
+
     "demo_data": [
         ("sim_pick_place", 1.0, "demo_data"),
     ],

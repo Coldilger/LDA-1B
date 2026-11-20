@@ -1,0 +1,103 @@
+# Experiment 11 (advisor's point 5), LDA-1B: finetune LDA-pretrain on the
+# evaluated RoboCasa GR1 task (PnPCupToDrawerClose, 1000 demos) twice, with
+# identical data, steps and seed:
+#   full        all four co-trained tasks (policy, forward dynamics, inverse
+#               dynamics, visual forecasting), as in the authors' recipe
+#   policyonly  only_policy: true -> every sample is a policy sample and the
+#               loss is the action loss alone (MMDiT_ActionHeader.py L650, L829)
+# The two files differ only in run_id and only_policy.
+# Model block = the authors' RoboCasa run (checkpoints/LDA-robocasa_run/config.yaml).
+# Deviations from that run, forced by one GPU per job and applied to BOTH variants:
+#   - qwen_vl_interface frozen (authors: lr 1e-5), as in our Bridge finetune
+#   - 1 task instead of 24, 100k micro-batches of 16 with accumulation 5
+#     (effective batch 80 = authors' 8 GPUs x 10) instead of 300k steps
+# 100k x 16 = 1.6M samples, the same sample budget as F1-VLA's Experiment 11.
+run_id: policyonly
+run_root_dir: outputs/lda_robocasa_exp11
+seed: 42
+trackers: [jsonl, wandb]
+wandb_entity: null
+wandb_project: lda-robocasa-exp11
+is_debug: false
+framework:
+  name: QwenMMDiT
+  qwenvl:
+    base_vlm: pretrained/vlm/Qwen3-VL-4B-Instruct
+    attn_implementation: flash_attention_2
+  action_model:
+    action_model_type: DiT-L
+    hidden_size: 2560
+    add_pos_embed: true
+    max_seq_len: 1024
+    action_dim: 138
+    state_dim: 58
+    action_horizon: 16
+    future_action_window_size: 15
+    past_action_window_size: 0
+    obs_horizon: 2
+    num_views: 1
+    future_obs_index: 16
+    max_num_embodiments: 32
+    num_target_vision_tokens: 32
+    num_timestep_buckets: 1000
+    num_inference_timesteps: 4
+    noise_beta_alpha: 1.5
+    noise_beta_beta: 1.0
+    noise_s: 0.999
+    obs_loss_weight: 1.0
+    only_policy: true
+    only_wo_video_gen: false
+    policy_and_video_gen: false
+    vision_encoder_type: dinov3
+    vision_encoder_size: s
+    vision_encoder_path: pretrained
+    diffusion_model_cfg:
+      cross_attention_dim: 2560
+      dropout: 0.2
+      final_dropout: true
+      interleave_self_attention: true
+      norm_type: ada_norm
+      num_layers: 16
+      output_dim: 2560
+      positional_embeddings: null
+datasets:
+  vla_data:
+    dataset_py: lerobot_datasets
+    data_root_dir: /mnt/beegfsnew/scratch/3295540/data/robocasa_gr1
+    data_mix: robocasa_cup_two_history
+    CoT_prompt: "Your task is {instruction}. To identify the key objects for your task. Locate their bounding boxes in [x1,y1,x2,y2] format."
+    image_size: [224, 224]
+    delete_pause_frame: false
+    use_delta_action: false
+    training_task_weights: [1, 1, 1, 1]
+    per_device_batch_size: 16
+trainer:
+  pretrained_checkpoint: checkpoints/LDA-pretrain/LDA-pretrain.pt
+  freeze_modules: 'qwen_vl_interface,action_model.vision_encoder'
+  max_train_steps: 100000
+  num_warmup_steps: 5000
+  save_interval: 10000
+  eval_interval: 1000
+  logging_frequency: 100
+  learning_rate:
+    base: 4.0e-05
+    qwen_vl_interface: 1.0e-05
+    action_model: 1.0e-04
+  lr_scheduler_type: cosine_with_min_lr
+  scheduler_specific_kwargs:
+    min_lr: 5.0e-07
+  repeated_diffusion_steps: 1
+  max_grad_norm: 1.0
+  gradient_clipping: 1.0
+  gradient_accumulation_steps: 5
+  weight_decay: 0.0
+  optimizer:
+    name: AdamW
+    betas: [0.9, 0.95]
+    eps: 1.0e-08
+    weight_decay: 1.0e-05
+  is_resume: false
+  resume_epoch: null
+  resume_step: null
+  enable_gradient_checkpointing: true
+  enable_mixed_precision_training: true
