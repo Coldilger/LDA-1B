@@ -35,7 +35,7 @@ authors' released checkpoint is therefore not the comparison point — the
 restore optimizer state), identically for both runs.
 
 Training: `slurm/exp11_robocasa_selfchain.slurm` (`VARIANT=full|policyonly`),
-self-chaining 6 h waves on one H200, keeps the two newest checkpoints.
+self-chaining 6 h waves on one H100, keeps the two newest checkpoints.
 
 ## Evaluation (after training)
 

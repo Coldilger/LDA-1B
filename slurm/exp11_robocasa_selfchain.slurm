@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=lda_exp11
-#SBATCH --partition=medium_gpuh200
-#SBATCH --gres=gpu:H200:1
+#SBATCH --partition=medium_gpunew
+#SBATCH --gres=gpu:H100:1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=128G
 #SBATCH --time=06:00:00
