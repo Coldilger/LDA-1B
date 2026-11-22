@@ -1,5 +1,13 @@
 # LDA-1B on SimplerEnv Bridge — setup, findings, and eval log
 
+> **2026-11-22, Experiment 12 (`experiment12_audit/README.md`):** the wrapper
+> integrates LDA's tool-frame deltas from SimplerEnv's tool pose, which is
+> rotated by a fixed 90° relative to Bridge's convention (`R_sim = R_data · T`,
+> SimplerEnv's own replay script). On ground-truth deltas the resulting
+> position steps point 77° (median) away from the true motion. This alone would
+> keep success at zero and fits the drift described below. Offline finding;
+> closed-loop confirmation needs a new finetune (checkpoints purged).
+
 Companion to `F1-VLA/eval/bridge/RESULTS.md`. Same benchmark, same protocol, so
 the two (and mimic-video) land in one table. Everything below is measured unless
 explicitly marked as pending.

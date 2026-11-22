@@ -1,0 +1,67 @@
+{
+ "A": {
+  "episodes": 53192,
+  "empty_instruction": 14532,
+  "kept_by_lda_loader": 38660,
+  "lda_copy_episodes_listed": 53192
+ },
+ "B": {
+  "state_pos": 0.0,
+  "state_rot": 0.0,
+  "state_grip": 0.0,
+  "action_pos_next_state": 0.0,
+  "action_grip": 0.0
+ },
+ "C": {
+  "pos_vs_state_diff": 3.725290298461914e-09,
+  "rot_vs_euler_diff": 1.4901161193847656e-08,
+  "rot_vs_world_delta": 0.25334503852433393
+ },
+ "D": {
+  "train_rot_std": [
+   0.1498008392955499,
+   0.17484748504409092,
+   0.6939665805412393
+  ],
+  "rel_abs_err_mean": [
+   0.30173566269078705,
+   0.17040234127873247,
+   0.48817924876254437
+  ],
+  "rel_abs_err_in_std": [
+   2.014245474923388,
+   0.9745770220015602,
+   0.7034621874468407
+  ],
+  "orientation_err_deg_median": 28.20341050185353,
+  "orientation_err_deg_p90": 82.1318373460234
+ },
+ "E": {
+  "angle_lda": {
+   "median": 76.99819400946983,
+   "p90": 89.60919670080337
+  },
+  "relerr_lda": {
+   "median": 1.2450046049350696,
+   "p90": 1.4093823105095458
+  },
+  "angle_fixed": {
+   "median": 0.0,
+   "p90": 8.537736462515939e-07
+  },
+  "rot_err_lda_deg": {
+   "median": 2.3690309131551697,
+   "p90": 7.3841445343203835
+  },
+  "rot_err_fixed_deg": {
+   "median": 2.024958255059357e-15,
+   "p90": 6.78539924848048e-15
+  }
+ },
+ "F": {
+  "Carrot (carrot & plate)": 551,
+  "Spoon (spoon & towel|cloth)": 444,
+  "Stack (green & yellow & block|cube)": 96,
+  "Eggplant (eggplant & basket)": 0
+ }
+}
