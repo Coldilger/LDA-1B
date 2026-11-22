@@ -75,6 +75,10 @@ from lda.dataloader.gr00t_lerobot.embodiment_tags import (
 from lda.model.framework.base_framework import baseframework
 from lda.utils.rotation_convert import delta2abs
 
+# SimplerEnv's tool frame vs Bridge's state frame: R_sim = R_data @ T_SIM
+# (SimplerEnv/simpler_env/utils/debug/widowx_test_dataset_inference_rollout_gt_traj_in_sim.py)
+T_SIM = np.array([[0.0, 0.0, 1.0], [0.0, 1.0, 0.0], [-1.0, 0.0, 0.0]])
+
 # Slices of the model's raw 138-wide padded action space. The compact bimanual
 # layout puts the left arm at 0:7; the right arm starts at 69 (138 = 69 per arm).
 # Taken from lda/utils/eval_relative_eef.py so offline and closed-loop agree.
@@ -145,6 +149,10 @@ class LDAInference:
         self.exec_horizon = min(exec_horizon, action_horizon)
         self.obs_lag_steps = obs_lag_steps
         self.invert_gripper = invert_gripper
+        # Experiment 12 fix, on by default; LDA_BRIDGE_FRAME=0 reproduces the
+        # wrapper every result before 2026-11-22 was measured with.
+        self.bridge_frame = os.environ.get("LDA_BRIDGE_FRAME", "1") != "0"
+        print(f"[lda] bridge_frame={self.bridge_frame}", flush=True)
         self.embodiment_id = EMBODIMENT_TAG_MAPPING[embodiment_tag.value]
 
         with _cwd(REPO_ROOT):
@@ -240,10 +248,18 @@ class LDAInference:
         """480x640 (4:3) -> 256x256 square, matching what training saw."""
         return np.asarray(Image.fromarray(image).resize((TRAIN_RESO, TRAIN_RESO), Image.LANCZOS))
 
-    @staticmethod
-    def _pose_to_xyzrpy(ee_pose_proprio) -> np.ndarray:
+    def _sim_rot(self, ee_pose_proprio) -> Rotation:
+        """Simulator tool orientation, in Bridge's convention when bridge_frame is
+        on: R_data = R_sim @ T_SIM^T (Experiment 12). Without it, LDA's
+        tool-frame deltas are applied in a frame rotated by 90 degrees and the
+        arm moves ~77 degrees off the intended direction (median, offline test
+        on ground-truth deltas, experiment12_audit/README.md)."""
+        rot = Rotation.from_quat(ee_pose_proprio.q, scalar_first=True)
+        return rot * Rotation.from_matrix(T_SIM.T) if self.bridge_frame else rot
+
+    def _pose_to_xyzrpy(self, ee_pose_proprio) -> np.ndarray:
         pos = np.asarray(ee_pose_proprio.p, dtype=np.float64)
-        rpy = Rotation.from_quat(ee_pose_proprio.q, scalar_first=True).as_euler("xyz")
+        rpy = self._sim_rot(ee_pose_proprio).as_euler("xyz")
         return np.concatenate([pos, rpy])
 
     def _build_state(self, ee_pose_proprio, gripper_proprio: float) -> np.ndarray:
@@ -260,11 +276,15 @@ class LDAInference:
         modes are q99 for every key, same as action -- see BaseDataConfig).
         """
         pos = np.asarray(ee_pose_proprio.p, dtype=np.float64)
-        rot = Rotation.from_quat(ee_pose_proprio.q, scalar_first=True)
-        if self._ref_rot is None:
-            self._ref_rot = rot
-        rel_rot = self._ref_rot.inv() * rot
-        rpy = rel_rot.as_euler("xyz")
+        if self.bridge_frame:
+            # absolute orientation in Bridge's convention, exactly what training saw
+            rpy = self._sim_rot(ee_pose_proprio).as_euler("xyz")
+        else:
+            rot = Rotation.from_quat(ee_pose_proprio.q, scalar_first=True)
+            if self._ref_rot is None:
+                self._ref_rot = rot
+            rel_rot = self._ref_rot.inv() * rot
+            rpy = rel_rot.as_euler("xyz")
 
         raw = {
             "state.left_eef_position": pos.reshape(1, 3).astype(np.float32),

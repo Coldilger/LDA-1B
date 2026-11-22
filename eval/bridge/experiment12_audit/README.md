@@ -120,11 +120,22 @@ consecutive frames the "next frame of the sequence" is +1 step (0.2 s), not
 (`F1-VLA/eval/bridge/experiment6_7_swap`). The 7/24 vs 1/24 choice was made
 on an earlier checkpoint and one seed.
 
-## Follow-ups (need GPUs)
+## Follow-ups (running, 2026-11-22)
 
-1. LDA-1B: corrected wrapper (state and integration seed in the Bridge
-   convention, `R_sim · Tᵀ`), a new Bridge finetune, closed loop on the four
-   tasks.
-2. F1-VLA: exact state conversion instead of the episode-relative one, and
-   the training history spacing, on the existing 100k checkpoint (evaluation
-   only, 288 paired episodes each).
+1. **LDA-1B.** `lda_policy.py` now converts the simulator pose
+   (`bridge_frame`, on by default; `LDA_BRIDGE_FRAME=0` restores the old
+   wrapper): the integration seed and the rotation state are in Bridge's
+   absolute convention (`R_sim · Tᵀ`). Check with the wrapper's own code
+   (`verify_wrapper_fix.py`: the model replaced by a stub returning the true
+   tool-frame deltas, 2,390 steps of 100 episodes): position direction error
+   77.7° (median) with the old wrapper, 9e-7° with the fix; rotation step
+   error 2.7° → 5e-8°. New Bridge finetune with the v3 recipe
+   (`lda/config/training/LDA_bridge_v4.yaml`, 150k micro-batches,
+   `slurm/bridge_v4_selfchain.slurm`, first wave job 786408), then closed
+   loop on the four tasks with the corrected wrapper. Job ids: `jobs.txt`.
+2. **F1-VLA**, evaluation only, 100k checkpoint, 4 tasks × seeds 0–2, paired
+   with `exp1_baseline_seed{0,1,2}`: `F1_STATE_FRAME=bridge` (exact rotation
+   state, tag `exp1_baseline_seed<S>_e12statebridge`) and
+   `F1_HISTORY_SPACING=3` (history frames at t−9, −6, −3, 0 as in training,
+   tag `..._e12hist3`), options of `F1-VLA/eval/bridge/f1_vla_policy.py`
+   (defaults unchanged). Labels `f1e12_*` in `jobs.txt`.
