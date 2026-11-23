@@ -45,4 +45,11 @@ self-chaining 6 h waves on one H100, keeps the two newest checkpoints.
 
 ## Results
 
-Pending.
+Training finished at 100k for both runs (2026-11-22). The evaluated
+weights are `outputs/lda_robocasa_exp11/{full,policyonly}/final_model/
+pytorch_model.pt`, written by the trainer at the end of training (the
+`full` run's `steps_100000` file was deleted by a pruning bug, fixed; see
+`../../bridge/experiment12_audit/README.md`). Evaluation submitted
+2026-11-23: `closed_loop/closed_loop.slurm` with `CONDITION=baseline`,
+`CKPT=<final_model>`, `LABEL=exp11full|exp11policyonly`, scene seeds
+1000/2000/3000 × 50 (the Experiment 1 episodes), jobs in `jobs_eval.txt`.

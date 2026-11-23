@@ -139,3 +139,17 @@ on an earlier checkpoint and one seed.
    `F1_HISTORY_SPACING=3` (history frames at t−9, −6, −3, 0 as in training,
    tag `..._e12hist3`), options of `F1-VLA/eval/bridge/f1_vla_policy.py`
    (defaults unchanged). Labels `f1e12_*` in `jobs.txt`.
+   **Result (2026-11-23):** exact state 154/288 vs 140/288 (+4.9 pp
+   [−1.0, +10.4], p = 0.13); training spacing 141/288 (+0.3 pp [−3.8, +4.5]).
+   Neither changes F1-VLA's success significantly
+   (`F1-VLA/eval/bridge/RESULTS.md`, "Bridge pipeline audit").
+3. **Checkpoint pruning bug (found 2026-11-23).** The self-chaining scripts'
+   prune loop sorted checkpoint paths as text (`sort -t_ -k2 -n` on a path
+   with other underscores), so `steps_100000` sorted before `steps_80000`
+   and was deleted. RoboCasa Experiment 11 `full` lost `steps_100000` this
+   way, but the trainer also writes `final_model/pytorch_model.pt` at the end
+   (100k), which is what is evaluated. Fixed in both scripts (numeric sort;
+   `final_model` counts as finished). The running Bridge v4 wave (job
+   787646) still has the old loop; `~/slurm_util/guard_ckpt_787646.sh` keeps
+   hard links of its checkpoints and restores any it deletes, so the next
+   wave resumes from the newest step.

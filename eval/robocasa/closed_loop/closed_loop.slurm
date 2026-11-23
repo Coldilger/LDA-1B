@@ -54,7 +54,11 @@ N_EPISODES="${N_EPISODES:-50}"
 LDA_ROOT=/home/3295540/LDA-1B
 OUT=$LDA_ROOT/eval/robocasa/closed_loop
 ROBOCASA_ROOT=/mnt/beegfsnew/scratch/3295540/robocasa-eval/robocasa-gr1-tabletop-tasks
-CKPT=$LDA_ROOT/checkpoints/LDA-robocasa_run/checkpoints/LDA-robocasa.pt
+# CKPT (default: the authors' RoboCasa checkpoint) lets Experiment 11 evaluate
+# its two finetunes (.../<run>/final_model/pytorch_model.pt; config and
+# statistics are read from <run>/, two levels up, as for the default).
+CKPT="${CKPT:-$LDA_ROOT/checkpoints/LDA-robocasa_run/checkpoints/LDA-robocasa.pt}"
+echo "CKPT=$CKPT"
 PORT=$((20000 + SLURM_JOB_ID % 20000))   # unique per job: two jobs may share a node
 SERVER_LOG=$OUT/server-${SLURM_JOB_ID}.log
 mkdir -p "$OUT/episodes"

@@ -18,10 +18,11 @@
 
 SCRIPT=/home/3295540/LDA-1B/slurm/bridge_v4_selfchain.slurm
 CKDIR=/home/3295540/LDA-1B/outputs/lda_bridge_v4/bridge_finetune_v4/checkpoints
+FINAL_MODEL="/home/3295540/LDA-1B/outputs/lda_bridge_v4/bridge_finetune_v4/final_model/pytorch_model.pt"
 FINAL="$CKDIR/steps_150000_pytorch_model.pt"
 
 resubmit_if_unfinished() {
-  if [ -f "$FINAL" ]; then
+  if [ -f "$FINAL" ] || [ -f "$FINAL_MODEL" ]; then
     echo ">>> training complete ($FINAL exists); not resubmitting."
   else
     echo ">>> time limit approaching, training unfinished -> resubmitting"
@@ -43,7 +44,11 @@ cd /home/3295540/LDA-1B
 
 mkdir -p "$CKDIR"
 ( while true; do
-    ls -1 "$CKDIR"/steps_*_pytorch_model.pt 2>/dev/null | sort -t_ -k2 -n | head -n -2 | xargs -r rm -f
+    # numeric sort on the step number (a plain sort on the path put steps_100000
+    # before steps_80000 and deleted the newest checkpoint, 2026-11-23)
+    ls -1 "$CKDIR"/steps_*_pytorch_model.pt 2>/dev/null \
+      | awk -F'steps_' '{split($NF, a, "_"); print a[1] "\t" $0}' | sort -n | cut -f2- \
+      | head -n -2 | xargs -r rm -f
     sleep 600
   done ) &
 PRUNE_PID=$!
@@ -61,7 +66,7 @@ RC=$?
 kill "$PRUNE_PID" 2>/dev/null
 if [ "$TERMED" = 1 ]; then
   echo ">>> wave ended at the time limit (next wave submitted by the trap)."
-elif [ -f "$FINAL" ]; then
+elif [ -f "$FINAL" ] || [ -f "$FINAL_MODEL" ]; then
   echo ">>> TRAINING FINISHED: $FINAL"
 else
   echo ">>> CHAIN BROKEN: training exited (rc=$RC) before the time limit; not auto-resubmitting."

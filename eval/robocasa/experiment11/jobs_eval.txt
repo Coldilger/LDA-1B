@@ -1,0 +1,6 @@
+exp11full 1000 788267
+exp11full 2000 788268
+exp11full 3000 788269
+exp11policyonly 1000 788270
+exp11policyonly 2000 788271
+exp11policyonly 3000 788272
