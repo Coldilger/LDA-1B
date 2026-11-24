@@ -82,3 +82,19 @@ pairs 12 (`full` only) / 30 (`policyonly` only), exact McNemar p = 0.008.
 3. Both runs are far below the authors' checkpoint (44.7%): one task instead
    of 24, frozen Qwen-VL, 100k instead of 300k steps; neither run is
    converged, one training seed each.
+
+**Control for the sample split (queued 2026-11-24).** `policyonly25k`
+(`lda/config/training/LDA_robocasa_exp11_policyonly25k.yaml`): action-only
+training for 25k micro-batches, i.e. as many policy samples as `full` got in
+100k, with its own complete cosine schedule. Then the same 150-episode
+evaluation. Reading: ≈ 24/150 → the 12 pp gap is the sample split and the
+forecasting objectives neither help nor hurt the policy; clearly above →
+co-training costs more than its share of samples; below → the forecasting
+objectives help per policy sample.
+
+**Offline action error (the authors' metric) is not possible here.** The
+dataset has 1,000 demonstrations of this task and LDA's loader trains on all
+of them (`_get_trajectories` reads every line of `episodes.jsonl`; the
+`splits` field is ignored), so there are no held-out demonstrations. Errors
+on training episodes measure memorisation and are not reported (protocol
+rule). Options: retrain with a held-out set, or new demonstrations.
