@@ -97,4 +97,6 @@ dataset has 1,000 demonstrations of this task and LDA's loader trains on all
 of them (`_get_trajectories` reads every line of `episodes.jsonl`; the
 `splits` field is ignored), so there are no held-out demonstrations. Errors
 on training episodes measure memorisation and are not reported (protocol
-rule). Options: retrain with a held-out set, or new demonstrations.
+rule). Decision (2026-11-24): skipped; the comparison rests on closed-loop
+success and the `policyonly25k` control. Retraining all three runs with a
+held-out set was judged not worth its cost.
