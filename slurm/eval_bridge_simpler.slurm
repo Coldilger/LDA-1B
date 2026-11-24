@@ -20,7 +20,8 @@
 # 3 seeds that make up the protocol F1-VLA and mimic-video were measured on.
 #
 # Required env vars: TASK, SEED, CKPT
-# Optional: EXEC_HORIZON (default 8)
+# Optional: EXEC_HORIZON (default 8), TAG_SUFFIX, LDA_BRIDGE_FRAME (0 = the
+# pre-Experiment-12 wrapper without the simulator-to-Bridge frame conversion).
 
 set -u
 : "${TASK:?set TASK}"
@@ -81,7 +82,7 @@ CKPT_TAG="$(basename "$(dirname "$(dirname "$CKPT")")")"
   --rgb-overlay-path "$OVERLAY" \
   --robot-init-x $INIT_X $INIT_X 1 --robot-init-y $INIT_Y $INIT_Y 1 \
   --obj-variation-mode episode --obj-episode-range 0 24 \
-  --additional-env-save-tags "lda_${CKPT_TAG}_seed${SEED}_ex${EXEC_HORIZON}" \
+  --additional-env-save-tags "lda_${CKPT_TAG}_seed${SEED}_ex${EXEC_HORIZON}${TAG_SUFFIX:-}" \
   --robot-init-rot-quat-center 0 0 0 1 --robot-init-rot-rpy-range 0 0 1 0 0 1 0 0 1 \
   --vam-experiment-name unused --vam-video-model-path unused --vam-action-model-path unused \
   --vam-dataset-statistics-path unused --vam-img-horizon 0 --vam-lowdim-horizon 0 \

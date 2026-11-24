@@ -53,3 +53,32 @@ pytorch_model.pt`, written by the trainer at the end of training (the
 2026-11-23: `closed_loop/closed_loop.slurm` with `CONDITION=baseline`,
 `CKPT=<final_model>`, `LABEL=exp11full|exp11policyonly`, scene seeds
 1000/2000/3000 × 50 (the Experiment 1 episodes), jobs in `jobs_eval.txt`.
+
+**Result (2026-11-24).** All six jobs finished (150 paired episodes per
+run; `python closed_loop/paired_stats_robocasa.py exp11full exp11policyonly`):
+
+| run | success | per scene set (1000 / 2000 / 3000) |
+|---|---|---|
+| `full` (co-trained with forecasting) | 24/150 = 16.0% [11.0, 22.7] | 5 / 10 / 9 |
+| `policyonly` (action loss only) | 42/150 = 28.0% [21.4, 35.7] | 12 / 14 / 16 |
+| authors' RoboCasa checkpoint (Experiment 1 baseline, reference) | 67/150 = 44.7% | 24 / 19 / 24 |
+
+`policyonly − full` = **+12.0 pp** [bootstrap 95%: +4.0, +20.0]; discordant
+pairs 12 (`full` only) / 30 (`policyonly` only), exact McNemar p = 0.008.
+
+**What this shows, and what it does not.**
+1. At this budget, training LDA-1B on actions only gives a better policy
+   than co-training with forecasting, in every scene set.
+2. **Budget per objective is not matched.** In co-training every sample is
+   assigned to one of four tasks with equal weight
+   (`training_task_weights: [1, 1, 1, 1]`; `MMDiT_ActionHeader.py`, task
+   assignment before L686): policy, forward dynamics, inverse dynamics,
+   visual forecasting. So `full` saw about a quarter of its 1.6M samples as
+   policy samples (plus a quarter as inverse dynamics, which also predicts
+   actions but from the future frame), `policyonly` all of them. The result
+   is "at equal total compute, forecasting objectives cost policy
+   updates", not "forecasting hurts at equal policy updates". The second
+   would need `full` trained about 4× longer.
+3. Both runs are far below the authors' checkpoint (44.7%): one task instead
+   of 24, frozen Qwen-VL, 100k instead of 300k steps; neither run is
+   converged, one training seed each.
