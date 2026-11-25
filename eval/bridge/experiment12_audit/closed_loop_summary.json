@@ -1,0 +1,92 @@
+{
+ "fix/PutCarrotOnPlateInScene": {
+  "episodes": 72,
+  "success": 0,
+  "moved_correct_obj": 0,
+  "moved_wrong_obj": 0,
+  "is_src_obj_grasped": 0,
+  "consecutive_grasp": 0,
+  "src_on_target": 0
+ },
+ "fix/PutEggplantInBasketScene": {
+  "episodes": 72,
+  "success": 0,
+  "moved_correct_obj": 10,
+  "moved_wrong_obj": 0,
+  "is_src_obj_grasped": 1,
+  "consecutive_grasp": 0,
+  "src_on_target": 0
+ },
+ "fix/PutSpoonOnTableClothInScene": {
+  "episodes": 72,
+  "success": 0,
+  "moved_correct_obj": 0,
+  "moved_wrong_obj": 0,
+  "is_src_obj_grasped": 0,
+  "consecutive_grasp": 0,
+  "src_on_target": 0
+ },
+ "fix/StackGreenCubeOnYellowCubeBakedTexInScene": {
+  "episodes": 72,
+  "success": 0,
+  "moved_correct_obj": 0,
+  "moved_wrong_obj": 0,
+  "is_src_obj_grasped": 0,
+  "consecutive_grasp": 0,
+  "src_on_target": 0
+ },
+ "old/PutCarrotOnPlateInScene": {
+  "episodes": 72,
+  "success": 0,
+  "moved_correct_obj": 5,
+  "moved_wrong_obj": 2,
+  "is_src_obj_grasped": 1,
+  "consecutive_grasp": 0,
+  "src_on_target": 0
+ },
+ "old/PutEggplantInBasketScene": {
+  "episodes": 72,
+  "success": 0,
+  "moved_correct_obj": 0,
+  "moved_wrong_obj": 0,
+  "is_src_obj_grasped": 0,
+  "consecutive_grasp": 0,
+  "src_on_target": 0
+ },
+ "old/PutSpoonOnTableClothInScene": {
+  "episodes": 72,
+  "success": 0,
+  "moved_correct_obj": 4,
+  "moved_wrong_obj": 1,
+  "is_src_obj_grasped": 2,
+  "consecutive_grasp": 1,
+  "src_on_target": 0
+ },
+ "old/StackGreenCubeOnYellowCubeBakedTexInScene": {
+  "episodes": 72,
+  "success": 0,
+  "moved_correct_obj": 0,
+  "moved_wrong_obj": 2,
+  "is_src_obj_grasped": 0,
+  "consecutive_grasp": 0,
+  "src_on_target": 0
+ },
+ "fix/all": {
+  "episodes": 288,
+  "success": 0,
+  "moved_correct_obj": 10,
+  "moved_wrong_obj": 0,
+  "is_src_obj_grasped": 1,
+  "consecutive_grasp": 0,
+  "src_on_target": 0
+ },
+ "old/all": {
+  "episodes": 288,
+  "success": 0,
+  "moved_correct_obj": 9,
+  "moved_wrong_obj": 5,
+  "is_src_obj_grasped": 3,
+  "consecutive_grasp": 1,
+  "src_on_target": 0
+ }
+}

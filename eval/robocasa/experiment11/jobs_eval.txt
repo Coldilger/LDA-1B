@@ -4,3 +4,6 @@ exp11full 3000 788269
 exp11policyonly 1000 788270
 exp11policyonly 2000 788271
 exp11policyonly 3000 788272
+exp11policyonly25k 1000 792590
+exp11policyonly25k 2000 792591
+exp11policyonly25k 3000 792592

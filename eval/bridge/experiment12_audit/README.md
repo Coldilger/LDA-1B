@@ -58,11 +58,10 @@ and drifts out of the trained position range as the episode goes on
 different initial pose ... the trajectory is rigidly rotated, not
 distorted" saw the rotation but not its size.
 
-**Status: found offline, from the wrapper code and the simulator's own
-convention; not yet confirmed in the closed loop.** The LDA-1B Bridge
-checkpoints were deleted in the October scratch purge, so the closed-loop
-test needs a new Bridge finetune (the bug is in evaluation, so the
-training recipe does not change) and the corrected wrapper.
+**Status: the bug is real (offline, from the wrapper code and the
+simulator's own convention), but fixing it does not make LDA-1B succeed in
+the closed loop** (Follow-up 1 below: 0/288 with the fix, 0/288 without).
+The bug is one cause of failure, not the explanation of the 0%.
 
 F1-VLA's actions are not affected: it predicts Bridge's world-frame
 position deltas and Euler-angle differences (section C: `action[0:3]` equals
@@ -133,6 +132,27 @@ on an earlier checkpoint and one seed.
    (`lda/config/training/LDA_bridge_v4.yaml`, 150k micro-batches,
    `slurm/bridge_v4_selfchain.slurm`, first wave job 786408), then closed
    loop on the four tasks with the corrected wrapper. Job ids: `jobs.txt`.
+   **Result (2026-11-25).** v4 finished 150k; its `final_model` was run on
+   the 4 tasks × 24 episodes × seeds 0–2 with the corrected wrapper
+   (`_e12fix`) and, as a paired control, with the old one (`_e12old`,
+   `LDA_BRIDGE_FRAME=0`); the logs confirm `[lda] bridge_frame=True/False`
+   and `EVAL_EXIT=0` for all 24 jobs. `analyze_closed_loop.py` →
+   `closed_loop_summary.json`, episodes with each partial-progress flag
+   (SimplerEnv's per-episode "ever" flags):
+
+   | wrapper | episodes | success | moved correct object | moved wrong object | grasped | grasp held |
+   |---|---|---|---|---|---|---|
+   | corrected (`_e12fix`) | 288 | **0** | 10 (all Eggplant) | 0 | 1 | 0 |
+   | old (`_e12old`) | 288 | **0** | 9 (Carrot 5, Spoon 4) | 5 | 3 | 1 |
+
+   Both wrappers give 0% on every task, and partial progress is equally
+   rare (≈3% of episodes move the right object). So the orientation bug
+   was not what kept LDA-1B at 0%: removing it, which the offline check
+   shows makes the decoded motion exact for correct predictions, leaves the
+   policy as unsuccessful as before. Whatever limits LDA-1B on SimplerEnv
+   Bridge lies in the predictions themselves (or elsewhere in the
+   pipeline), and is not yet identified. The corrected wrapper stays the
+   default, since it is the right conversion.
 2. **F1-VLA**, evaluation only, 100k checkpoint, 4 tasks × seeds 0–2, paired
    with `exp1_baseline_seed{0,1,2}`: `F1_STATE_FRAME=bridge` (exact rotation
    state, tag `exp1_baseline_seed<S>_e12statebridge`) and

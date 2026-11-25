@@ -5,8 +5,13 @@
 > rotated by a fixed 90° relative to Bridge's convention (`R_sim = R_data · T`,
 > SimplerEnv's own replay script). On ground-truth deltas the resulting
 > position steps point 77° (median) away from the true motion. This alone would
-> keep success at zero and fits the drift described below. Offline finding;
-> closed-loop confirmation needs a new finetune (checkpoints purged).
+> keep success at zero and fits the drift described below. Offline finding.
+>
+> **2026-11-25, closed loop:** a new 150k finetune (v4, v3 recipe) gives
+> 0/288 with the corrected wrapper and 0/288 with the old one on the same
+> episodes; partial progress is equally rare (10 vs 9 episodes move the right
+> object). The bug was real but is not why LDA-1B scores 0%; that cause is
+> still open (`experiment12_audit/README.md`, Follow-up 1).
 
 Companion to `F1-VLA/eval/bridge/RESULTS.md`. Same benchmark, same protocol, so
 the two (and mimic-video) land in one table. Everything below is measured unless
