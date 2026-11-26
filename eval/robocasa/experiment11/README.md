@@ -83,7 +83,7 @@ pairs 12 (`full` only) / 30 (`policyonly` only), exact McNemar p = 0.008.
    of 24, frozen Qwen-VL, 100k instead of 300k steps; neither run is
    converged, one training seed each.
 
-**Control for the sample split (queued 2026-11-24).** `policyonly25k`
+**Control for the sample split (submitted 2026-11-24).** `policyonly25k`
 (`lda/config/training/LDA_robocasa_exp11_policyonly25k.yaml`): action-only
 training for 25k micro-batches, i.e. as many policy samples as `full` got in
 100k, with its own complete cosine schedule. Then the same 150-episode
@@ -91,6 +91,37 @@ evaluation. Reading: ≈ 24/150 → the 12 pp gap is the sample split and the
 forecasting objectives neither help nor hurt the policy; clearly above →
 co-training costs more than its share of samples; below → the forecasting
 objectives help per policy sample.
+
+**Control result (2026-11-26).** All three `policyonly25k` jobs finished
+(792590–792592, `jobs_eval.txt`; same 150 paired episodes):
+
+| run | success | per scene set (1000 / 2000 / 3000) |
+|---|---|---|
+| `full`, 100k (≈25k policy samples) | 24/150 = 16.0% [11.0, 22.7] | 5 / 10 / 9 |
+| `policyonly25k`, 25k (same number of policy samples) | 34/150 = 22.7% [16.7, 30.0] | 8 / 16 / 10 |
+| `policyonly`, 100k | 42/150 = 28.0% [21.4, 35.7] | 12 / 14 / 16 |
+
+| comparison | paired difference [bootstrap 95%] | discordant | McNemar p |
+|---|---|---|---|
+| `policyonly25k − full` (equal policy samples) | +6.7 pp [−1.3, +15.3] | 16 / 26 | 0.16 |
+| `policyonly − policyonly25k` (4× policy samples) | +5.3 pp [−2.7, +13.3] | 15 / 23 | 0.26 |
+| `policyonly − full` (equal compute, above) | +12.0 pp [+4.0, +20.0] | 12 / 30 | 0.008 |
+
+(`python closed_loop/paired_stats_robocasa.py <a> <b>`.)
+
+**Reading.**
+1. `policyonly25k` lies between the two 100k runs and is not
+   distinguishable from either at 150 episodes, so this control cannot say
+   how much of the 12 pp gap is the sample split and how much is the
+   forecasting objectives themselves.
+2. What it does bound: at an equal number of policy samples, co-training
+   with forecasting is not better than action-only training; the 95% CI
+   leaves co-training at most 1.3 pp ahead (point estimate 6.7 pp behind).
+   So in this setting forecasting objectives give the policy no measurable
+   benefit per policy sample, and at equal compute they cost it 12 pp.
+3. One training seed per run and short, unconverged training (see above);
+   a seed-to-seed spread of a few points would be enough to move the
+   point estimates.
 
 **Offline action error (the authors' metric) is not possible here.** The
 dataset has 1,000 demonstrations of this task and LDA's loader trains on all
